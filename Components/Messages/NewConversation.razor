@@ -1,0 +1,100 @@
+﻿@page "/messages/newconversation"
+@using TeaWork.Data.Models
+@using TeaWork.Logic.Dto
+@using TeaWork.Logic.Services
+@using TeaWork.Logic.Services.Interfaces
+@using Microsoft.AspNetCore.SignalR.Client
+@inject NavigationManager NavigationManager
+@inject IConversationService ConversationService
+@inject IUserService UserService
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize]
+@implements IAsyncDisposable
+
+<PageTitle>Find User</PageTitle>
+
+<div class="form-group">
+    <label>
+        User:
+        <input @bind="userInput" />
+    </label>
+</div>
+
+<button @onclick="FindUser">Send</button>
+
+<Modal @ref="modal" Title="Uwaga!">
+    <BodyTemplate>
+        Nie znaleziono użytkownika z podanym adresem.
+    </BodyTemplate>
+    <FooterTemplate>
+        <Button Color="ButtonColor.Secondary" @onclick="HideModal">Close</Button>
+    </FooterTemplate>
+</Modal>
+
+@code {
+    private HubConnection? hubConnection;
+    List<ToastMessage> messages = new List<ToastMessage>();
+    private string? userInput;
+    private Modal modal = default!;
+
+    protected override async Task OnInitializedAsync()
+    {
+        hubConnection = new HubConnectionBuilder()
+            .WithUrl(NavigationManager.ToAbsoluteUri("/chathub"))
+            .Build();
+        await hubConnection.StartAsync();
+    }
+
+    private async Task FindUser()
+    {
+        try
+        {
+            string userId;
+            if (hubConnection is not null)
+            {
+                //await hubConnection.SendAsync("SendMessage", userInput, messageInput);
+            }
+            if (userInput != null)
+            {
+                userId = await UserService.FindUserByEmail(userInput);
+                if (userId != null)
+                {
+                    var conversation = await ConversationService.AddConversation(Data.Enums.ConversationType.PrivateChat);
+                    var loggedUserId = await UserService.GetLoggedUserId();
+                    await ConversationService.AddMember(conversation, userId);
+                    await ConversationService.AddMember(conversation, loggedUserId);
+                    NavigationManager.NavigateTo($"/messages/conversation?id={conversation.Id}");
+                }
+                else
+                {
+                    userInput = "";
+                    await ShowModal();
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"ERROR: {ex.Message}");
+        }
+
+
+    }
+    private async Task ShowModal()
+    {
+        await modal.ShowAsync();
+    }
+
+    private async Task HideModal()
+    {
+        await modal.HideAsync();
+    }
+
+
+    public async ValueTask DisposeAsync()
+    {
+        if (hubConnection is not null)
+        {
+            await hubConnection.DisposeAsync();
+        }
+    }
+}

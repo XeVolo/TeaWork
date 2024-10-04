@@ -1,0 +1,38 @@
+﻿@page "/messages"
+@using TeaWork.Data.Models
+@using TeaWork.Logic.Dto
+@using TeaWork.Logic.Services
+@using TeaWork.Logic.Services.Interfaces
+@inject NavigationManager NavigationManager
+@inject IConversationService ConversationService
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize]
+
+<PageTitle>Messages</PageTitle>
+
+<Sidebar Href="/"
+         IconName="IconName.Envelope"
+         Title="Conversations"
+         DataProvider="SidebarDataProvider" />
+
+@code {
+    public List<NavItem> navItems = new List<NavItem>();
+    private List<Data.Models.Conversation> conversationsList = new List<Data.Models.Conversation>();
+
+    private async Task<SidebarDataProviderResult> SidebarDataProvider(SidebarDataProviderRequest request)
+    {
+        navItems = await GetNavItems();
+        return await Task.FromResult(request.ApplyTo(navItems));
+    }
+
+    private async Task<List<NavItem>> GetNavItems()
+    {
+        conversationsList = await ConversationService.GetMyConversations();
+        foreach (var conversation in conversationsList)
+        {
+            navItems.Add(new NavItem { Href = ($"messages/conversation?id={conversation.Id}"), IconName = IconName.Envelope, Text = conversation.Id.ToString() });
+        }
+        navItems.Add(new NavItem { Href = ($"messages/newconversation"), IconName = IconName.Plus, Text = "New Conversation" });
+        return navItems;
+    }
+}

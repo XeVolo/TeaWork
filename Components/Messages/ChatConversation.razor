@@ -1,0 +1,126 @@
+﻿@page "/messages/conversation"
+@using Microsoft.AspNetCore.SignalR.Client
+@using TeaWork.Data.Models
+@using TeaWork.Logic.Dto
+@using System
+@using TeaWork.Logic.Services
+@using TeaWork.Logic.Services.Interfaces
+@inject NavigationManager NavigationManager
+@using Microsoft.EntityFrameworkCore
+@inject IConversationService ConversationService
+@implements IAsyncDisposable
+@attribute [StreamRendering]
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize]
+   
+<PageTitle>Conversation</PageTitle>
+<div>
+    <div>
+        <Messages />
+    </div>
+    
+    <h1>Conversation</h1>
+
+    <div>
+        <h4>Conversation</h4>
+        <hr />
+        @if (conversation is null)
+        {
+            <p><em>Loading...</em></p>
+        }
+        else
+        {
+            <h5>@conversation.Id</h5>
+            if(messages!=null)
+            foreach(var mess in messages)
+            {
+                    <div>
+                        <div>@mess.Sender.Email</div>
+                        <div>@mess.Content</div>
+                    </div>
+            }
+            <div>
+                <a href="@($"/messages")">Back to List</a>
+            </div>
+            <textarea class="input-lg" placeholder="enter your comment" @bind="@newMessage"></textarea>
+            <button class="btn btn-default" @onclick="@(() => Send(newMessage))">Send</button>
+        }
+    </div>
+</div>
+
+@code {
+    Conversation? conversation;
+
+    [SupplyParameterFromQuery]
+    public int Id { get; set; }
+
+    private HubConnection? hubConnection;
+    private List<Message> messages = new List<Message>();
+    private string? newMessage;
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        hubConnection = new HubConnectionBuilder()
+            .WithUrl(NavigationManager.ToAbsoluteUri("/chathub"))
+            .Build();
+
+
+        hubConnection.On<int>("ReceiveMessage",async (messageId) =>
+    {
+        Message mess =await ConversationService.GetMessegesById(messageId);
+        if(mess!=null&&mess.ConversationId==Id)
+        {
+            messages.Add(mess);
+            InvokeAsync(StateHasChanged);
+        }
+
+    });
+        await hubConnection.StartAsync();
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        try
+        {
+            await Task.Delay(50);
+            conversation = await ConversationService.GetConversationById(Id);
+            messages = await ConversationService.GetMessegesByConversation(Id);
+            if (conversation == null)
+            {
+                NavigationManager.NavigateTo("/messages");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"ERROR: {ex.Message}");
+        }
+    }
+    private async Task Send(string mymessage)
+    {       
+        try
+        {
+            Message message = await ConversationService.NewMessage(Id, mymessage);
+            string messageContent = message.Content;
+            string messageResult = messageContent.Length > 15
+                            ? messageContent.Substring(0, 15) + "..."
+                            : messageContent;
+            if (hubConnection is not null)
+            {
+                await hubConnection.SendAsync("SendMessage",message.Id);
+                await hubConnection.SendAsync("SendMessageNotification", message.Sender.UserName.ToString(), messageResult);
+            }
+            newMessage = string.Empty;
+        }
+        catch (Exception ex)
+        {            
+            Console.WriteLine($"ERROR: {ex.Message}");
+        }
+    }
+    public async ValueTask DisposeAsync()
+    {
+        if(hubConnection!=null)
+        await hubConnection.DisposeAsync();
+    }
+
+}

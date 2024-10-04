@@ -1,0 +1,75 @@
+﻿@inherits LayoutComponentBase
+@using Microsoft.AspNetCore.SignalR.Client
+@inject NavigationManager navigationManager
+
+<div class="page">
+    <div class="sidebar">
+        <NavMenu />
+    </div>
+
+    <main>
+        <Toasts class="p-3" Messages="messages" AutoHide="true" Delay="6000" Placement="ToastsPlacement.TopRight" />
+        <div class="top-row px-4">
+            <AuthorizeView>
+                <Authorized>
+                    <Dropdown Color="DropdownColor.Secondary">
+                        <DropdownToggleButton>Dropdown</DropdownToggleButton>
+                        <DropdownMenu>
+                            <DropdownItem To="#" Type="DropdownItemType.Link">Action</DropdownItem>
+                            <DropdownItem To="#" Type="DropdownItemType.Link">Another action</DropdownItem>
+                            <DropdownItem To="#" Type="DropdownItemType.Link">Something else here</DropdownItem>
+                            <DropdownDivider>Dropdown header</DropdownDivider>
+                            <DropdownItem To="#" Type="DropdownItemType.Link">Separated link</DropdownItem>
+                        </DropdownMenu>
+                    </Dropdown>
+                </Authorized>
+                <NotAuthorized>
+                </NotAuthorized>
+            </AuthorizeView>
+        </div>
+
+        <article class="content px-4">
+            @Body
+        </article>
+    </main>
+</div>
+
+<div id="blazor-error-ui">
+    An unhandled error has occurred.
+    <a href="" class="reload">Reload</a>
+    <a class="dismiss">🗙</a>
+</div>
+
+@code {
+    List<ToastMessage> messages = new List<ToastMessage>();
+    List<DropdownItem> notifications = new List<DropdownItem>();
+    private HubConnection? hubConnection;
+
+    protected override async Task OnInitializedAsync()
+    {
+        hubConnection = new HubConnectionBuilder()
+            .WithUrl(navigationManager.ToAbsoluteUri("/chathub"))
+            .Build();
+
+        await hubConnection.StartAsync();
+
+        hubConnection.On<string, string>("ReceiveMessageNotification", (senderId, message) =>
+        {
+            ShowMessage(senderId, message);
+            InvokeAsync(StateHasChanged);
+        });
+    }
+
+    private void ShowMessage(string senderId, string message) => messages.Add(CreateToastMessage(senderId, message));
+
+    private ToastMessage CreateToastMessage(string senderId, string message)
+    => new ToastMessage
+        {
+            Type = ToastType.Info,
+            Title = senderId,
+            HelpText = $"{DateTime.Now}",
+            Message = message,
+        };
+
+
+}
