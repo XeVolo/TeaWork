@@ -1,0 +1,56 @@
+﻿@page "/projects/details"
+@inject TeaWork.Data.ApplicationDbContext DB
+@using TeaWork.Data.Models
+@inject NavigationManager NavigationManager
+@using Microsoft.EntityFrameworkCore
+
+<PageTitle>Details</PageTitle>
+
+<h1>Details</h1>
+
+<div>
+    <h4>Project</h4>
+    <hr />
+    @if (project is null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else
+    {
+        <dl class="row">
+            <dt class="col-sm-2">Title</dt>
+            <dd class="col-sm-10">@project.Title</dd>
+            <dt class="col-sm-2">StartDate</dt>
+            <dd class="col-sm-10">@project.StartDate</dd>
+            <dt class="col-sm-2">Deadline</dt>
+            <dd class="col-sm-10">@project.Deadline</dd>
+            <dt class="col-sm-2">Description</dt>
+            <dd class="col-sm-10">@project.Description</dd>
+            <dt class="col-sm-2">ToDoListId</dt>
+            <dd class="col-sm-10">@project.ToDoListId</dd>
+            <dt class="col-sm-2">ProjectConversationId</dt>
+            <dd class="col-sm-10">@project.ProjectConversationId</dd>
+        </dl>
+        <div>
+            <a href="@($"/projects/edit?id={project.Id}")">Edit</a> |
+            <a href="@($"/projects")">Back to List</a>
+        </div>
+    }
+</div>
+
+@code {
+    Project? project;
+
+    [SupplyParameterFromQuery]
+    public int Id { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        project = await DB.Projects.FirstOrDefaultAsync(m => m.Id == Id);
+
+        if (project is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
+}
