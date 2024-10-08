@@ -1,0 +1,60 @@
+﻿@page "/notifications/details"
+@using TeaWork.Data.Models
+@using TeaWork.Logic.Dto
+@using TeaWork.Logic.Services
+@using TeaWork.Logic.Services.Interfaces
+@using Microsoft.AspNetCore.SignalR.Client
+@using Microsoft.AspNetCore.Components.QuickGrid
+@inject NavigationManager NavigationManager
+@inject INotificationService NotificationService
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize]
+
+<PageTitle>Details</PageTitle>
+
+<h3>NotificationDetails</h3>
+
+<div>
+    <h4>Notification</h4>
+    <hr />
+    @if (notification is null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else
+    {
+        <dl class="row">
+            <dt class="col-sm-2">Title</dt>
+            <dd class="col-sm-10">@notification.Title</dd>          
+            <dt class="col-sm-2">Description</dt>
+            <dd class="col-sm-10">@notification.Description</dd>
+            <dt class="col-sm-2">CreationDate</dt>
+            <dd class="col-sm-10">@notification.CreationDate</dd>
+            <dt class="col-sm-2">Type</dt>
+            <dd class="col-sm-10">@notification.NotificationType</dd>
+            <dt class="col-sm-2">Status</dt>
+            <dd class="col-sm-10">@notification.Status</dd>
+        </dl>
+        <div>
+            <a href="@($"/projects/edit?id={notification.Id}")">Edit</a> |
+            <a href="@($"/notifications")">Back to List</a>
+        </div>
+    }
+</div>
+
+@code {
+    Notification? notification;
+
+    [SupplyParameterFromQuery]
+    public int Id { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        notification = await NotificationService.GetNotificationById(Id);
+
+        if (notification is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
+}

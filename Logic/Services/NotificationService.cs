@@ -44,6 +44,20 @@ namespace TeaWork.Logic.Services
                 throw new NotImplementedException();
             }
         }
+        public async Task<Notification> GetNotificationById(int id)
+        {
+            try
+            {
+                var notification = await _context.Notifications
+                    .FirstOrDefaultAsync(m => m.Id == id);
+                
+                return notification!;
+            }
+            catch (Exception ex)
+            {
+                throw new NotImplementedException();
+            }
+        }
         public async Task NotificationDisplayed()
         {
 
