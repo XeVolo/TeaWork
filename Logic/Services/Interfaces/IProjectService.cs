@@ -1,4 +1,6 @@
-﻿using TeaWork.Data.Models;
+﻿using TeaWork.Data.Enums;
+using TeaWork.Data;
+using TeaWork.Data.Models;
 using TeaWork.Logic.Dto;
 
 namespace TeaWork.Logic.Services.Interfaces
@@ -11,6 +13,6 @@ namespace TeaWork.Logic.Services.Interfaces
         Task<Project> GetProjectById(int id);
         Task<List<Project>> GetProjects();
         Task<List<Project>> GetMyProjects();
-        Task SendInvitation(string userId, int projectId);
+        Task AddProjectMember(Project project, ApplicationUser user, ProjectMemberRole role);
     }
 }

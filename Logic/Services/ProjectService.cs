@@ -140,24 +140,6 @@ namespace TeaWork.Logic.Services
             _context.ProjectMembers.Add(projectMember);
             await _context.SaveChangesAsync();
         }
-
-        public async Task SendInvitation(string userId, int projectId)
-        {
-            try
-            {
-                Invitation invitation = new Invitation
-                {
-                    UserId = userId,
-                    ProjectId = projectId,
-                    Status = InvitationStatus.Processed,
-                };
-                _context.Invitations.Add(invitation);
-                await _context.SaveChangesAsync();
-            }
-            catch (Exception ex)
-            {
-                throw new NotImplementedException();
-            }
-        }
+      
     }
 }

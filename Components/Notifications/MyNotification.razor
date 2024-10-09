@@ -1,5 +1,6 @@
 ﻿@page "/notifications"
 @using TeaWork.Data.Models
+@using TeaWork.Data.Enums
 @using TeaWork.Logic.Dto
 @using TeaWork.Logic.Services
 @using TeaWork.Logic.Services.Interfaces
@@ -7,6 +8,7 @@
 @using Microsoft.AspNetCore.Components.QuickGrid
 @inject NavigationManager NavigationManager
 @inject INotificationService NotificationService
+@inject IInvitationService InvitationService
 @using Microsoft.AspNetCore.Authorization
 @attribute [Authorize]
 
@@ -21,18 +23,48 @@
     <PropertyColumn Property="notification => notification.NotificationType" />
     <PropertyColumn Property="notification => notification.Status" />
 
-    <TemplateColumn Context="notification">
+    <TemplateColumn Context="notification">       
         <a href="@($"notifications/details?id={notification.Id}")">Details</a> |
+    </TemplateColumn>
+</QuickGrid>
+
+<h3>Invitations</h3>
+
+<QuickGrid Items="Invitations">
+    <PropertyColumn Property="invitation => invitation.Project.Title" />
+    <PropertyColumn Property="invitation => invitation.Status" />
+
+    <TemplateColumn Context="invitation">       
+                <button @onclick="() => AcceptInvitation(invitation.Id)">Akceptuj</button>
+                <button @onclick="() => DeclineInvitation(invitation.Id)">Odrzuć</button>
     </TemplateColumn>
 </QuickGrid>
 
 
 @code {
     private List<Notification> NotificationList = new List<Notification>();
-    IQueryable<Notification>? Notifications;
+    private IQueryable<Notification>? Notifications;
+
+    private List<Invitation> InvitationList = new List<Invitation>();
+    private IQueryable<Invitation>? Invitations;
+
     protected async override Task OnInitializedAsync()
     {
         NotificationList = await NotificationService.GetMyAllNotifications();
         Notifications = NotificationList.AsQueryable();
+
+        InvitationList = await InvitationService.GetNewInvitations();
+        Invitations = InvitationList.AsQueryable();
+    }
+    private async void AcceptInvitation(int invitationId)
+    {
+        await InvitationService.AcceptInvitation(invitationId);
+        InvokeAsync(StateHasChanged);
+    }
+
+    private async void DeclineInvitation(int invitationId)
+    {
+        await InvitationService.DeclineInvitation(invitationId);
+        InvokeAsync(StateHasChanged);
     }
 }

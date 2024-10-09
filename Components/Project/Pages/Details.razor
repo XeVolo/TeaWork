@@ -6,6 +6,7 @@
 @inject IProjectService ProjectService
 @inject IUserService UserService
 @inject INotificationService NotificationService
+@inject IInvitationService InvitationService
 @using Microsoft.AspNetCore.Authorization
 @attribute [Authorize]
 @implements IAsyncDisposable
@@ -116,12 +117,15 @@
                 userId = await UserService.FindUserByEmail(userInput);
                 if (userId != null)
                 {
-                    await ProjectService.SendInvitation(userId, Id);
+                    if(await InvitationService.IsInvitationExist(userId,Id)==false)
+                    {
+                    await InvitationService.SendInvitation(userId, Id);
                     Notification notif = await NotificationService.NewInvitation(userId, Id);
 
                     if (hubConnection is not null)
                     {
                         await hubConnection.SendAsync("SendInvitationNotification", notif.Title, notif.Description);
+                    }
                     }
                 }
                 else

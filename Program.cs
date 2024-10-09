@@ -34,6 +34,7 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IDesignConceptService, DesignConceptService>();
 builder.Services.AddScoped<INotificationService, NotificationService>();
 builder.Services.AddScoped<ITaskService, TaskService>();
+builder.Services.AddScoped<IInvitationService, InvitationService>();
 
 builder.Services.AddAuthentication(options =>
     {
