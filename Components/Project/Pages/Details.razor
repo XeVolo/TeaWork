@@ -1,8 +1,14 @@
 ﻿@page "/projects/details"
-@inject TeaWork.Data.ApplicationDbContext DB
 @using TeaWork.Data.Models
+@using TeaWork.Logic.Services.Interfaces
+@using Microsoft.AspNetCore.SignalR.Client
 @inject NavigationManager NavigationManager
-@using Microsoft.EntityFrameworkCore
+@inject IProjectService ProjectService
+@inject IUserService UserService
+@inject INotificationService NotificationService
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize]
+@implements IAsyncDisposable
 
 <PageTitle>Details</PageTitle>
 
@@ -30,27 +36,122 @@
             <dd class="col-sm-10">@project.ToDoListId</dd>
             <dt class="col-sm-2">ProjectConversationId</dt>
             <dd class="col-sm-10">@project.ProjectConversationId</dd>
+
+            @if(projectMembers!=null)
+            {
+            <h3>Project members</h3>
+            @foreach(ProjectMember member in projectMembers)
+            {
+                if (member.User != null)
+                {
+                    <dt class="col-sm-2">User</dt>                
+                    <dd class="col-sm-10">@member.User.UserName</dd>
+
+                    <dt class="col-sm-2">Role</dt>
+                    <dd class="col-sm-10">@member.Role</dd>
+                }
+
+            }
+            }
         </dl>
         <div>
             <a href="@($"/projects/edit?id={project.Id}")">Edit</a> |
             <a href="@($"/projects")">Back to List</a>
         </div>
+
+        <div class="form-group">
+            <label>
+                User:
+                <input @bind="userInput" />
+            </label>
+        </div>
+
+        <button @onclick="FindUser">Send</button>
+
+        <Modal @ref="modal" Title="Uwaga!">
+            <BodyTemplate>
+                Nie znaleziono użytkownika z podanym adresem.
+            </BodyTemplate>
+            <FooterTemplate>
+                <Button Color="ButtonColor.Secondary" @onclick="HideModal">Close</Button>
+            </FooterTemplate>
+        </Modal>
     }
 </div>
 
 @code {
-    Project? project;
+    private HubConnection? hubConnection;
+    private Project? project;
+    private List<ProjectMember>? projectMembers;
+    private string? userInput;
+    private Modal modal = default!;
 
     [SupplyParameterFromQuery]
     public int Id { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        project = await DB.Projects.FirstOrDefaultAsync(m => m.Id == Id);
+        hubConnection = new HubConnectionBuilder()
+            .WithUrl(NavigationManager.ToAbsoluteUri("/communicationhub"))
+            .Build();
+        await hubConnection.StartAsync();
+
+
+        project = await ProjectService.GetProjectById(Id);
+        projectMembers = project.ProjectMembers;
 
         if (project is null)
         {
             NavigationManager.NavigateTo("notfound");
+        }
+    }
+    private async Task FindUser()
+    {
+        try
+        {
+            string userId;
+
+            if (userInput != null)
+            {
+                userId = await UserService.FindUserByEmail(userInput);
+                if (userId != null)
+                {
+                    await ProjectService.SendInvitation(userId, Id);
+                    Notification notif = await NotificationService.NewInvitation(userId, Id);
+
+                    if (hubConnection is not null)
+                    {
+                        await hubConnection.SendAsync("SendInvitationNotification", notif.Title, notif.Description);
+                    }
+                }
+                else
+                {
+                    userInput = "";
+                    await ShowModal();
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"ERROR: {ex.Message}");
+        }
+
+
+    }
+    private async Task ShowModal()
+    {
+        await modal.ShowAsync();
+    }
+
+    private async Task HideModal()
+    {
+        await modal.HideAsync();
+    }
+    public async ValueTask DisposeAsync()
+    {
+        if (hubConnection is not null)
+        {
+            await hubConnection.DisposeAsync();
         }
     }
 }

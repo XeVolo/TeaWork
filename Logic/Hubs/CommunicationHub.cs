@@ -12,5 +12,9 @@ namespace TeaWork.Logic.Hubs
         {
             await Clients.All.SendAsync("ReceiveMessageNotification", senderId, message);
         }
+        public async Task SendInvitationNotification(string title, string description)
+        {
+            await Clients.All.SendAsync("ReceiveInvationNotification", title, description);
+        }
     }
 }

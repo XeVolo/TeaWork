@@ -7,15 +7,18 @@ namespace TeaWork.Data
     public class ApplicationUser : IdentityUser
     {
 
-        public List<ConversationMember>? ConversationMembers { get; set; }
-        public List<Message>? Messages { get; set; }
-        public List<ProjectMember>? ProjectMembers { get; set; }
-        public List<OwnDesignConcept>? OwnDesignConcepts { get; set; }
-        public List<ProjectTask>? Tasks { get; set; }
-        public List<TaskDistribution>? TasksDistributions { get; set; }
-        public List<TaskComment>? Comments { get; set; }
-        public List<Notification>? Notifications { get; set; }
-        public List<DesignConceptComment>? DesignConceptComments { get; set; }
+        public virtual List<ConversationMember>? ConversationMembers { get; set; }
+        public virtual List<Message>? Messages { get; set; }
+        public virtual List<ProjectMember>? ProjectMembers { get; set; }
+        public virtual List<OwnDesignConcept>? OwnDesignConcepts { get; set; }
+        public virtual List<ProjectTask>? Tasks { get; set; }
+        public virtual List<TaskDistribution>? TasksDistributions { get; set; }
+        public virtual List<TaskComment>? Comments { get; set; }
+        public virtual List<Notification>? Notifications { get; set; }
+        public virtual List<DesignConceptComment>? DesignConceptComments { get; set; }
+
+        public virtual List<Invitation>? Invitations { get; set; }
+
     }
 
 }

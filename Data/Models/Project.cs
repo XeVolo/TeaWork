@@ -11,6 +11,7 @@
         public int ProjectConversationId { get; set; }
         public bool IsActive { get; set; }
         public virtual List<ProjectMember>? ProjectMembers { get; set; }
+        public virtual List<Invitation>? Invitations { get; set; }
         public virtual ToDoList? ToDoList { get; set; }
         public virtual Conversation? Conversation { get; set; }
     }

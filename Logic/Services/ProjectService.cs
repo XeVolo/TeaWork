@@ -69,11 +69,14 @@ namespace TeaWork.Logic.Services
             }
         }
 
-        public async Task<Project> GetOne(int id)
+        public async Task<Project> GetProjectById(int id)
         {
             try
             {
-                var project = await _context.Projects.FirstOrDefaultAsync(m => m.Id == id);
+                var project = await _context.Projects
+                    .Include(x => x.ProjectMembers)
+                        .ThenInclude(pm => pm.User)
+                    .FirstOrDefaultAsync(x => x.Id == id);
                 return project!;
             }
             catch (Exception ex)
@@ -136,6 +139,25 @@ namespace TeaWork.Logic.Services
             ProjectMember projectMember = new ProjectMember { UserId = user.Id, ProjectId = project.Id, Role = role };
             _context.ProjectMembers.Add(projectMember);
             await _context.SaveChangesAsync();
+        }
+
+        public async Task SendInvitation(string userId, int projectId)
+        {
+            try
+            {
+                Invitation invitation = new Invitation
+                {
+                    UserId = userId,
+                    ProjectId = projectId,
+                    Status = InvitationStatus.Processed,
+                };
+                _context.Invitations.Add(invitation);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new NotImplementedException();
+            }
         }
     }
 }

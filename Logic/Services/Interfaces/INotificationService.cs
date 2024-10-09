@@ -10,5 +10,6 @@ namespace TeaWork.Logic.Services.Interfaces
         Task NotificationDisplayed();
         Task<List<Notification>> GetMyNewNotifications();
         Task<List<Notification>> GetMyAllNotifications();
+        Task <Notification>NewInvitation(string userId, int projectId);
     }
 }

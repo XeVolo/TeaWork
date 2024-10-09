@@ -18,6 +18,7 @@ namespace TeaWork.Data
         public DbSet<TaskDistribution> TaskDistributions { get; set; }
         public DbSet<TaskComment> TaskComments { get; set; }
         public DbSet<Notification> Notifications { get; set; }
+        public DbSet<Invitation> Invitations { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -103,6 +104,17 @@ namespace TeaWork.Data
                 .HasOne(n => n.User)
                 .WithMany(u => u.Notifications)
                 .HasForeignKey(n => n.UserId);
+            
+            modelBuilder.Entity<Invitation>()
+                .HasOne (n => n.User)
+                .WithMany(u=>u.Invitations)
+                .HasForeignKey(n => n.UserId);
+
+            modelBuilder.Entity<Invitation>()
+                .HasOne(n=>n.Project)
+                .WithMany(p => p.Invitations)
+                .HasForeignKey(n => n.ProjectId);
+
         }
     }
 

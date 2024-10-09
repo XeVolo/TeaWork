@@ -10,7 +10,7 @@
 @using Microsoft.AspNetCore.Authorization
 @attribute [Authorize]
 
-<PageTitle>Details</PageTitle>
+<PageTitle>Notification Details</PageTitle>
 
 <h3>NotificationDetails</h3>
 
@@ -36,7 +36,6 @@
             <dd class="col-sm-10">@notification.Status</dd>
         </dl>
         <div>
-            <a href="@($"/projects/edit?id={notification.Id}")">Edit</a> |
             <a href="@($"/notifications")">Back to List</a>
         </div>
     }
