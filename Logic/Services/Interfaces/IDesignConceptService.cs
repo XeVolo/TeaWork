@@ -5,6 +5,7 @@ namespace TeaWork.Logic.Services.Interfaces
 {
     public interface IDesignConceptService
     {
-        Task Add(DesignConceptDto designConceptData, Project project);
+        Task Add(DesignConceptDto designConceptData, int projectId);
+        Task<List<OwnDesignConcept>> GetDesignConcepts(int projectId);
     }
 }

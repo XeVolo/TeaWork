@@ -1,0 +1,168 @@
+﻿@page "/projects/designconcept"
+@using TeaWork.Data.Models
+@using TeaWork.Logic.Dto
+@using TeaWork.Logic.Services.Interfaces
+@using Microsoft.AspNetCore.SignalR.Client
+@inject NavigationManager NavigationManager
+@inject IProjectService ProjectService
+@inject IUserService UserService
+@inject INotificationService NotificationService
+@inject IDesignConceptService DesignConceptService
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize]
+@implements IAsyncDisposable
+
+<PageTitle>Project design concept</PageTitle>
+
+<h3>DesignConcept</h3>
+<div>
+    <h4>Project</h4>
+    <hr />
+    @if (project is null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else
+    {
+        <dl class="row">
+            <dt class="col-sm-2">Title</dt>
+            <dd class="col-sm-10">@project.Title</dd>
+            <dt class="col-sm-2">StartDate</dt>
+            <dd class="col-sm-10">@project.StartDate</dd>
+            <dt class="col-sm-2">Deadline</dt>
+            <dd class="col-sm-10">@project.Deadline</dd>
+            <dt class="col-sm-2">Description</dt>
+            <dd class="col-sm-10">@project.Description</dd>           
+        </dl>
+        <div>
+            <a href="@($"/projects/edit?id={project.Id}")">Edit</a> |
+            <a href="@($"/projects")">Back to List</a>
+        </div>
+
+        <button class="btn btn-primary" @onclick="ToggleFormVisibility">
+            @if (!showForm)
+            {
+                <text>Add own design concept</text>
+            }
+            else
+            {
+                <text>Cancel</text>
+            }
+        </button>
+
+        @if (showForm)
+        {
+            <div class="col-md-4">
+            <EditForm Model="ownDesignConcept" OnValidSubmit="AddDesignConcept">
+                <DataAnnotationsValidator />
+                    <ValidationSummary class="text-danger" />
+
+                <div class="form-group">
+                    <label for="title">Title:</label>
+                    <InputText id="title" class="form-control" @bind-Value="ownDesignConcept.Title" />
+                        <ValidationMessage For="() => ownDesignConcept.Title" class="text-danger" />
+                </div>
+
+                <div class="form-group">
+                    <label for="description">Description:</label>
+                    <InputText id="description" class="form-control" @bind-Value="ownDesignConcept.Description" />
+                        <ValidationMessage For="() => ownDesignConcept.Description" class="text-danger" />
+                </div>
+
+                <button type="submit" class="btn btn-success">Add</button>
+            </EditForm>
+            </div>
+        }
+
+
+
+        <div>
+            @if (designConcepts is not null)
+            {
+                @foreach (var designconcept in designConcepts)
+                {
+                    <dl class="row">
+                        @if(designconcept.User is not null)
+                        {
+                        <dt class="col-sm-2">User</dt>
+                        <dd class="col-sm-10">@designconcept.User.UserName</dd>
+                        }
+                        <dt class="col-sm-2">Title</dt>
+                        <dd class="col-sm-10">@designconcept.Title</dd>
+                        <dt class="col-sm-2">Description</dt>
+                        <dd class="col-sm-10">@designconcept.Description</dd>
+                    </dl>
+                    if (designconcept.DesignConceptComments is not null)
+                    {
+                        foreach (var designconceptcomment in designconcept.DesignConceptComments)
+                        {
+                            <dl class="row">
+                                @if (designconceptcomment.User is not null)
+                                {
+                                    <dt class="col-sm-2">User</dt>
+                                    <dd class="col-sm-10">@designconceptcomment.User.UserName</dd>
+                                }
+                                <dt class="col-sm-2">Title</dt>
+                                <dd class="col-sm-10">@designconceptcomment.Title</dd>
+                                <dt class="col-sm-2">Description</dt>
+                                <dd class="col-sm-10">@designconceptcomment.Description</dd>
+                            </dl>
+                        }
+                    }
+                }
+            }
+        </div>
+    }
+</div>
+
+@code {
+    private HubConnection? hubConnection;
+    private Project? project;
+    private List<OwnDesignConcept>? designConcepts;
+    private string? userInput;
+    private Modal modal = default!;
+    private bool showForm = false; 
+    private DesignConceptDto ownDesignConcept = new DesignConceptDto();
+
+
+    [SupplyParameterFromQuery]
+    public int Id { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        hubConnection = new HubConnectionBuilder()
+            .WithUrl(NavigationManager.ToAbsoluteUri("/communicationhub"))
+            .Build();
+        await hubConnection.StartAsync();
+
+
+        project = await ProjectService.GetProjectById(Id);
+        designConcepts = await DesignConceptService.GetDesignConcepts(Id);
+
+
+        if (project is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
+    private void ToggleFormVisibility()
+    {
+        showForm = !showForm;
+    }
+    public async Task AddDesignConcept()
+    {
+        await DesignConceptService.Add(ownDesignConcept, Id);
+        project = await ProjectService.GetProjectById(Id);
+        designConcepts = await DesignConceptService.GetDesignConcepts(Id);
+        ownDesignConcept = new DesignConceptDto();
+        showForm = false;
+        await InvokeAsync(StateHasChanged);
+    }
+    public async ValueTask DisposeAsync()
+    {
+        if (hubConnection is not null)
+        {
+            await hubConnection.DisposeAsync();
+        }
+    }
+}

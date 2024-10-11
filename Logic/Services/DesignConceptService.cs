@@ -3,6 +3,7 @@ using TeaWork.Data.Models;
 using TeaWork.Data;
 using TeaWork.Logic.Services.Interfaces;
 using TeaWork.Logic.Dto;
+using Microsoft.EntityFrameworkCore;
 
 namespace TeaWork.Logic.Services
 {
@@ -17,7 +18,7 @@ namespace TeaWork.Logic.Services
             _authenticationStateProvider = authenticationStateProvider;
             _userIdentity = new UserIdentity(context, authenticationStateProvider);
         }
-        public async Task Add(DesignConceptDto designConceptData, Project project)
+        public async Task Add(DesignConceptDto designConceptData, int projectId)
         {
             ApplicationUser currentUser = await _userIdentity.GetLoggedUser();
             try
@@ -29,10 +30,29 @@ namespace TeaWork.Logic.Services
                     Title = designConceptData.Title,
                     Description = designConceptData.Description,
                     UserId = currentUser.Id,
-                    //ProjectId= project.Id,
+                    IsDeleted=false,
+                    ProjectId= projectId,
                 };
                 _context.OwnDesignConcepts.Add(designConcept);
                 await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new NotImplementedException();
+            }
+        }
+        public async Task<List<OwnDesignConcept>> GetDesignConcepts(int projectId)
+        {
+            try
+            {
+                var designconcepts = await _context.OwnDesignConcepts
+                    .Where(x => x.ProjectId == projectId)
+                    .Include(x => x.User)
+                    .Include(x =>x.DesignConceptComments)
+                        .ThenInclude(pm => pm.User)
+                    .ToListAsync();
+
+                return designconcepts;
             }
             catch (Exception ex)
             {

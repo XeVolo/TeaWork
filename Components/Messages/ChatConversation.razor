@@ -72,7 +72,7 @@
         if(mess!=null&&mess.ConversationId==Id)
         {
             messages.Add(mess);
-            InvokeAsync(StateHasChanged);
+            await InvokeAsync(StateHasChanged);
         }
 
     });

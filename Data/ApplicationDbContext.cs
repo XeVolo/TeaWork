@@ -75,6 +75,11 @@ namespace TeaWork.Data
                 .WithMany(u => u.OwnDesignConcepts)
                 .HasForeignKey(odc => odc.UserId);
 
+            modelBuilder.Entity<OwnDesignConcept>()
+                .HasOne(odc => odc.Project)
+                .WithMany(p => p.OwnDesignConcepts)
+                .HasForeignKey(odc => odc.ProjectId);
+
             modelBuilder.Entity<ToDoList>()
                 .HasOne(tdl => tdl.Project)
                 .WithOne(p => p.ToDoList)
