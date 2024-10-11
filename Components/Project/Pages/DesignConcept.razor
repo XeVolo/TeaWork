@@ -102,13 +102,23 @@
                                     <dt class="col-sm-2">User</dt>
                                     <dd class="col-sm-10">@designconceptcomment.User.UserName</dd>
                                 }
-                                <dt class="col-sm-2">Title</dt>
-                                <dd class="col-sm-10">@designconceptcomment.Title</dd>
                                 <dt class="col-sm-2">Description</dt>
                                 <dd class="col-sm-10">@designconceptcomment.Description</dd>
                             </dl>
                         }
                     }
+                    <EditForm Model="newComment" OnValidSubmit="@(() => AddComment(designconcept.Id))">
+                        <DataAnnotationsValidator />
+                        <ValidationSummary />
+
+                        <div class="form-group">
+                            <label for="commentDescription">Comment Description:</label>
+                            <InputTextArea id="commentDescription" class="form-control" @bind-Value="newComment.Description" />
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">Add Comment</button>
+                    </EditForm>
+
                 }
             }
         </div>
@@ -123,6 +133,7 @@
     private Modal modal = default!;
     private bool showForm = false; 
     private DesignConceptDto ownDesignConcept = new DesignConceptDto();
+    private DesignConceptDto newComment = new DesignConceptDto();
 
 
     [SupplyParameterFromQuery]
@@ -156,6 +167,14 @@
         designConcepts = await DesignConceptService.GetDesignConcepts(Id);
         ownDesignConcept = new DesignConceptDto();
         showForm = false;
+        await InvokeAsync(StateHasChanged);
+    }
+    private async Task AddComment(int designConceptId)
+    {
+        await DesignConceptService.AddComment(newComment, designConceptId);
+        project = await ProjectService.GetProjectById(Id);
+        designConcepts = await DesignConceptService.GetDesignConcepts(Id);
+        newComment = new DesignConceptDto();
         await InvokeAsync(StateHasChanged);
     }
     public async ValueTask DisposeAsync()

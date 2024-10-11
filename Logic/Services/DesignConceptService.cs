@@ -59,5 +59,28 @@ namespace TeaWork.Logic.Services
                 throw new NotImplementedException();
             }
         }
+        public async Task AddComment(DesignConceptDto designCommentData, int designConceptId)
+        {
+            ApplicationUser currentUser = await _userIdentity.GetLoggedUser();
+            try
+            {
+
+                DesignConceptComment designComment = new DesignConceptComment
+                {
+                    CreationDate = DateTime.Now,
+                    Title = "Comment",
+                    Description = designCommentData.Description,
+                    OwnDesignConceptId=designConceptId,
+                    UserId = currentUser.Id,
+                    IsDeleted = false,
+                };
+                _context.DesignConceptComments.Add(designComment);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new NotImplementedException();
+            }
+        }
     }
 }
