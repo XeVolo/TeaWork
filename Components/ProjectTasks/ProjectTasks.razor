@@ -125,7 +125,40 @@
                         <dt class="col-sm-2">Priority</dt>
                         <dd class="col-sm-10">@projectTask.Priority</dd>
                     </dl>
-                    
+
+                    <button class="btn btn-primary" @onclick="ShowAssignModal">Assign a task</button>
+
+                    <Modal @ref="assignModal" Title="Assign a task">
+                        <BodyTemplate>
+                            <EditForm Model="newUser" OnValidSubmit="@(() => AssignTask(projectTask.Id))">
+                                <DataAnnotationsValidator />
+                                <ValidationSummary class="text-danger" />                        
+
+                                <div class="form-group">
+                                    <label for="priority">User:</label>
+                                    <InputSelect id="user" class="form-control" @bind-Value="newUser.Id">
+                                        <option value="">-- Assign user --</option>
+                                        @if (users is not null)
+                                        {
+                                            @foreach (var user in users)
+                                            {
+                                                <option value="@user.Id">@user.Name</option>
+                                                
+                                            }
+                                        }
+                                    </InputSelect>
+
+                                    <ValidationMessage For="() => newUser.Name" class="text-danger" />
+                                </div>
+                                
+
+                                <button type="submit" class="btn btn-success">Add</button>
+                            </EditForm>
+                        </BodyTemplate>
+                        <FooterTemplate>
+                            <Button Color="ButtonColor.Secondary" @onclick="HideAssignModal">Close</Button>
+                        </FooterTemplate>
+                    </Modal>
                 }
             }
         </div>
@@ -135,9 +168,12 @@
 @code {
     private HubConnection? hubConnection;
     private Project? project;
+    private List<UserDto>? users; 
     private List<ProjectTask>? projectTasks;
     private Modal modal = default!;
+    private Modal assignModal = default!;
     private ProjectTaskAddDto newProjectTask = new ProjectTaskAddDto();
+    private UserDto newUser = new UserDto();
 
 
     [SupplyParameterFromQuery]
@@ -158,15 +194,31 @@
             NavigationManager.NavigateTo("notfound");
         }
         projectTasks = await ProjectTaskService.GetProjectTasks(Id);
+        users = await UserService.GetProjectUsers(Id);
     }
     public async Task AddProjectTask()
     {
-        await ProjectTaskService.Add(newProjectTask, Id);
-        project = await ProjectService.GetProjectById(Id);
-        projectTasks = await ProjectTaskService.GetProjectTasks(Id);
-        newProjectTask = new ProjectTaskAddDto();
-        await HideModal();
-        await InvokeAsync(StateHasChanged);
+        if (newProjectTask != null)
+        {
+            await ProjectTaskService.Add(newProjectTask, Id);
+            project = await ProjectService.GetProjectById(Id);
+            projectTasks = await ProjectTaskService.GetProjectTasks(Id);
+            newProjectTask = new ProjectTaskAddDto();
+            await HideModal();
+            await InvokeAsync(StateHasChanged);
+        }
+    }
+    public async Task AssignTask(int projectTaskId)
+    {
+        if (newUser.Id != null)
+        {
+            await ProjectTaskService.AddTaskDistribution(projectTaskId, newUser.Id);
+            project = await ProjectService.GetProjectById(Id);
+            projectTasks = await ProjectTaskService.GetProjectTasks(Id);
+            newUser = new UserDto();
+            await HideAssignModal();
+            await InvokeAsync(StateHasChanged);
+        }
     }
     private async Task ShowModal()
     {
@@ -176,6 +228,15 @@
     private async Task HideModal()
     {
         await modal.HideAsync();
+    }
+    private async Task ShowAssignModal()
+    {
+        await assignModal.ShowAsync();
+    }
+
+    private async Task HideAssignModal()
+    {
+        await assignModal.HideAsync();
     }
     public async ValueTask DisposeAsync()
     {

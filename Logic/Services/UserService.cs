@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.EntityFrameworkCore;
 using TeaWork.Data;
+using TeaWork.Logic.Dto;
 using TeaWork.Logic.Services.Interfaces;
 
 namespace TeaWork.Logic.Services
@@ -59,6 +60,34 @@ namespace TeaWork.Logic.Services
                 throw new NotImplementedException();
             }
 
+        }
+        public async Task<List<UserDto>> GetProjectUsers(int projectId)
+        {
+            try
+            {
+                List<UserDto> Users = new List<UserDto>();
+                var projectmembers = await _context.ProjectMembers
+                    .Where(x => x.ProjectId == projectId)
+                    .ToListAsync();
+                foreach (var projectmember in projectmembers)
+                {
+                    var user = await _context.Users.FirstOrDefaultAsync(x=>x.Id.Equals(projectmember.UserId));
+                    if (user != null)
+                    {
+                        UserDto userDto = new UserDto
+                        {
+                            Id = user.Id,
+                            Name = user.UserName,
+                        };
+                        Users.Add(userDto);
+                    }
+                }
+                return Users;
+            }
+            catch (Exception ex)
+            {
+                throw new NotImplementedException();
+            }
         }
     }
 }

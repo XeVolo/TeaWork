@@ -62,5 +62,23 @@ namespace TeaWork.Logic.Services
                 throw new NotImplementedException();
             }
         }
+        public async Task AddTaskDistribution(int taskId, string userId)
+        {
+            
+            try
+            {
+                TaskDistribution taskDistribution = new TaskDistribution
+                {
+                    TaskId = taskId,
+                    UserId = userId
+                };
+                _context.TaskDistributions.Add(taskDistribution);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new NotImplementedException();
+            }
+        }
     }
 }

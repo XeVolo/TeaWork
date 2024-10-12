@@ -136,9 +136,16 @@ namespace TeaWork.Logic.Services
         }
         public async Task AddProjectMember(Project project, ApplicationUser user, ProjectMemberRole role)
         {
-            ProjectMember projectMember = new ProjectMember { UserId = user.Id, ProjectId = project.Id, Role = role };
+            try
+            {
+                ProjectMember projectMember = new ProjectMember { UserId = user.Id, ProjectId = project.Id, Role = role };
             _context.ProjectMembers.Add(projectMember);
             await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new NotImplementedException();
+            }
         }
       
     }
