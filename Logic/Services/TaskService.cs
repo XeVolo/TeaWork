@@ -54,6 +54,8 @@ namespace TeaWork.Logic.Services
                 var project = _context.Projects.FirstOrDefault(m => m.Id == projectId);
                 var projecttaks = await _context.ProjectTasks
                     .Where(x => x.ToDoListId == project.ToDoListId)
+                    .Include(x => x.TasksDistributions)
+                        .ThenInclude(y => y.User)
                     .ToListAsync();
                 return projecttaks;
             }

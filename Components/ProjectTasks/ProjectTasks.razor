@@ -124,13 +124,25 @@
                         <dd class="col-sm-10">@projectTask.State</dd>
                         <dt class="col-sm-2">Priority</dt>
                         <dd class="col-sm-10">@projectTask.Priority</dd>
+                        @if(projectTask.TasksDistributions is not null)
+                        {
+                            <dt class="col-sm-2">Task assignment:</dt>
+                            @foreach (var user in projectTask.TasksDistributions)
+                            {
+                                if(user.User is not null)
+                                {
+                                    <dd class="col-sm-10">@user.User.UserName</dd>
+                                }
+                                
+                            }
+                        }
                     </dl>
 
-                    <button class="btn btn-primary" @onclick="ShowAssignModal">Assign a task</button>
+                    <button class="btn btn-primary" @onclick="() => ShowAssignModal(projectTask.Id)">Assign a task</button>
 
                     <Modal @ref="assignModal" Title="Assign a task">
                         <BodyTemplate>
-                            <EditForm Model="newUser" OnValidSubmit="@(() => AssignTask(projectTask.Id))">
+                            <EditForm Model="newUser" OnValidSubmit="@(() => AssignTask(selectedProjectTaskId))">
                                 <DataAnnotationsValidator />
                                 <ValidationSummary class="text-danger" />                        
 
@@ -174,6 +186,7 @@
     private Modal assignModal = default!;
     private ProjectTaskAddDto newProjectTask = new ProjectTaskAddDto();
     private UserDto newUser = new UserDto();
+    private int selectedProjectTaskId;
 
 
     [SupplyParameterFromQuery]
@@ -229,8 +242,9 @@
     {
         await modal.HideAsync();
     }
-    private async Task ShowAssignModal()
+    private async Task ShowAssignModal(int taskId)
     {
+        selectedProjectTaskId = taskId;
         await assignModal.ShowAsync();
     }
 
