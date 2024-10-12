@@ -5,6 +5,7 @@ namespace TeaWork.Logic.Services.Interfaces
 {
     public interface ITaskService
     {
-        Task Add(ProjectTaskAddDto taskdata, Project project);
+        Task Add(ProjectTaskAddDto taskdata, int projectId);
+        Task<List<ProjectTask>> GetProjectTasks(int projectId);
     }
 }

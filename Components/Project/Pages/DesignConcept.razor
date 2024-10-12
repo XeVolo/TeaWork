@@ -39,40 +39,33 @@
             <a href="@($"/projects")">Back to List</a>
         </div>
 
-        <button class="btn btn-primary" @onclick="ToggleFormVisibility">
-            @if (!showForm)
-            {
-                <text>Add own design concept</text>
-            }
-            else
-            {
-                <text>Cancel</text>
-            }
-        </button>
+        <button class="btn btn-primary" @onclick="ShowModal">Add design concept</button>
 
-        @if (showForm)
-        {
-            <div class="col-md-4">
-            <EditForm Model="ownDesignConcept" OnValidSubmit="AddDesignConcept">
-                <DataAnnotationsValidator />
+        <Modal @ref="modal" Title="Add design concept">
+            <BodyTemplate>
+                <EditForm Model="ownDesignConcept" OnValidSubmit="AddDesignConcept">
+                    <DataAnnotationsValidator />
                     <ValidationSummary class="text-danger" />
 
-                <div class="form-group">
-                    <label for="title">Title:</label>
-                    <InputText id="title" class="form-control" @bind-Value="ownDesignConcept.Title" />
+                    <div class="form-group">
+                        <label for="title">Title:</label>
+                        <InputText id="title" class="form-control" @bind-Value="ownDesignConcept.Title" />
                         <ValidationMessage For="() => ownDesignConcept.Title" class="text-danger" />
-                </div>
+                    </div>
 
-                <div class="form-group">
-                    <label for="description">Description:</label>
-                    <InputText id="description" class="form-control" @bind-Value="ownDesignConcept.Description" />
+                    <div class="form-group">
+                        <label for="description">Description:</label>
+                        <InputText id="description" class="form-control" @bind-Value="ownDesignConcept.Description" />
                         <ValidationMessage For="() => ownDesignConcept.Description" class="text-danger" />
-                </div>
+                    </div>
 
-                <button type="submit" class="btn btn-success">Add</button>
-            </EditForm>
-            </div>
-        }
+                    <button type="submit" class="btn btn-success">Add</button>
+                </EditForm>
+            </BodyTemplate>
+            <FooterTemplate>
+                <Button Color="ButtonColor.Secondary" @onclick="HideModal">Close</Button>
+            </FooterTemplate>
+        </Modal>
 
 
 
@@ -167,6 +160,7 @@
         designConcepts = await DesignConceptService.GetDesignConcepts(Id);
         ownDesignConcept = new DesignConceptDto();
         showForm = false;
+        await HideModal();
         await InvokeAsync(StateHasChanged);
     }
     private async Task AddComment(int designConceptId)
@@ -176,6 +170,15 @@
         designConcepts = await DesignConceptService.GetDesignConcepts(Id);
         newComment = new DesignConceptDto();
         await InvokeAsync(StateHasChanged);
+    }
+    private async Task ShowModal()
+    {
+        await modal.ShowAsync();
+    }
+
+    private async Task HideModal()
+    {
+        await modal.HideAsync();
     }
     public async ValueTask DisposeAsync()
     {

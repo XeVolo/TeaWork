@@ -3,6 +3,7 @@ using TeaWork.Data.Models;
 using TeaWork.Data;
 using TeaWork.Logic.Dto;
 using TeaWork.Logic.Services.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace TeaWork.Logic.Services
 {
@@ -17,25 +18,44 @@ namespace TeaWork.Logic.Services
             _authenticationStateProvider = authenticationStateProvider;
             _userIdentity = new UserIdentity(context, authenticationStateProvider);
         }
-        public async Task Add(ProjectTaskAddDto taskData, Project project)
+        public async Task Add(ProjectTaskAddDto taskData, int projectId)
         {
             ApplicationUser currentUser = await _userIdentity.GetLoggedUser();
             try
             {
-
-                ProjectTask projectTask = new ProjectTask
+                var project = _context.Projects.FirstOrDefault(m => m.Id == projectId);
+                if (project != null)
                 {
-                    CreationDate = DateTime.Now,
-                    Deadline = taskData.Deadline,
-                    Title = taskData.Title,
-                    Description = taskData.Description,
-                    State = taskData.State,
-                    Priority = taskData.Priority,
-                    ToDoListId = project.ToDoListId,
-                    UserId = currentUser.Id,
-                };
-                _context.ProjectTasks.Add(projectTask);
-                await _context.SaveChangesAsync();
+                    ProjectTask projectTask = new ProjectTask
+                    {
+                        CreationDate = DateTime.Now,
+                        Deadline = taskData.Deadline,
+                        Title = taskData.Title,
+                        Description = taskData.Description,
+                        State = taskData.State,
+                        Priority = taskData.Priority,
+                        ToDoListId = project.ToDoListId,
+                        UserId = currentUser.Id,
+                    };
+                    _context.ProjectTasks.Add(projectTask);
+                    await _context.SaveChangesAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new NotImplementedException();
+            }
+        }
+        public async Task<List<ProjectTask>> GetProjectTasks(int projectId)
+        {
+            ApplicationUser currentUser = await _userIdentity.GetLoggedUser();
+            try
+            {
+                var project = _context.Projects.FirstOrDefault(m => m.Id == projectId);
+                var projecttaks = await _context.ProjectTasks
+                    .Where(x => x.ToDoListId == project.ToDoListId)
+                    .ToListAsync();
+                return projecttaks;
             }
             catch (Exception ex)
             {

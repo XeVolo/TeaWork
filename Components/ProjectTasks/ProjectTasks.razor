@@ -1,0 +1,187 @@
+﻿@page "/projects/tasks"
+@using TeaWork.Data.Models
+@using TeaWork.Logic.Dto
+@using TeaWork.Logic.Services.Interfaces
+@using Microsoft.AspNetCore.SignalR.Client
+@using TeaWork.Data.Enums
+@inject NavigationManager NavigationManager
+@inject IProjectService ProjectService
+@inject IUserService UserService
+@inject INotificationService NotificationService
+@inject IDesignConceptService DesignConceptService
+@inject ITaskService ProjectTaskService
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize]
+@implements IAsyncDisposable
+
+<PageTitle>Project tasks</PageTitle>
+
+<h3>Project Tasks</h3>
+<div>
+    <h4>Project</h4>
+    <hr />
+    @if (project is null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else
+    {
+        <dl class="row">
+            <dt class="col-sm-2">Title</dt>
+            <dd class="col-sm-10">@project.Title</dd>
+            <dt class="col-sm-2">StartDate</dt>
+            <dd class="col-sm-10">@project.StartDate</dd>
+            <dt class="col-sm-2">Deadline</dt>
+            <dd class="col-sm-10">@project.Deadline</dd>
+            <dt class="col-sm-2">Description</dt>
+            <dd class="col-sm-10">@project.Description</dd>
+        </dl>
+        <div>
+            <a href="@($"/projects/edit?id={project.Id}")">Edit</a> |
+            <a href="@($"/projects")">Back to List</a>
+        </div>
+
+        <button class="btn btn-primary" @onclick="ShowModal">Add task</button>
+
+        <Modal @ref="modal" Title="Add task">
+            <BodyTemplate>
+                <EditForm Model="newProjectTask" OnValidSubmit="AddProjectTask">
+                    <DataAnnotationsValidator />
+                    <ValidationSummary class="text-danger" />
+
+                    <div class="form-group">
+                        <label for="title">Title:</label>
+                        <InputText id="title" class="form-control" @bind-Value="newProjectTask.Title" />
+                        <ValidationMessage For="() => newProjectTask.Title" class="text-danger" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="description">Description:</label>
+                        <InputText id="description" class="form-control" @bind-Value="newProjectTask.Description" />
+                        <ValidationMessage For="() => newProjectTask.Description" class="text-danger" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="deadline">Deadline:</label>
+                        <InputDate id="deadline" class="form-control" @bind-Value="newProjectTask.Deadline" />
+                        <ValidationMessage For="() => newProjectTask.Deadline" class="text-danger" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="state">State:</label>
+                        <InputSelect id="state" class="form-control" @bind-Value="newProjectTask.State">
+                            <option value="">-- Wybierz stan --</option>
+                            @foreach (var state in Enum.GetValues<TaskState>())
+                            {
+                                <option value="@state">@state</option>
+                            }
+                        </InputSelect>
+                        <ValidationMessage For="() => newProjectTask.State" class="text-danger" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="priority">Priority:</label>
+                        <InputSelect id="priority" class="form-control" @bind-Value="newProjectTask.Priority">
+                            <option value="">-- Wybierz priorytet --</option>
+                            @foreach (var priority in Enum.GetValues<TaskPriority>())
+                            {
+                                <option value="@priority">@priority</option>
+                            }
+                        </InputSelect>
+                        <ValidationMessage For="() => newProjectTask.Priority" class="text-danger" />
+                    </div>
+
+                    <button type="submit" class="btn btn-success">Add</button>
+                </EditForm>
+            </BodyTemplate>
+            <FooterTemplate>
+                <Button Color="ButtonColor.Secondary" @onclick="HideModal">Close</Button>
+            </FooterTemplate>
+        </Modal>
+
+
+
+        <div>
+            @if (projectTasks is not null)
+            {
+                @foreach (var projectTask in projectTasks)
+                {
+                    <dl class="row">
+                        @if (projectTask.User is not null)
+                        {
+                            <dt class="col-sm-2">User</dt>
+                            <dd class="col-sm-10">@projectTask.User.UserName</dd>
+                        }
+                        <dt class="col-sm-2">Title</dt>
+                        <dd class="col-sm-10">@projectTask.Title</dd>
+                        <dt class="col-sm-2">Description</dt>
+                        <dd class="col-sm-10">@projectTask.Description</dd>
+                        <dt class="col-sm-2">Creation Date</dt>
+                        <dd class="col-sm-10">@projectTask.CreationDate</dd>
+                        <dt class="col-sm-2">Deadline</dt>
+                        <dd class="col-sm-10">@projectTask.Deadline</dd>
+                        <dt class="col-sm-2">State</dt>
+                        <dd class="col-sm-10">@projectTask.State</dd>
+                        <dt class="col-sm-2">Priority</dt>
+                        <dd class="col-sm-10">@projectTask.Priority</dd>
+                    </dl>
+                    
+                }
+            }
+        </div>
+    }
+</div>
+
+@code {
+    private HubConnection? hubConnection;
+    private Project? project;
+    private List<ProjectTask>? projectTasks;
+    private Modal modal = default!;
+    private ProjectTaskAddDto newProjectTask = new ProjectTaskAddDto();
+
+
+    [SupplyParameterFromQuery]
+    public int Id { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        hubConnection = new HubConnectionBuilder()
+            .WithUrl(NavigationManager.ToAbsoluteUri("/communicationhub"))
+            .Build();
+        await hubConnection.StartAsync();
+
+
+        project = await ProjectService.GetProjectById(Id);
+
+        if (project is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+        projectTasks = await ProjectTaskService.GetProjectTasks(Id);
+    }
+    public async Task AddProjectTask()
+    {
+        await ProjectTaskService.Add(newProjectTask, Id);
+        project = await ProjectService.GetProjectById(Id);
+        projectTasks = await ProjectTaskService.GetProjectTasks(Id);
+        newProjectTask = new ProjectTaskAddDto();
+        await HideModal();
+        await InvokeAsync(StateHasChanged);
+    }
+    private async Task ShowModal()
+    {
+        await modal.ShowAsync();
+    }
+
+    private async Task HideModal()
+    {
+        await modal.HideAsync();
+    }
+    public async ValueTask DisposeAsync()
+    {
+        if (hubConnection is not null)
+        {
+            await hubConnection.DisposeAsync();
+        }
+    }
+}
