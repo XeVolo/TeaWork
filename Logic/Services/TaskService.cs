@@ -69,13 +69,19 @@ namespace TeaWork.Logic.Services
             
             try
             {
-                TaskDistribution taskDistribution = new TaskDistribution
+                var existingTaskDistribution = await _context.TaskDistributions
+                        .FirstOrDefaultAsync(x => x.TaskId == taskId && x.UserId == userId);
+
+                if (existingTaskDistribution == null)
                 {
-                    TaskId = taskId,
-                    UserId = userId
-                };
-                _context.TaskDistributions.Add(taskDistribution);
-                await _context.SaveChangesAsync();
+                    TaskDistribution taskDistribution = new TaskDistribution
+                    {
+                        TaskId = taskId,
+                        UserId = userId
+                    };
+                    _context.TaskDistributions.Add(taskDistribution);
+                    await _context.SaveChangesAsync();
+                }
             }
             catch (Exception ex)
             {
