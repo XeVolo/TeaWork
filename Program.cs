@@ -8,14 +8,18 @@ using TeaWork.Data;
 using TeaWork.Logic.Services.Interfaces;
 using TeaWork.Logic.Services;
 using TeaWork.Logic.Hubs;
+using Radzen;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddBlazorBootstrap();
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
 builder.Services.AddSignalR();
+
+builder.Services.AddBlazorBootstrap();
+
+builder.Services.AddRadzenComponents();
 
 builder.Services.AddResponseCompression(opts =>
 {
@@ -32,7 +36,7 @@ builder.Services.AddScoped<IProjectService, ProjectService>();
 builder.Services.AddScoped<IConversationService, ConversationService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IDesignConceptService, DesignConceptService>();
-builder.Services.AddScoped<INotificationService, NotificationService>();
+builder.Services.AddScoped<INotificationService, TeaWork.Logic.Services.NotificationService>();
 builder.Services.AddScoped<ITaskService, TaskService>();
 builder.Services.AddScoped<IInvitationService, InvitationService>();
 
