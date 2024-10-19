@@ -54,6 +54,7 @@ namespace TeaWork.Logic.Services
                 var project = _context.Projects.FirstOrDefault(m => m.Id == projectId);
                 var projecttaks = await _context.ProjectTasks
                     .Where(x => x.ToDoListId == project.ToDoListId)
+                    .Include(x => x.TaskComments)
                     .Include(x => x.TasksDistributions)
                         .ThenInclude(y => y.User)
                     .ToListAsync();
@@ -82,6 +83,29 @@ namespace TeaWork.Logic.Services
                     _context.TaskDistributions.Add(taskDistribution);
                     await _context.SaveChangesAsync();
                 }
+            }
+            catch (Exception ex)
+            {
+                throw new NotImplementedException();
+            }
+        }
+        public async Task AddComment(DesignConceptDto taskCommentData, int taskId)
+        {
+            ApplicationUser currentUser = await _userIdentity.GetLoggedUser();
+            try
+            {
+
+                TaskComment taskComment = new TaskComment
+                {
+                    CreationDate = DateTime.Now,
+                    Title = "Comment",
+                    Description = taskCommentData.Description,
+                    TaskId = taskId,
+                    UserId = currentUser.Id,
+                    IsDeleted = false,
+                };
+                _context.TaskComments.Add(taskComment);
+                await _context.SaveChangesAsync();
             }
             catch (Exception ex)
             {

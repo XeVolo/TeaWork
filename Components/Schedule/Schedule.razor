@@ -23,12 +23,207 @@
     <RadzenMonthView />
 </RadzenScheduler>
 
+@if (projectTasks is not null)
+{
+    <div class="container">
+        <div class="row">
+            
+            <div class="col-md-4">
+                <h3>Running</h3>
+                @foreach (var projectTask in projectTasks.Where(t => t.State == TaskState.Running))
+                {
+                    <dl class="row">
+                        @if (projectTask.User is not null)
+                        {
+                            <dt class="col-sm-4">User</dt>
+                            <dd class="col-sm-8">@projectTask.User.UserName</dd>
+                        }
+                        <dt class="col-sm-4">Title</dt>
+                        <dd class="col-sm-8">@projectTask.Title</dd>
+                        <dt class="col-sm-4">Description</dt>
+                        <dd class="col-sm-8">@projectTask.Description</dd>
+                        <dt class="col-sm-4">Creation Date</dt>
+                        <dd class="col-sm-8">@projectTask.CreationDate</dd>
+                        <dt class="col-sm-4">Deadline</dt>
+                        <dd class="col-sm-8">@projectTask.Deadline</dd>
+                        <dt class="col-sm-4">Priority</dt>
+                        <dd class="col-sm-8">@projectTask.Priority</dd>
+                        @if (projectTask.TasksDistributions is not null)
+                        {
+                            <dt class="col-sm-4">Task assignment:</dt>
+                            @foreach (var user in projectTask.TasksDistributions)
+                            {
+                                if (user.User is not null)
+                                {
+                                    <dd class="col-sm-8">@user.User.UserName</dd>
+                                }
+                            }
+                        }
+                        @if (projectTask.TaskComments is not null)
+                        {
+                            foreach (var taskComment in projectTask.TaskComments)
+                            {
+                                <dl class="row">
+                                    @if (taskComment.User is not null)
+                                    {
+                                        <dt class="col-sm-2">User</dt>
+                                        <dd class="col-sm-10">@taskComment.User.UserName</dd>
+                                    }
+                                    <dt class="col-sm-2">Description</dt>
+                                    <dd class="col-sm-10">@taskComment.Description</dd>
+                                </dl>
+                            }
+                        }
+                        <EditForm Model="newComment" OnValidSubmit="@(() => AddComment(projectTask.Id))">
+                            <DataAnnotationsValidator />
+                            <ValidationSummary />
+
+                            <div class="form-group">
+                                <label for="commentDescription">Comment Description:</label>
+                                <InputTextArea id="commentDescription" class="form-control" @bind-Value="newComment.Description" />
+                            </div>
+
+                            <button type="submit" class="btn btn-primary">Add Comment</button>
+                        </EditForm>
+                    </dl>
+                }
+            </div>
+
+            
+            <div class="col-md-4">
+                <h3>In Progress</h3>
+                @foreach (var projectTask in projectTasks.Where(t => t.State == TaskState.InProgress))
+                {
+                    <dl class="row">
+                        @if (projectTask.User is not null)
+                        {
+                            <dt class="col-sm-4">User</dt>
+                            <dd class="col-sm-8">@projectTask.User.UserName</dd>
+                        }
+                        <dt class="col-sm-4">Title</dt>
+                        <dd class="col-sm-8">@projectTask.Title</dd>
+                        <dt class="col-sm-4">Description</dt>
+                        <dd class="col-sm-8">@projectTask.Description</dd>
+                        <dt class="col-sm-4">Creation Date</dt>
+                        <dd class="col-sm-8">@projectTask.CreationDate</dd>
+                        <dt class="col-sm-4">Deadline</dt>
+                        <dd class="col-sm-8">@projectTask.Deadline</dd>
+                        <dt class="col-sm-4">Priority</dt>
+                        <dd class="col-sm-8">@projectTask.Priority</dd>
+                        @if (projectTask.TasksDistributions is not null)
+                        {
+                            <dt class="col-sm-4">Task assignment:</dt>
+                            @foreach (var user in projectTask.TasksDistributions)
+                            {
+                                if (user.User is not null)
+                                {
+                                    <dd class="col-sm-8">@user.User.UserName</dd>
+                                }
+                            }
+                        }
+                        @if (projectTask.TaskComments is not null)
+                        {
+                            foreach (var taskComment in projectTask.TaskComments)
+                            {
+                            <dl class="row">
+                                @if (taskComment.User is not null)
+                                {
+                                <dt class="col-sm-2">User</dt>
+                                <dd class="col-sm-10">@taskComment.User.UserName</dd>
+                                }
+                                <dt class="col-sm-2">Description</dt>
+                                <dd class="col-sm-10">@taskComment.Description</dd>
+                            </dl>
+                            }
+                        }
+                        <EditForm Model="newComment" OnValidSubmit="@(() => AddComment(projectTask.Id))">
+                            <DataAnnotationsValidator />
+                            <ValidationSummary />
+
+                            <div class="form-group">
+                                <label for="commentDescription">Comment Description:</label>
+                                <InputTextArea id="commentDescription" class="form-control" @bind-Value="newComment.Description" />
+                            </div>
+
+                            <button type="submit" class="btn btn-primary">Add Comment</button>
+                        </EditForm>
+                    </dl>
+                }
+            </div>
+
+            
+            <div class="col-md-4">
+                <h3>Finished</h3>
+                @foreach (var projectTask in projectTasks.Where(t => t.State == TaskState.Finished))
+                {
+                    <dl class="row">
+                        @if (projectTask.User is not null)
+                        {
+                            <dt class="col-sm-4">User</dt>
+                            <dd class="col-sm-8">@projectTask.User.UserName</dd>
+                        }
+                        <dt class="col-sm-4">Title</dt>
+                        <dd class="col-sm-8">@projectTask.Title</dd>
+                        <dt class="col-sm-4">Description</dt>
+                        <dd class="col-sm-8">@projectTask.Description</dd>
+                        <dt class="col-sm-4">Creation Date</dt>
+                        <dd class="col-sm-8">@projectTask.CreationDate</dd>
+                        <dt class="col-sm-4">Deadline</dt>
+                        <dd class="col-sm-8">@projectTask.Deadline</dd>
+                        <dt class="col-sm-4">Priority</dt>
+                        <dd class="col-sm-8">@projectTask.Priority</dd>
+                        @if (projectTask.TasksDistributions is not null)
+                        {
+                            <dt class="col-sm-4">Task assignment:</dt>
+                            @foreach (var user in projectTask.TasksDistributions)
+                            {
+                                if (user.User is not null)
+                                {
+                                    <dd class="col-sm-8">@user.User.UserName</dd>
+                                }
+                            }
+                        }
+                        @if (projectTask.TaskComments is not null)
+                        {
+                            foreach (var taskComment in projectTask.TaskComments)
+                            {
+                                <dl class="row">
+                                    @if (taskComment.User is not null)
+                                    {
+                                        <dt class="col-sm-2">User</dt>
+                                        <dd class="col-sm-10">@taskComment.User.UserName</dd>
+                                    }
+                                    <dt class="col-sm-2">Description</dt>
+                                    <dd class="col-sm-10">@taskComment.Description</dd>
+                                </dl>
+                            }
+                        }
+                        <EditForm Model="newComment" OnValidSubmit="@(() => AddComment(projectTask.Id))">
+                            <DataAnnotationsValidator />
+                            <ValidationSummary />
+
+                            <div class="form-group">
+                                <label for="commentDescription">Comment Description:</label>
+                                <InputTextArea id="commentDescription" class="form-control" @bind-Value="newComment.Description" />
+                            </div>
+
+                            <button type="submit" class="btn btn-primary">Add Comment</button>
+                        </EditForm>
+                    </dl>
+                }
+            </div>
+        </div>
+    </div>
+}
+
+
 @code {
     RadzenScheduler<Appointment> scheduler;
     Dictionary<DateTime, string> events = new Dictionary<DateTime, string>();
     IList<Appointment> appointments = new List<Appointment>();
     private Project? project;
     private List<ProjectTask>? projectTasks;
+    private DesignConceptDto newComment = new DesignConceptDto();
 
     [SupplyParameterFromQuery]
     public int Id { get; set; }
@@ -53,6 +248,14 @@
             appointments.Add(appointment);
         }
         await scheduler.Reload();
+    }
+    private async Task AddComment(int taskId)
+    {
+        await ProjectTaskService.AddComment(newComment, taskId);
+        project = await ProjectService.GetProjectById(Id);
+        projectTasks = await ProjectTaskService.GetProjectTasks(Id);
+        newComment = new DesignConceptDto();
+        await InvokeAsync(StateHasChanged);
     }
 
     void OnSlotRender(SchedulerSlotRenderEventArgs args)
