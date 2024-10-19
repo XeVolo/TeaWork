@@ -8,48 +8,69 @@
 @inject NavigationManager NavigationManager
 @using Microsoft.EntityFrameworkCore
 @inject IConversationService ConversationService
+@inject IUserService UserService
 @implements IAsyncDisposable
 @attribute [StreamRendering]
 @using Microsoft.AspNetCore.Authorization
 @attribute [Authorize]
    
 <PageTitle>Conversation</PageTitle>
-<div>
-    <div>
-        <Messages />
-    </div>
-    
-    <h1>Conversation</h1>
 
-    <div>
-        <h4>Conversation</h4>
-        <hr />
-        @if (conversation is null)
-        {
-            <p><em>Loading...</em></p>
-        }
-        else
-        {
-            <h5>@conversation.Id</h5>
-            if(messages!=null)
-            foreach(var mess in messages)
-            {
-                    <div>
-                        <div>@mess.Sender.Email</div>
-                        <div>@mess.Content</div>
+<div class="container-fluid">
+    <div class="row">
+        
+        <div class="col-md-3">
+            <Messages />
+        </div>
+
+        
+        <div class="col-md-9">
+            <h1>Conversation</h1>
+
+            <div class="conversation-section">
+                <h4>Conversation</h4>
+                <hr />
+
+                @if (conversation is null)
+                {
+                    <p><em>Loading...</em></p>
+                }
+                else
+                {
+                    <h5>Conversation ID: @conversation.Id</h5>
+
+                    @if (messages != null)
+                    {
+                        <div class="message-list">
+                            @foreach (var mess in messages)
+                            {
+                                <div class="message @(mess.Sender.Id == currentUser ? "my-message" : "other-message")">
+                                    <div class="message-sender">@mess.Sender.Email</div>
+                                    <div class="message-content">@mess.Content</div>
+                                </div>
+                            }
+                        </div>
+                    }
+
+                    
+                    <div class="mt-3">
+                        <a href="@($"/messages")" class="btn btn-secondary">Back to List</a>
                     </div>
-            }
-            <div>
-                <a href="@($"/messages")">Back to List</a>
+
+                    
+                    <div class="mt-3">
+                        <textarea class="form-control message-input" placeholder="Enter your comment" @bind="@newMessage"></textarea>
+                        <button class="btn btn-primary mt-2" @onclick="@(() => Send(newMessage))">Send</button>
+                    </div>
+                }
             </div>
-            <textarea class="input-lg" placeholder="enter your comment" @bind="@newMessage"></textarea>
-            <button class="btn btn-default" @onclick="@(() => Send(newMessage))">Send</button>
-        }
+        </div>
     </div>
 </div>
 
 @code {
     Conversation? conversation;
+    private string currentUser;
 
     [SupplyParameterFromQuery]
     public int Id { get; set; }
@@ -76,6 +97,7 @@
         }
 
     });
+        currentUser = await UserService.GetLoggedUserId();
         await hubConnection.StartAsync();
     }
 
