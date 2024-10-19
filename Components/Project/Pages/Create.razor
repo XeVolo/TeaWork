@@ -27,7 +27,7 @@
             </div>
             <div class="mb-3">
                 <label for="deadline" class="form-label">Deadline:</label>
-                <InputDate id="deadline" @bind-Value="Project.Deadline" class="form-control" />
+                <RadzenDatePicker TValue="DateTime?" Value=@Project.Deadline Change="@(args => Project.Deadline = args)" Name="RadzenDatePickerChangeEvent" />
                 <ValidationMessage For="() => Project.Deadline" class="text-danger" />
             </div>
             <div class="mb-3">
@@ -49,7 +49,11 @@
     [SupplyParameterFromForm]
     public ProjectAddDto Project { get; set; } = new();
 
-    // To protect from overposting attacks, see https://aka.ms/RazorPagesCRUD
+    protected override async Task OnInitializedAsync()
+    {
+        Project.Deadline = DateTime.Now;
+    }
+
     public async Task AddProject()
     {
         await ProjectService.Add(Project);

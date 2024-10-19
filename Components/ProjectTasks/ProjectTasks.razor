@@ -63,7 +63,7 @@
 
                     <div class="form-group">
                         <label for="deadline">Deadline:</label>
-                        <InputDate id="deadline" class="form-control" @bind-Value="newProjectTask.Deadline" />
+                        <RadzenDatePicker TValue="DateTime?" Value=@newProjectTask.Deadline Change="@(args => newProjectTask.Deadline = args)" Name="RadzenDatePickerChangeEvent" />
                         <ValidationMessage For="() => newProjectTask.Deadline" class="text-danger" />
                     </div>
 
@@ -194,6 +194,8 @@
 
     protected override async Task OnInitializedAsync()
     {
+        newProjectTask.Deadline = DateTime.Now;
+
         hubConnection = new HubConnectionBuilder()
             .WithUrl(NavigationManager.ToAbsoluteUri("/communicationhub"))
             .Build();

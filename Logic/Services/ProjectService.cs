@@ -40,7 +40,7 @@ namespace TeaWork.Logic.Services
                 {
                     Title = projectdata.Title,
                     StartDate = DateTime.Now,
-                    Deadline = projectdata.Deadline,
+                    Deadline = (DateTime)projectdata.Deadline!,
                     Description = projectdata.Description,
                     ToDoListId = toDoList.Id,
                     ProjectConversationId = conversation.Id,

@@ -1,5 +1,18 @@
 ﻿@page "/projects/schedule"
 @inject DialogService DialogService
+@using TeaWork.Data.Models
+@using TeaWork.Logic.Dto
+@using TeaWork.Logic.Services.Interfaces
+@using Microsoft.AspNetCore.SignalR.Client
+@using TeaWork.Data.Enums
+@inject NavigationManager NavigationManager
+@inject IProjectService ProjectService
+@inject IUserService UserService
+@inject INotificationService NotificationService
+@inject IDesignConceptService DesignConceptService
+@inject ITaskService ProjectTaskService
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize]
 
 <RadzenScheduler @ref=@scheduler SlotRender=@OnSlotRender style="height: 768px;" TItem="Appointment" Data=@appointments StartProperty="Start" EndProperty="End"
     TextProperty="Text" SelectedIndex="2"
@@ -13,17 +26,34 @@
 @code {
     RadzenScheduler<Appointment> scheduler;
     Dictionary<DateTime, string> events = new Dictionary<DateTime, string>();
+    IList<Appointment> appointments = new List<Appointment>();
+    private Project? project;
+    private List<ProjectTask>? projectTasks;
 
-    IList<Appointment> appointments = new List<Appointment>
+    [SupplyParameterFromQuery]
+    public int Id { get; set; }
+
+    protected override async Task OnInitializedAsync()
     {
-        new Appointment { Start = DateTime.Today.AddDays(-2), End = DateTime.Today.AddDays(-2), Text = "Birthday" },
-        new Appointment { Start = DateTime.Today.AddDays(-11), End = DateTime.Today.AddDays(-10), Text = "Day off" },
-        new Appointment { Start = DateTime.Today.AddDays(-10), End = DateTime.Today.AddDays(-8), Text = "Work from home" },
-        new Appointment { Start = DateTime.Today.AddHours(10), End = DateTime.Today.AddHours(12), Text = "Online meeting" },
-        new Appointment { Start = DateTime.Today.AddHours(10), End = DateTime.Today.AddHours(13), Text = "Skype call" },
-        new Appointment { Start = DateTime.Today.AddHours(14), End = DateTime.Today.AddHours(14).AddMinutes(30), Text = "Dentist appointment" },
-        new Appointment { Start = DateTime.Today.AddDays(1), End = DateTime.Today.AddDays(12), Text = "Vacation" },
-    };
+
+        project = await ProjectService.GetProjectById(Id);
+
+        if (project is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+        Appointment appointmentDeadline = new Appointment { Start = project.Deadline, End = project.Deadline, Text = "Deadline" };
+        appointments.Add(appointmentDeadline);
+
+        projectTasks = await ProjectTaskService.GetProjectTasks(Id);
+
+        foreach(var task in projectTasks)
+        {
+            Appointment appointment = new Appointment { Start = task.CreationDate, End = task.Deadline, Text = task.Title };
+            appointments.Add(appointment);
+        }
+        await scheduler.Reload();
+    }
 
     void OnSlotRender(SchedulerSlotRenderEventArgs args)
     {
@@ -33,11 +63,6 @@
             args.Attributes["style"] = "background: var(--rz-scheduler-highlight-background-color, rgba(255,220,40,.2));";
         }
 
-        // Highlight working hours (9-18)
-        if ((args.View.Text == "Week" || args.View.Text == "Day") && args.Start.Hour > 8 && args.Start.Hour < 19)
-        {
-            args.Attributes["style"] = "background: var(--rz-scheduler-highlight-background-color, rgba(255,220,40,.2));";
-        }
     }
 
     async Task OnSlotSelect(SchedulerSlotSelectEventArgs args)
@@ -84,7 +109,7 @@
     {
         // Never call StateHasChanged in AppointmentRender - would lead to infinite loop
 
-        if (args.Data.Text == "Birthday")
+        if (args.Data.Text == "Deadline")
         {
             args.Attributes["style"] = "background: red";
         }

@@ -29,7 +29,7 @@ namespace TeaWork.Logic.Services
                     ProjectTask projectTask = new ProjectTask
                     {
                         CreationDate = DateTime.Now,
-                        Deadline = taskData.Deadline,
+                        Deadline = (DateTime)taskData.Deadline!,
                         Title = taskData.Title,
                         Description = taskData.Description,
                         State = taskData.State,
