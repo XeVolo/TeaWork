@@ -1,6 +1,9 @@
 ﻿@inherits LayoutComponentBase
 @using Microsoft.AspNetCore.SignalR.Client
-@inject NavigationManager navigationManager
+@using TeaWork.Logic.Services.Interfaces
+@inject NavigationManager NavigationManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject IUserService UserService
 <RadzenComponents @rendermode="InteractiveServer" />
 
 <div class="page">
@@ -45,26 +48,39 @@
     List<ToastMessage> messages = new List<ToastMessage>();
     List<DropdownItem> notifications = new List<DropdownItem>();
     private HubConnection? hubConnection;
+    private string? currentUser;
 
     protected override async Task OnInitializedAsync()
     {
-        hubConnection = new HubConnectionBuilder()
-            .WithUrl(navigationManager.ToAbsoluteUri("/communicationhub"))
-            .Build();
 
-        await hubConnection.StartAsync();
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
 
-        hubConnection.On<string, string>("ReceiveMessageNotification", (senderId, message) =>
+        if (user.Identity.IsAuthenticated)
         {
-            ShowMessage(senderId, message);
-            InvokeAsync(StateHasChanged);
-        });
+            currentUser = await UserService.GetLoggedUserId();
+            if (hubConnection == null)
+            {
+                hubConnection = new HubConnectionBuilder()
+                    .WithUrl(NavigationManager.ToAbsoluteUri($"/communicationhub?userId={currentUser}"))
+                    .Build();
 
-        hubConnection.On<string, string>("ReceiveInvationNotification", (title, description) =>
-        {
-            ShowMessage(title, description);
-            InvokeAsync(StateHasChanged);
-        });
+                await hubConnection.StartAsync();
+            
+
+                hubConnection.On<string, string>("ReceiveMessageNotification", (senderId, message) =>
+                {
+                    ShowMessage(senderId, message);
+                    InvokeAsync(StateHasChanged);
+                });
+
+                hubConnection.On<string, string>("ReceiveInvationNotification", (title, description) =>
+                {
+                    ShowMessage(title, description);
+                    InvokeAsync(StateHasChanged);
+                });
+            }
+        }
     }
 
     private void ShowMessage(string title, string description) => messages.Add(CreateToastMessage(title, description));

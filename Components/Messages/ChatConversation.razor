@@ -11,6 +11,7 @@
 @inject IUserService UserService
 @implements IAsyncDisposable
 @attribute [StreamRendering]
+@inject AuthenticationStateProvider AuthenticationStateProvider
 @using Microsoft.AspNetCore.Authorization
 @attribute [Authorize]
    
@@ -81,24 +82,26 @@
 
     protected override async Task OnInitializedAsync()
     {
-
-        hubConnection = new HubConnectionBuilder()
-            .WithUrl(NavigationManager.ToAbsoluteUri("/communicationhub"))
-            .Build();
-
-
-        hubConnection.On<int>("ReceiveMessage",async (messageId) =>
-    {
-        Message mess =await ConversationService.GetMessegesById(messageId);
-        if(mess!=null&&mess.ConversationId==Id)
-        {
-            messages.Add(mess);
-            await InvokeAsync(StateHasChanged);
-        }
-
-    });
         currentUser = await UserService.GetLoggedUserId();
-        await hubConnection.StartAsync();
+        if (hubConnection == null)
+        {
+            hubConnection = new HubConnectionBuilder()
+                .WithUrl(NavigationManager.ToAbsoluteUri($"/communicationhub?userId={currentUser}"))
+                .Build();
+
+
+            hubConnection.On<int>("ReceiveMessage", async (messageId) =>
+                {
+                    Message mess = await ConversationService.GetMessegesById(messageId);
+                    if (mess != null && mess.ConversationId == Id)
+                    {
+                        messages.Add(mess);
+                        await InvokeAsync(StateHasChanged);
+                    }
+
+                });
+            await hubConnection.StartAsync();
+        }
     }
 
     protected override async Task OnParametersSetAsync()
@@ -129,8 +132,8 @@
                             : messageContent;
             if (hubConnection is not null)
             {
-                await hubConnection.SendAsync("SendMessage",message.Id);
-                await hubConnection.SendAsync("SendMessageNotification", message.Sender.UserName.ToString(), messageResult);
+                await hubConnection.SendAsync("SendGroupMessage",message.Id,Id.ToString());
+                await hubConnection.SendAsync("SendGroupMessageNotification", message.Sender.UserName.ToString(), messageResult, Id.ToString());
             }
             newMessage = string.Empty;
         }

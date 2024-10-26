@@ -82,6 +82,25 @@ namespace TeaWork.Logic.Services
                 throw new NotImplementedException();
             }
         }
+        public async Task<List<Conversation>> GetConversationsByUserId(string userId)
+        {
+            try
+            {
+                List<Conversation> conversations = new List<Conversation>();
+                var conversationMembers = await _context.ConversationMembers.Where(x => x.UserId.Equals(userId)).ToListAsync();
+                foreach (var conversationMember in conversationMembers)
+                {
+                    var conversation = await _context.Conversations.Where(x => x.Id == conversationMember.ConversationId).FirstOrDefaultAsync();
+                    if (conversation != null)
+                        conversations.Add(conversation);
+                }
+                return conversations;
+            }
+            catch (Exception ex)
+            {
+                throw new NotImplementedException();
+            }
+        }
         public async Task<Conversation> GetConversationById(int id)
         {
             try

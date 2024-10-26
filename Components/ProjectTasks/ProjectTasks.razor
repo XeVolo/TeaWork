@@ -187,6 +187,7 @@
     private ProjectTaskAddDto newProjectTask = new ProjectTaskAddDto();
     private UserDto newUser = new UserDto();
     private int selectedProjectTaskId;
+    private string? currentUser;
 
 
     [SupplyParameterFromQuery]
@@ -196,10 +197,15 @@
     {
         newProjectTask.Deadline = DateTime.Now;
 
-        hubConnection = new HubConnectionBuilder()
-            .WithUrl(NavigationManager.ToAbsoluteUri("/communicationhub"))
-            .Build();
-        await hubConnection.StartAsync();
+        currentUser = await UserService.GetLoggedUserId();
+        if (hubConnection == null)
+        {
+            hubConnection = new HubConnectionBuilder()
+                .WithUrl(NavigationManager.ToAbsoluteUri($"/communicationhub?userId={currentUser}"))
+                .Build();
+
+            await hubConnection.StartAsync();
+        }
 
 
         project = await ProjectService.GetProjectById(Id);

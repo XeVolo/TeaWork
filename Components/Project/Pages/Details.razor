@@ -86,16 +86,22 @@
     private List<ProjectMember>? projectMembers;
     private string? userInput;
     private Modal modal = default!;
+    private string? currentUser;
 
     [SupplyParameterFromQuery]
     public int Id { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        hubConnection = new HubConnectionBuilder()
-            .WithUrl(NavigationManager.ToAbsoluteUri("/communicationhub"))
-            .Build();
-        await hubConnection.StartAsync();
+        currentUser = await UserService.GetLoggedUserId();
+        if (hubConnection == null)
+        {
+            hubConnection = new HubConnectionBuilder()
+                .WithUrl(NavigationManager.ToAbsoluteUri($"/communicationhub?userId={currentUser}"))
+                .Build();
+
+            await hubConnection.StartAsync();
+        }
 
 
         project = await ProjectService.GetProjectById(Id);

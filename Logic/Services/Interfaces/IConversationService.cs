@@ -9,6 +9,7 @@ namespace TeaWork.Logic.Services.Interfaces
         Task Delete(int id);
         Task AddMember(Conversation conversation, string userId);
         Task<List<Conversation>> GetMyConversations();
+        Task<List<Conversation>> GetConversationsByUserId(string userId);
         Task<Conversation> GetConversationById(int id);
         Task<List<Message>> GetMessegesByConversation(int id);
         Task<Message> NewMessage(int conversationId, string content);

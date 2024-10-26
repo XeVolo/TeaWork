@@ -127,6 +127,7 @@
     private bool showForm = false; 
     private DesignConceptDto ownDesignConcept = new DesignConceptDto();
     private DesignConceptDto newComment = new DesignConceptDto();
+    private string? currentUser;
 
 
     [SupplyParameterFromQuery]
@@ -134,10 +135,15 @@
 
     protected override async Task OnInitializedAsync()
     {
-        hubConnection = new HubConnectionBuilder()
-            .WithUrl(NavigationManager.ToAbsoluteUri("/communicationhub"))
-            .Build();
-        await hubConnection.StartAsync();
+        currentUser = await UserService.GetLoggedUserId();
+        if (hubConnection == null)
+        {
+            hubConnection = new HubConnectionBuilder()
+                .WithUrl(NavigationManager.ToAbsoluteUri($"/communicationhub?userId={currentUser}"))
+                .Build();
+
+            await hubConnection.StartAsync();
+        }
 
 
         project = await ProjectService.GetProjectById(Id);
