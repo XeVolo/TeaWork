@@ -152,7 +152,7 @@ namespace TeaWork.Logic.Services
                     SendTime = DateTime.Now,
                 };
                 _context.Messages.Add(message);
-                _context.SaveChanges();
+                _context.SaveChanges();                
                 return message;
             }
             catch (Exception ex)

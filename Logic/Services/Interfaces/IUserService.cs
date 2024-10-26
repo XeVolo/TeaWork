@@ -8,5 +8,6 @@ namespace TeaWork.Logic.Services.Interfaces
         Task<string> FindUserByEmail(string email);
         Task<string> GetLoggedUserId();
         Task<List<UserDto>> GetProjectUsers(int projectId);
+        Task<string> FindUserEmailById(string userId);
     }
 }

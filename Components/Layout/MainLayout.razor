@@ -92,6 +92,11 @@
                     ShowMessage(title, message);
                     InvokeAsync(StateHasChanged);
                 });
+                hubConnection.On<string, string>("ReceiveTaskNotification", (title, message) =>
+                {
+                    ShowMessage(title, message);
+                    InvokeAsync(StateHasChanged);
+                });
                 
             }
         }

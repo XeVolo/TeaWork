@@ -65,6 +65,23 @@ namespace TeaWork.Logic.Services
             }
 
         }
+        public async Task<string> FindUserEmailById(string userId)
+        {
+            try
+            {
+                using var _context = _dbContextFactory.CreateDbContext();
+                var userEmail = await _context.Users
+                    .Where(x => x.Id.Equals(userId))
+                    .Select(x => x.Email)
+                    .FirstOrDefaultAsync();
+                return userEmail;
+            }
+            catch (Exception ex)
+            {
+                throw new NotImplementedException();
+            }
+
+        }
         public async Task<List<UserDto>> GetProjectUsers(int projectId)
         {
             try

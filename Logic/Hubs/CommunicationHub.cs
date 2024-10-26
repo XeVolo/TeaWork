@@ -8,12 +8,10 @@ namespace TeaWork.Logic.Hubs
 {
     public class CommunicationHub : Hub
     {
-        private readonly ApplicationDbContext _context;
         private readonly IConversationService _conversationService;
 
-        public CommunicationHub(ApplicationDbContext context, IConversationService conversationService)
+        public CommunicationHub(IConversationService conversationService)
         {
-            _context = context;
             _conversationService = conversationService;
         }
         public override async Task OnConnectedAsync()
@@ -59,6 +57,15 @@ namespace TeaWork.Logic.Hubs
 
         public async Task SendGroupDesignConceptCommentNotification(string title, string message, string groupName)
             => await Clients.Group(groupName).SendAsync("ReceiveDesignConceptCommentNotification", title, message);
+
+
+
+        public async Task SendGroupTask(string groupName)
+            => await Clients.Group(groupName).SendAsync("ReceiveTask");
+
+        public async Task SendGroupTaskNotification(string title, string message, string groupName)
+            => await Clients.Group(groupName).SendAsync("ReceiveTaskNotification", title, message);
+
 
         public async Task SendInvitationNotification(string title, string description)
         {

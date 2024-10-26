@@ -125,10 +125,12 @@
             string messageResult = messageContent.Length > 15
                             ? messageContent.Substring(0, 15) + "..."
                             : messageContent;
+
             if (hubConnection is not null)
             {
+                string userName = await UserService.FindUserEmailById(message.SenderId);
                 await hubConnection.SendAsync("SendGroupMessage",message.Id,Id.ToString());
-                await hubConnection.SendAsync("SendGroupMessageNotification", message.Sender.UserName.ToString(), messageResult, Id.ToString());
+                await hubConnection.SendAsync("SendGroupMessageNotification", userName, messageResult, Id.ToString());
             }
             newMessage = string.Empty;
         }

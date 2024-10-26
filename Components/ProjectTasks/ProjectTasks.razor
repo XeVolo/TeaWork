@@ -205,6 +205,13 @@
                 .Build();
 
             await hubConnection.StartAsync();
+
+            hubConnection.On("ReceiveTask", async () =>
+                {
+                    project = await ProjectService.GetProjectById(Id);
+                    projectTasks = await ProjectTaskService.GetProjectTasks(Id);
+                    await InvokeAsync(StateHasChanged);
+                });
         }
 
 
@@ -214,6 +221,7 @@
         {
             NavigationManager.NavigateTo("notfound");
         }
+
         projectTasks = await ProjectTaskService.GetProjectTasks(Id);
         users = await UserService.GetProjectUsers(Id);
     }
@@ -224,6 +232,20 @@
             await ProjectTaskService.Add(newProjectTask, Id);
             project = await ProjectService.GetProjectById(Id);
             projectTasks = await ProjectTaskService.GetProjectTasks(Id);
+
+
+            if (hubConnection is not null)
+            {
+                string messageContent = newProjectTask.Title;
+                string messageResult = messageContent.Length > 15
+                                ? messageContent.Substring(0, 15) + "..."
+                                : messageContent;
+
+                await hubConnection.SendAsync("SendGroupTask", project.ProjectConversationId.ToString());
+                await hubConnection.SendAsync("SendGroupTaskNotification", project.Title, messageResult, project.ProjectConversationId.ToString());
+            }
+
+
             newProjectTask = new ProjectTaskAddDto();
             await HideModal();
             await InvokeAsync(StateHasChanged);
@@ -236,6 +258,12 @@
             await ProjectTaskService.AddTaskDistribution(projectTaskId, newUser.Id);
             project = await ProjectService.GetProjectById(Id);
             projectTasks = await ProjectTaskService.GetProjectTasks(Id);
+
+            if (hubConnection is not null)
+            {
+                await hubConnection.SendAsync("SendGroupTask", project.ProjectConversationId.ToString());
+            }
+
             newUser = new UserDto();
             await HideAssignModal();
             await InvokeAsync(StateHasChanged);
