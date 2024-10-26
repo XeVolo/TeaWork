@@ -5,31 +5,32 @@ using TeaWork.Data;
 using Microsoft.AspNetCore.Components.Authorization;
 using TeaWork.Logic.Services.Interfaces;
 using Microsoft.CodeAnalysis;
+using TeaWork.Logic.DbContextFactory;
 
 namespace TeaWork.Logic.Services
 {
     public class InvitationService : IInvitationService
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IDbContextFactory _dbContextFactory;
         private readonly AuthenticationStateProvider _authenticationStateProvider;
         private readonly UserIdentity _userIdentity;
         private readonly IProjectService _projectService;
         private readonly IConversationService _conversationService;
 
 
-        public InvitationService(ApplicationDbContext context, AuthenticationStateProvider authenticationStateProvider)
+        public InvitationService(IDbContextFactory dbContextFactory, AuthenticationStateProvider authenticationStateProvider, UserIdentity userIdentity)
         {
-            _context = context;
+            _dbContextFactory = dbContextFactory;
             _authenticationStateProvider = authenticationStateProvider;
-            _userIdentity = new UserIdentity(context, authenticationStateProvider);
-            _conversationService = new ConversationService(context, authenticationStateProvider);
-            _projectService = new ProjectService(context, authenticationStateProvider);
+            _userIdentity = userIdentity;
+            _conversationService = new ConversationService(dbContextFactory, authenticationStateProvider, userIdentity);
+            _projectService = new ProjectService(dbContextFactory, authenticationStateProvider, userIdentity);
         }
         public async Task SendInvitation(string userId, int projectId)
         {
             try
-            {                              
-
+            {
+                using var _context = _dbContextFactory.CreateDbContext();
                 Invitation invitation = new Invitation
                 {
                     UserId = userId,
@@ -50,6 +51,7 @@ namespace TeaWork.Logic.Services
 
             try
             {
+                using var _context = _dbContextFactory.CreateDbContext();
                 ApplicationUser currentUser = await _userIdentity.GetLoggedUser();
 
                 var invitations = await _context.Invitations
@@ -68,6 +70,7 @@ namespace TeaWork.Logic.Services
         {
             try
             {
+                using var _context = _dbContextFactory.CreateDbContext();
                 ApplicationUser currentUser = await _userIdentity.GetLoggedUser();
                 var invitation = await _context.Invitations.FirstOrDefaultAsync(x => x.Id == invitationId);
                 var project = await _context.Projects.FirstOrDefaultAsync(x => x.Id == invitation.ProjectId);
@@ -88,6 +91,7 @@ namespace TeaWork.Logic.Services
         {
             try
             {
+                using var _context = _dbContextFactory.CreateDbContext();
                 var invitation = _context.Invitations.FirstOrDefault(x => x.Id == invitationId);
                 invitation.Status = InvitationStatus.Rejected;
                 await _context.SaveChangesAsync();
@@ -100,6 +104,8 @@ namespace TeaWork.Logic.Services
         }
         public async Task<bool> IsInvitationExist(string userId, int projectId)
         {
+            using var _context = _dbContextFactory.CreateDbContext();
+
             bool isInvitationExists = await _context.Invitations
                 .AnyAsync(pm => pm.UserId.Equals(userId) && pm.ProjectId == projectId);
 

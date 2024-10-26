@@ -4,25 +4,28 @@ using TeaWork.Data;
 using TeaWork.Logic.Dto;
 using TeaWork.Logic.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using TeaWork.Logic.DbContextFactory;
 
 namespace TeaWork.Logic.Services
 {
     public class TaskService : ITaskService
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IDbContextFactory _dbContextFactory;
         private readonly AuthenticationStateProvider _authenticationStateProvider;
         private readonly UserIdentity _userIdentity;
-        public TaskService(ApplicationDbContext context, AuthenticationStateProvider authenticationStateProvider)
+        public TaskService(IDbContextFactory dbContextFactory, AuthenticationStateProvider authenticationStateProvider, UserIdentity userIdentity)
         {
-            _context = context;
+            _dbContextFactory = dbContextFactory;
             _authenticationStateProvider = authenticationStateProvider;
-            _userIdentity = new UserIdentity(context, authenticationStateProvider);
+            _userIdentity =userIdentity;
         }
         public async Task Add(ProjectTaskAddDto taskData, int projectId)
         {
-            ApplicationUser currentUser = await _userIdentity.GetLoggedUser();
+            
             try
             {
+                using var _context = _dbContextFactory.CreateDbContext();
+                ApplicationUser currentUser = await _userIdentity.GetLoggedUser();
                 var project = _context.Projects.FirstOrDefault(m => m.Id == projectId);
                 if (project != null)
                 {
@@ -48,9 +51,11 @@ namespace TeaWork.Logic.Services
         }
         public async Task<List<ProjectTask>> GetProjectTasks(int projectId)
         {
-            ApplicationUser currentUser = await _userIdentity.GetLoggedUser();
+            
             try
             {
+                using var _context = _dbContextFactory.CreateDbContext();
+                ApplicationUser currentUser = await _userIdentity.GetLoggedUser();
                 var project = _context.Projects.FirstOrDefault(m => m.Id == projectId);
                 var projecttaks = await _context.ProjectTasks
                     .Where(x => x.ToDoListId == project.ToDoListId)
@@ -70,6 +75,7 @@ namespace TeaWork.Logic.Services
             
             try
             {
+                using var _context = _dbContextFactory.CreateDbContext();
                 var existingTaskDistribution = await _context.TaskDistributions
                         .FirstOrDefaultAsync(x => x.TaskId == taskId && x.UserId == userId);
 
@@ -91,10 +97,11 @@ namespace TeaWork.Logic.Services
         }
         public async Task AddComment(DesignConceptDto taskCommentData, int taskId)
         {
-            ApplicationUser currentUser = await _userIdentity.GetLoggedUser();
+            
             try
             {
-
+                using var _context = _dbContextFactory.CreateDbContext();
+                ApplicationUser currentUser = await _userIdentity.GetLoggedUser();
                 TaskComment taskComment = new TaskComment
                 {
                     CreationDate = DateTime.Now,

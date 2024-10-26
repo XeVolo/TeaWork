@@ -5,26 +5,28 @@ using TeaWork.Data;
 using TeaWork.Logic.Dto;
 using TeaWork.Logic.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using TeaWork.Logic.DbContextFactory;
 
 namespace TeaWork.Logic.Services
 {
     public class NotificationService : INotificationService
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IDbContextFactory _dbContextFactory;
         private readonly AuthenticationStateProvider _authenticationStateProvider;
         private readonly UserIdentity _userIdentity;
 
-        public NotificationService(ApplicationDbContext context, AuthenticationStateProvider authenticationStateProvider)
+        public NotificationService(IDbContextFactory dbContextFactory, AuthenticationStateProvider authenticationStateProvider, UserIdentity userIdentity)
         {
-            _context = context;
+            _dbContextFactory = dbContextFactory;
             _authenticationStateProvider = authenticationStateProvider;
-            _userIdentity = new UserIdentity(context, authenticationStateProvider);
+            _userIdentity =userIdentity;
         }
         public async Task NewNotification(NotificationDto notificationData)
         {
 
             try
             {
+                using var _context = _dbContextFactory.CreateDbContext();
                 Notification notification = new Notification
                 {
                     UserId = notificationData.UserId,
@@ -49,6 +51,7 @@ namespace TeaWork.Logic.Services
 
             try
             {
+                using var _context = _dbContextFactory.CreateDbContext();
                 var project = await _context.Projects.FirstOrDefaultAsync(m => m.Id == projectId);
 
                 Notification notification = new Notification
@@ -77,6 +80,7 @@ namespace TeaWork.Logic.Services
         {
             try
             {
+                using var _context = _dbContextFactory.CreateDbContext();
                 var notification = await _context.Notifications
                     .FirstOrDefaultAsync(m => m.Id == id);
                 
@@ -96,7 +100,7 @@ namespace TeaWork.Logic.Services
 
             try
             {
-
+                using var _context = _dbContextFactory.CreateDbContext();
                 ApplicationUser currentUser = await _userIdentity.GetLoggedUser();
                 var notifications = await _context.Notifications
                     .Where(x => x.UserId.Equals(currentUser.Id))
@@ -115,6 +119,7 @@ namespace TeaWork.Logic.Services
             try
             {
 
+                using var _context = _dbContextFactory.CreateDbContext();
                 ApplicationUser currentUser = await _userIdentity.GetLoggedUser();
                 var notifications = await _context.Notifications
                     .Where(x => x.UserId.Equals(currentUser.Id))

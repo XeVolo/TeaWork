@@ -4,26 +4,28 @@ using TeaWork.Data;
 using TeaWork.Logic.Services.Interfaces;
 using TeaWork.Logic.Dto;
 using Microsoft.EntityFrameworkCore;
+using TeaWork.Logic.DbContextFactory;
 
 namespace TeaWork.Logic.Services
 {
     public class DesignConceptService : IDesignConceptService
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IDbContextFactory _dbContextFactory;
         private readonly AuthenticationStateProvider _authenticationStateProvider;
         private readonly UserIdentity _userIdentity;
-        public DesignConceptService(ApplicationDbContext context, AuthenticationStateProvider authenticationStateProvider)
+        public DesignConceptService(IDbContextFactory dbContextFactory, AuthenticationStateProvider authenticationStateProvider, UserIdentity userIdentity)
         {
-            _context = context;
+            _dbContextFactory = dbContextFactory;
             _authenticationStateProvider = authenticationStateProvider;
-            _userIdentity = new UserIdentity(context, authenticationStateProvider);
+            _userIdentity =userIdentity;
         }
         public async Task Add(DesignConceptDto designConceptData, int projectId)
         {
-            ApplicationUser currentUser = await _userIdentity.GetLoggedUser();
+            
             try
             {
-
+                using var _context = _dbContextFactory.CreateDbContext();
+                ApplicationUser currentUser = await _userIdentity.GetLoggedUser();
                 OwnDesignConcept designConcept = new OwnDesignConcept
                 {
                     CreationDate = DateTime.Now,
@@ -45,6 +47,7 @@ namespace TeaWork.Logic.Services
         {
             try
             {
+                using var _context = _dbContextFactory.CreateDbContext();
                 var designconcepts = await _context.OwnDesignConcepts
                     .Where(x => x.ProjectId == projectId)
                     .Include(x => x.User)
@@ -61,10 +64,11 @@ namespace TeaWork.Logic.Services
         }
         public async Task AddComment(DesignConceptDto designCommentData, int designConceptId)
         {
-            ApplicationUser currentUser = await _userIdentity.GetLoggedUser();
+            
             try
             {
-
+                using var _context = _dbContextFactory.CreateDbContext();
+                ApplicationUser currentUser = await _userIdentity.GetLoggedUser();
                 DesignConceptComment designComment = new DesignConceptComment
                 {
                     CreationDate = DateTime.Now,

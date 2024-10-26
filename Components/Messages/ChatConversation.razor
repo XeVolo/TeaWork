@@ -104,7 +104,6 @@
     {
         try
         {
-            await Task.Delay(50);
             conversation = await ConversationService.GetConversationById(Id);
             messages = await ConversationService.GetMessegesByConversation(Id);
             if (conversation == null)

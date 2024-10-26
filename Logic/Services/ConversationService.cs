@@ -4,26 +4,28 @@ using TeaWork.Data.Models;
 using TeaWork.Data;
 using TeaWork.Logic.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using TeaWork.Logic.DbContextFactory;
 
 namespace TeaWork.Logic.Services
 {
     public class ConversationService : IConversationService
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IDbContextFactory _dbContextFactory;
         private readonly AuthenticationStateProvider _authenticationStateProvider;
         private readonly UserIdentity _userIdentity;
 
-        public ConversationService(ApplicationDbContext context, AuthenticationStateProvider authenticationStateProvider)
+        public ConversationService(IDbContextFactory dbContextFactory, AuthenticationStateProvider authenticationStateProvider, UserIdentity userIdentity)
         {
-            _context = context;
+            _dbContextFactory = dbContextFactory;
             _authenticationStateProvider = authenticationStateProvider;
-            _userIdentity = new UserIdentity(context, authenticationStateProvider);
+            _userIdentity = userIdentity;
         }
         public async Task<Conversation> AddConversation(ConversationType conversationType)
         {
 
             try
             {
+                using var _context = _dbContextFactory.CreateDbContext();
                 Conversation conversation = new Conversation { ConversationType = conversationType };
                 _context.Conversations.Add(conversation);
                 await _context.SaveChangesAsync();
@@ -39,6 +41,7 @@ namespace TeaWork.Logic.Services
         {
             try
             {
+                using var _context = _dbContextFactory.CreateDbContext();
                 var conversation = await _context.Conversations.FirstOrDefaultAsync(m => m.Id == id);
                 _context.Conversations.Remove(conversation!);
                 await _context.SaveChangesAsync();
@@ -52,6 +55,7 @@ namespace TeaWork.Logic.Services
         {
             try
             {
+                using var _context = _dbContextFactory.CreateDbContext();
                 ConversationMember newconversationmember = new ConversationMember { UserId = userId, ConversationId = conversation.Id };
                 _context.ConversationMembers.Add(newconversationmember);
                 await _context.SaveChangesAsync();
@@ -66,7 +70,7 @@ namespace TeaWork.Logic.Services
             List<Conversation> conversations = new List<Conversation>();
             try
             {
-
+                using var _context = _dbContextFactory.CreateDbContext();
                 ApplicationUser currentUser = await _userIdentity.GetLoggedUser();
                 var conversationMembers = await _context.ConversationMembers.Where(x => x.UserId.Equals(currentUser.Id)).ToListAsync();
                 foreach (var conversationMember in conversationMembers)
@@ -86,6 +90,7 @@ namespace TeaWork.Logic.Services
         {
             try
             {
+                using var _context = _dbContextFactory.CreateDbContext();
                 List<Conversation> conversations = new List<Conversation>();
                 var conversationMembers = await _context.ConversationMembers.Where(x => x.UserId.Equals(userId)).ToListAsync();
                 foreach (var conversationMember in conversationMembers)
@@ -105,6 +110,7 @@ namespace TeaWork.Logic.Services
         {
             try
             {
+                using var _context = _dbContextFactory.CreateDbContext();
                 var conversation = await _context.Conversations
                     .Include(x => x.Messages)
                     .FirstOrDefaultAsync(x => x.Id == id);
@@ -119,6 +125,7 @@ namespace TeaWork.Logic.Services
         {
             try
             {
+                using var _context = _dbContextFactory.CreateDbContext();
                 var messages = await _context.Messages
                     .Where(x => x.ConversationId == id)
                     .OrderBy(x => x.SendTime)
@@ -135,6 +142,7 @@ namespace TeaWork.Logic.Services
         {
             try
             {
+                using var _context = _dbContextFactory.CreateDbContext();
                 ApplicationUser currentUser = await _userIdentity.GetLoggedUser();
                 Message message = new Message
                 {
@@ -156,6 +164,7 @@ namespace TeaWork.Logic.Services
         {
             try
             {
+                using var _context = _dbContextFactory.CreateDbContext();
                 var message = await _context.Messages
                     .FirstOrDefaultAsync(x => x.Id == id); ;
                 return message!;

@@ -5,33 +5,32 @@ using TeaWork.Data.Models;
 using TeaWork.Data;
 using TeaWork.Logic.Dto;
 using TeaWork.Logic.Services.Interfaces;
+using TeaWork.Logic.DbContextFactory;
 
 namespace TeaWork.Logic.Services
 {
     public class ProjectService : IProjectService
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IDbContextFactory _dbContextFactory;
         private readonly AuthenticationStateProvider _authenticationStateProvider;
         private readonly UserIdentity _userIdentity;
         private readonly IConversationService _conversationService;
 
 
-        public ProjectService(ApplicationDbContext context, AuthenticationStateProvider authenticationStateProvider)
+        public ProjectService(IDbContextFactory dbContextFactory, AuthenticationStateProvider authenticationStateProvider, UserIdentity userIdentity)
         {
-            _context = context;
+            _dbContextFactory = dbContextFactory;
             _authenticationStateProvider = authenticationStateProvider;
-            _userIdentity = new UserIdentity(context, authenticationStateProvider);
-            _conversationService = new ConversationService(context, authenticationStateProvider);
+            _userIdentity = userIdentity;
+            _conversationService = new ConversationService(dbContextFactory, authenticationStateProvider, userIdentity);
         }
         public async Task Add(ProjectAddDto projectdata)
-        {
-
-            ApplicationUser currentUser = await _userIdentity.GetLoggedUser();
-
-            ToDoList toDoList = new ToDoList();
+        {            
             try
             {
-
+                using var _context = _dbContextFactory.CreateDbContext();
+                ToDoList toDoList = new ToDoList();
+                ApplicationUser currentUser = await _userIdentity.GetLoggedUser();
                 _context.ToDoLists.Add(toDoList);
                 await _context.SaveChangesAsync();
                 Conversation conversation = await _conversationService.AddConversation(ConversationType.GroupChat);
@@ -59,6 +58,7 @@ namespace TeaWork.Logic.Services
         {
             try
             {
+                using var _context = _dbContextFactory.CreateDbContext();
                 var project = await _context.Projects.FirstOrDefaultAsync(m => m.Id == id);
                 _context.Projects.Remove(project!);
                 await _context.SaveChangesAsync();
@@ -73,6 +73,7 @@ namespace TeaWork.Logic.Services
         {
             try
             {
+                using var _context = _dbContextFactory.CreateDbContext();
                 var project = await _context.Projects
                     .Include(x => x.ProjectMembers)
                         .ThenInclude(pm => pm.User)
@@ -89,6 +90,7 @@ namespace TeaWork.Logic.Services
         {
             try
             {
+                using var _context = _dbContextFactory.CreateDbContext();
                 var projects = await _context.Projects.ToListAsync();
                 return projects;
             }
@@ -100,9 +102,9 @@ namespace TeaWork.Logic.Services
         public async Task<List<Project>> GetMyProjects()
         {
             List<Project> projects = new List<Project>();
-          //  try
-         //   {
-
+            try
+            {
+                using var _context = _dbContextFactory.CreateDbContext();
                 ApplicationUser currentUser = await _userIdentity.GetLoggedUser();
                 var projectMembers = await _context.ProjectMembers.Where(x => x.UserId.Equals(currentUser.Id)).ToListAsync();
                 foreach (var projectMember in projectMembers)
@@ -112,11 +114,11 @@ namespace TeaWork.Logic.Services
                         projects.Add(project);
                 }
                 return projects;
-          //  }
-          //  catch (Exception ex)
-          //  {
-         //       throw new NotImplementedException();
-          //  }
+            }
+            catch (Exception ex)
+            {
+                throw new NotImplementedException();
+            }
         }
 
 
@@ -124,6 +126,7 @@ namespace TeaWork.Logic.Services
         {
             try
             {
+                using var _context = _dbContextFactory.CreateDbContext();
                 var projectToEdit = await _context.Projects.FirstOrDefaultAsync(m => m.Id == id);
                 projectToEdit = project;
                 _context.Attach(projectToEdit!).State = EntityState.Modified;
@@ -138,6 +141,7 @@ namespace TeaWork.Logic.Services
         {
             try
             {
+                using var _context = _dbContextFactory.CreateDbContext();
                 ProjectMember projectMember = new ProjectMember { UserId = user.Id, ProjectId = project.Id, Role = role };
             _context.ProjectMembers.Add(projectMember);
             await _context.SaveChangesAsync();
