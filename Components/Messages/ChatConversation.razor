@@ -91,14 +91,10 @@
 
 
             hubConnection.On<int>("ReceiveMessage", async (messageId) =>
-                {
-                    Message mess = await ConversationService.GetMessegesById(messageId);
-                    if (mess != null && mess.ConversationId == Id)
-                    {
-                        messages.Add(mess);
-                        await InvokeAsync(StateHasChanged);
-                    }
-
+                {                    
+                    conversation = await ConversationService.GetConversationById(Id);
+                    messages = await ConversationService.GetMessegesByConversation(Id);
+                    await InvokeAsync(StateHasChanged);
                 });
             await hubConnection.StartAsync();
         }

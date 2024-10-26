@@ -142,6 +142,15 @@
                 .WithUrl(NavigationManager.ToAbsoluteUri($"/communicationhub?userId={currentUser}"))
                 .Build();
 
+
+            hubConnection.On("ReceiveDesignConcept",async () =>
+                {
+                    project = await ProjectService.GetProjectById(Id);
+                    designConcepts = await DesignConceptService.GetDesignConcepts(Id);
+                    await InvokeAsync(StateHasChanged);
+                });
+
+
             await hubConnection.StartAsync();
         }
 
@@ -163,7 +172,19 @@
     {
         await DesignConceptService.Add(ownDesignConcept, Id);
         project = await ProjectService.GetProjectById(Id);
-        designConcepts = await DesignConceptService.GetDesignConcepts(Id);
+        designConcepts = await DesignConceptService.GetDesignConcepts(Id);        
+
+        if (hubConnection is not null)
+        {
+            string messageContent = ownDesignConcept.Title;
+            string messageResult = messageContent.Length > 15
+                            ? messageContent.Substring(0, 15) + "..."
+                            : messageContent;
+
+            await hubConnection.SendAsync("SendGroupDesignConcept", project.ProjectConversationId.ToString());
+            await hubConnection.SendAsync("SendGroupDesignConceptNotification", project.Title, messageResult, project.ProjectConversationId.ToString());
+        }
+
         ownDesignConcept = new DesignConceptDto();
         showForm = false;
         await HideModal();
@@ -174,6 +195,18 @@
         await DesignConceptService.AddComment(newComment, designConceptId);
         project = await ProjectService.GetProjectById(Id);
         designConcepts = await DesignConceptService.GetDesignConcepts(Id);
+
+        if (hubConnection is not null)
+        {
+            string messageContent = newComment.Description;
+            string messageResult = messageContent.Length > 15
+                            ? messageContent.Substring(0, 15) + "..."
+                            : messageContent;
+
+            await hubConnection.SendAsync("SendGroupDesignConcept", project.ProjectConversationId.ToString());
+            await hubConnection.SendAsync("SendGroupDesignConceptCommentNotification", project.Title, messageResult, project.ProjectConversationId.ToString());
+        }
+
         newComment = new DesignConceptDto();
         await InvokeAsync(StateHasChanged);
     }

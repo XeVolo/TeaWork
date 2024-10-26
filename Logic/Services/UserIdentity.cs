@@ -1,10 +1,11 @@
-﻿using Microsoft.AspNetCore.Components.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.EntityFrameworkCore;
 using TeaWork.Data;
 
 namespace TeaWork.Logic.Services
 {
-    public class UserIdentity
+    public class UserIdentity 
     {
         private readonly ApplicationDbContext _context;
         private readonly AuthenticationStateProvider _authenticationStateProvider;
@@ -18,7 +19,7 @@ namespace TeaWork.Logic.Services
         public async Task<ApplicationUser> GetLoggedUser()
         {
 
-            var authState = await _authenticationStateProvider.GetAuthenticationStateAsync();
+            var authState = await _authenticationStateProvider.GetAuthenticationStateAsync();            
             var user = authState.User;
             var currentUser = await _context.Users.FirstOrDefaultAsync(u => u.UserName == user.Identity!.Name);
             if (currentUser == null)

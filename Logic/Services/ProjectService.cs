@@ -100,8 +100,8 @@ namespace TeaWork.Logic.Services
         public async Task<List<Project>> GetMyProjects()
         {
             List<Project> projects = new List<Project>();
-            try
-            {
+          //  try
+         //   {
 
                 ApplicationUser currentUser = await _userIdentity.GetLoggedUser();
                 var projectMembers = await _context.ProjectMembers.Where(x => x.UserId.Equals(currentUser.Id)).ToListAsync();
@@ -112,11 +112,11 @@ namespace TeaWork.Logic.Services
                         projects.Add(project);
                 }
                 return projects;
-            }
-            catch (Exception ex)
-            {
-                throw new NotImplementedException();
-            }
+          //  }
+          //  catch (Exception ex)
+          //  {
+         //       throw new NotImplementedException();
+          //  }
         }
 
 

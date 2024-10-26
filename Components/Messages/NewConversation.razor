@@ -9,7 +9,6 @@
 @inject IUserService UserService
 @using Microsoft.AspNetCore.Authorization
 @attribute [Authorize]
-@implements IAsyncDisposable
 
 <PageTitle>Find User</PageTitle>
 
@@ -35,24 +34,13 @@
     private HubConnection? hubConnection;
     private string? userInput;
     private Modal modal = default!;
-
-    protected override async Task OnInitializedAsync()
-    {
-        hubConnection = new HubConnectionBuilder()
-            .WithUrl(NavigationManager.ToAbsoluteUri("/communicationhub"))
-            .Build();
-        await hubConnection.StartAsync();
-    }
+    private string? currentUser;
 
     private async Task FindUser()
     {
         try
         {
             string userId;
-            if (hubConnection is not null)
-            {
-                //await hubConnection.SendAsync("SendMessage", userInput, messageInput);
-            }
             if (userInput != null)
             {
                 userId = await UserService.FindUserByEmail(userInput);
@@ -86,14 +74,5 @@
     private async Task HideModal()
     {
         await modal.HideAsync();
-    }
-
-
-    public async ValueTask DisposeAsync()
-    {
-        if (hubConnection is not null)
-        {
-            await hubConnection.DisposeAsync();
-        }
     }
 }

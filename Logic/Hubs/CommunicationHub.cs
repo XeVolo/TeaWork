@@ -18,17 +18,21 @@ namespace TeaWork.Logic.Hubs
         }
         public override async Task OnConnectedAsync()
         {
-            var userId = Context.GetHttpContext().Request.Query["userId"];
-
-            List<Conversation> conversations = await _conversationService.GetConversationsByUserId(userId);
-            
-            foreach (var conversation in conversations)
+            string userId = Context.GetHttpContext().Request.Query["userId"];
+            if (userId != null)
             {
-                await Groups.AddToGroupAsync(Context.ConnectionId, conversation.Id.ToString());
-            }
+                List<Conversation> conversations = await _conversationService.GetConversationsByUserId(userId);
 
+                foreach (var conversation in conversations)
+                {
+                    await Groups.AddToGroupAsync(Context.ConnectionId, conversation.Id.ToString());
+                }
+                await Groups.AddToGroupAsync(Context.ConnectionId, userId);
+            }
             await base.OnConnectedAsync();
         }
+
+
         public async Task SendMessage(int messageId)
         {
             await Clients.All.SendAsync("ReceiveMessage", messageId);
@@ -46,6 +50,15 @@ namespace TeaWork.Logic.Hubs
         {
             await Clients.Group(groupName).SendAsync("ReceiveMessageNotification", senderId, message);
         }
+
+        public async Task SendGroupDesignConcept(string groupName) 
+            => await Clients.Group(groupName).SendAsync("ReceiveDesignConcept");
+
+        public async Task SendGroupDesignConceptNotification(string title, string message, string groupName)
+            => await Clients.Group(groupName).SendAsync("ReceiveDesignConceptNotification", title, message);
+
+        public async Task SendGroupDesignConceptCommentNotification(string title, string message, string groupName)
+            => await Clients.Group(groupName).SendAsync("ReceiveDesignConceptCommentNotification", title, message);
 
         public async Task SendInvitationNotification(string title, string description)
         {

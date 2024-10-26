@@ -58,6 +58,7 @@
 
         if (user.Identity.IsAuthenticated)
         {
+            
             currentUser = await UserService.GetLoggedUserId();
             if (hubConnection == null)
             {
@@ -79,6 +80,19 @@
                     ShowMessage(title, description);
                     InvokeAsync(StateHasChanged);
                 });
+
+                hubConnection.On<string, string>("ReceiveDesignConceptNotification", (title, message) =>
+                {
+                    ShowMessage(title, message);
+                    InvokeAsync(StateHasChanged);
+                });
+
+                hubConnection.On<string, string>("ReceiveDesignConceptCommentNotification", (title, message) =>
+                {
+                    ShowMessage(title, message);
+                    InvokeAsync(StateHasChanged);
+                });
+                
             }
         }
     }
