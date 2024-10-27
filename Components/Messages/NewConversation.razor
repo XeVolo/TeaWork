@@ -46,7 +46,7 @@
                 userId = await UserService.FindUserByEmail(userInput);
                 if (userId != null)
                 {
-                    var conversation = await ConversationService.AddConversation(Data.Enums.ConversationType.PrivateChat);
+                    var conversation = await ConversationService.AddConversation(Data.Enums.ConversationType.PrivateChat,userInput);
                     var loggedUserId = await UserService.GetLoggedUserId();
                     await ConversationService.AddMember(conversation, userId);
                     await ConversationService.AddMember(conversation, loggedUserId);

@@ -20,13 +20,13 @@ namespace TeaWork.Logic.Services
             _authenticationStateProvider = authenticationStateProvider;
             _userIdentity = userIdentity;
         }
-        public async Task<Conversation> AddConversation(ConversationType conversationType)
+        public async Task<Conversation> AddConversation(ConversationType conversationType,string name)
         {
 
             try
             {
                 using var _context = _dbContextFactory.CreateDbContext();
-                Conversation conversation = new Conversation { ConversationType = conversationType };
+                Conversation conversation = new Conversation { ConversationType = conversationType, Name=name };
                 _context.Conversations.Add(conversation);
                 await _context.SaveChangesAsync();
                 return conversation;

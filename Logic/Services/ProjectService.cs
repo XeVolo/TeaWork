@@ -33,7 +33,7 @@ namespace TeaWork.Logic.Services
                 ApplicationUser currentUser = await _userIdentity.GetLoggedUser();
                 _context.ToDoLists.Add(toDoList);
                 await _context.SaveChangesAsync();
-                Conversation conversation = await _conversationService.AddConversation(ConversationType.GroupChat);
+                Conversation conversation = await _conversationService.AddConversation(ConversationType.GroupChat, projectdata.Title);
                 await _conversationService.AddMember(conversation, currentUser.Id);
                 Project project = new Project
                 {
