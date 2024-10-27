@@ -225,6 +225,20 @@
         projectTasks = await ProjectTaskService.GetProjectTasks(Id);
         users = await UserService.GetProjectUsers(Id);
     }
+    protected override async Task OnParametersSetAsync()
+    {
+        try
+        {
+            project = await ProjectService.GetProjectById(Id);
+            projectTasks = await ProjectTaskService.GetProjectTasks(Id);
+            users = await UserService.GetProjectUsers(Id);
+            await InvokeAsync(StateHasChanged);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"ERROR: {ex.Message}");
+        }
+    }
     public async Task AddProjectTask()
     {
         if (newProjectTask != null)
