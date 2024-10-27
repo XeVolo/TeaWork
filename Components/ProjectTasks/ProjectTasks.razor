@@ -15,10 +15,10 @@
 @implements IAsyncDisposable
 
 <PageTitle>Project tasks</PageTitle>
-
-<h3>Project Tasks</h3>
-<div>
-    <h4>Project</h4>
+<div class="container">
+<h3 class="page-title">Project Tasks</h3>
+    <div class="project-details">
+        <h4 class="section-title">Project</h4>
     <hr />
     @if (project is null)
     {
@@ -26,7 +26,7 @@
     }
     else
     {
-        <dl class="row">
+            <dl class="row project-info">
             <dt class="col-sm-2">Title</dt>
             <dd class="col-sm-10">@project.Title</dd>
             <dt class="col-sm-2">StartDate</dt>
@@ -36,16 +36,16 @@
             <dt class="col-sm-2">Description</dt>
             <dd class="col-sm-10">@project.Description</dd>
         </dl>
-        <div>
-            <a href="@($"/projects/edit?id={project.Id}")">Edit</a> |
-            <a href="@($"/projects")">Back to List</a>
+            <div class="project-actions">
+            <a class="btn-link" href="@($"/projects/edit?id={project.Id}")">Edit</a> |
+            <a class="btn-link" href="@($"/projects")">Back to List</a>
         </div>
 
         <button class="btn btn-primary" @onclick="ShowModal">Add task</button>
 
         <Modal @ref="modal" Title="Add task">
             <BodyTemplate>
-                <EditForm Model="newProjectTask" OnValidSubmit="AddProjectTask">
+                    <EditForm Model="newProjectTask" OnValidSubmit="AddProjectTask" class="task-form">
                     <DataAnnotationsValidator />
                     <ValidationSummary class="text-danger" />
 
@@ -101,7 +101,7 @@
 
 
 
-        <div>
+            <div class="tasks-list">
             @if (projectTasks is not null)
             {
                 @foreach (var projectTask in projectTasks)
@@ -176,7 +176,7 @@
         </div>
     }
 </div>
-
+</div>
 @code {
     private HubConnection? hubConnection;
     private Project? project;

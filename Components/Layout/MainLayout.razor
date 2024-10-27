@@ -22,10 +22,10 @@
                      
                         <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Start" Gap="0.5rem" class="rz-p-sm-12">
                         <RadzenDropDown @bind-Value=@value Data=@myProjects TextProperty="@nameof(Project.Title)" ValueProperty="@nameof(Project.Id)" AllowClear=true Placeholder="Select project" Style="width: 100%; max-width: 400px;" Name="DropDownClear" />
-                        <RadzenButton Disabled="@IsDisabled" Text="To Do List" Click="NavigateToToDoList" ButtonStyle="ButtonStyle.Primary" />
-                        <RadzenButton Disabled="@IsDisabled" Text="Details" Click="NavigateToDetails" ButtonStyle="ButtonStyle.Primary" />
-                        <RadzenButton Disabled="@IsDisabled" Text="Schedule" Click="NavigateToSchedule" ButtonStyle="ButtonStyle.Primary" />
-                        <RadzenButton Disabled="@IsDisabled" Text="Design Concept" Click="NavigateToDesignConcept" ButtonStyle="ButtonStyle.Primary" />
+                        <RadzenButton Style="width: 200px;" Disabled="@IsDisabled" Text="To Do List" Click="NavigateToToDoList" ButtonStyle="ButtonStyle.Primary" />
+                        <RadzenButton Style="width: 200px;" Disabled="@IsDisabled" Text="Details" Click="NavigateToDetails" ButtonStyle="ButtonStyle.Primary" />
+                        <RadzenButton Style="width: 200px;" Disabled="@IsDisabled" Text="Schedule" Click="NavigateToSchedule" ButtonStyle="ButtonStyle.Primary" />
+                        <RadzenButton Style="width: 250px;" Disabled="@IsDisabled" Text="Design Concept" Click="NavigateToDesignConcept" ButtonStyle="ButtonStyle.Primary" />
                         </RadzenStack>
 
                 </Authorized>

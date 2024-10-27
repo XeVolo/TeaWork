@@ -96,3 +96,9 @@ p.lead {
     padding: 30px;
     border-radius: 10px;
 }
+
+.custom-button {
+    width: 150px;
+    height: 50px;
+
+}
