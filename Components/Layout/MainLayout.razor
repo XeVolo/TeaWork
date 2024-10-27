@@ -4,6 +4,7 @@
 @inject NavigationManager NavigationManager
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject IUserService UserService
+@using Orientation = Radzen.Orientation;
 <RadzenComponents @rendermode="InteractiveServer" />
 
 <div class="page">
@@ -30,8 +31,7 @@
                 <NotAuthorized>
                 </NotAuthorized>
             </AuthorizeView>
-        </div>
-
+        </div>        
         <article class="content px-4">
             @Body
         </article>

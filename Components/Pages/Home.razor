@@ -1,6 +1,162 @@
 ﻿@page "/"
+@using TeaWork.Data.Models
+@using TeaWork.Logic.Services.Interfaces
+@inject NavigationManager NavigationManager
+@inject IProjectService ProjectService
+@inject ITaskService ProjectTaskService
+@inject IConversationService ConversationService
+@inject AuthenticationStateProvider AuthenticationStateProvider
 
+<AuthorizeView>
+    <Authorized>
+        <header class="text-center mb-5">
+            <h1 class="display-4 text-primary">Welcome Back to TeaWork!</h1>
+            <p class="lead text-secondary" style="font-size: 1.5rem;">Here's a quick overview of your projects, tasks, conversations, and notifications.</p>
+        </header>
+        <RadzenRow>
+
+            <RadzenColumn Size="4">
+                <RadzenCard Style="padding: 20px; text-align: center; background-color: #f9f9f9;">
+                    <h4 class="text-primary">My Projects</h4>
+                    <RadzenDataList AllowVirtualization="true" Style="height:400px;overflow:auto;"
+                                    Data="@myProjects" TItem="Project">
+                        <Template Context="project">
+                            <RadzenCard Variant="Variant.Outlined" class="rz-p-0" Style="width: 100%; overflow: hidden; margin-bottom: 10px;">
+                                <RadzenColumn Size="12" class="rz-p-4 product-title">
+                                    <RadzenText TextStyle="TextStyle.H6" TagName="TagName.H5" class=".rz-color-black">@project.Title</RadzenText>
+                                </RadzenColumn>
+                                <RadzenColumn Size="12" class="rz-p-4">
+                                    <RadzenButton Text="Project Panel" Click="() => NavigateToProject(project.Id)" Style="width: 100%; background-color: #007bff; color: white;" />
+                                </RadzenColumn>
+                            </RadzenCard>
+                        </Template>
+                    </RadzenDataList>
+                </RadzenCard>
+            </RadzenColumn>
+
+            <RadzenColumn Size="4">
+                <RadzenCard Style="padding: 20px; text-align: center; background-color: #f9f9f9;">
+                    <h4 class="text-primary">My Conversations</h4>
+                    <RadzenDataList AllowVirtualization="true" Style="height:400px;overflow:auto;"
+                                    Data="@myConversations" TItem="Conversation">
+                        <Template Context="conversation">
+                            <RadzenCard Variant="Variant.Outlined" class="rz-p-0" Style="width: 100%; overflow: hidden; margin-bottom: 10px;">
+                                <RadzenColumn Size="12" class="rz-p-4 product-title">
+                                    <RadzenText TextStyle="TextStyle.H6" TagName="TagName.H5" class=".rz-color-black">@conversation.Id</RadzenText>
+                                </RadzenColumn>
+                                <RadzenColumn Size="12" class="rz-p-4">
+                                    <RadzenButton Text="Conversation" Click="() => NavigateToConversation(conversation.Id)" Style="width: 100%; background-color: #007bff; color: white;" />
+                                </RadzenColumn>
+                            </RadzenCard>
+                        </Template>
+                    </RadzenDataList>
+                </RadzenCard>
+            </RadzenColumn>
+
+            <RadzenColumn Size="4">
+                <RadzenCard Style="padding: 20px; text-align: center; background-color: #f9f9f9;">
+                    <h4 class="text-primary">My Tasks</h4>
+                    <RadzenDataList AllowVirtualization="true" Style="height:400px;overflow:auto;"
+                                    Data="@myTasks" TItem="ProjectTask">
+                        <Template Context="projectTask">
+                            <RadzenCard Variant="Variant.Outlined" class="rz-p-0" Style="width: 100%; overflow: hidden; margin-bottom: 10px;">
+                                <RadzenColumn Size="12" class="rz-p-4 product-title">
+                                    <RadzenText TextStyle="TextStyle.H6" TagName="TagName.H5" class=".rz-color-black">@projectTask.Title</RadzenText>
+                                </RadzenColumn>
+                                <RadzenColumn Size="12" class="rz-p-4">
+                                    <RadzenButton Text="Details" Click="() => NavigateToProjectTask(projectTask.Id)" Style="width: 100%; background-color: #007bff; color: white;" />
+                                </RadzenColumn>
+                            </RadzenCard>
+                        </Template>
+                    </RadzenDataList>
+                </RadzenCard>
+            </RadzenColumn>
+        </RadzenRow>
+    </Authorized>
+
+    <NotAuthorized>
+        <RadzenCard Style="margin-top: 40px; max-width: 1000px; margin-left: auto; margin-right: auto; padding: 40px; background-color: #ffffff;">
+            <header class="text-center">
+                <RadzenImage Path="images/teawork-logo.png" Style="width: 140px; margin-bottom: 30px;" />
+                <h1 class="display-2 text-primary">Welcome to TeaWork!</h1>
+                <p class="lead text-secondary" style="font-size: 1.5rem;">A platform designed for efficient student collaboration on group projects.</p>
+            </header>
+
+            <RadzenRow>
+                <RadzenColumn Size="4">
+                    <div class="text-center">
+                        <i class="bi bi-kanban-fill feature-icon-large"></i>
+                        <h4 style="font-size: 1.5rem; color: #007bff;">Project Management</h4>
+                        <p style="font-size: 1.2rem;">Organize projects, track progress, and assign tasks with your team.</p>
+                    </div>
+                </RadzenColumn>
+                <RadzenColumn Size="4">
+                    <div class="text-center">
+                        <i class="bi bi-chat-dots-fill feature-icon-large"></i>
+                        <h4 style="font-size: 1.5rem; color: #007bff;">Communication</h4>
+                        <p style="font-size: 1.2rem;">Stay connected in real-time, share files, and collaborate efficiently.</p>
+                    </div>
+                </RadzenColumn>
+                <RadzenColumn Size="4">
+                    <div class="text-center">
+                        <i class="bi bi-check2-circle feature-icon-large"></i>
+                        <h4 style="font-size: 1.5rem; color: #007bff;">Progress Tracking</h4>
+                        <p style="font-size: 1.2rem;">Monitor task status and motivate your team to achieve goals on time.</p>
+                    </div>
+                </RadzenColumn>
+            </RadzenRow>
+
+            <RadzenCard Class="mt-5 text-center call-to-action">
+                <h2 style="font-size: 2rem; color: #007bff;">Join TeaWork Today!</h2>
+                <p style="font-size: 1.25rem;">Join thousands of students working efficiently and stress-free on their projects.</p>
+                <RadzenButton Text="Sign Up" Click="NavigateToRegistration" ButtonStyle="ButtonStyle.Primary" Style="font-size: 1.25rem; padding: 15px 30px; margin-right: 15px; background-color: #007bff; color: white;" />
+                <RadzenButton Text="Log In" Click="NavigateToLogin" ButtonStyle="ButtonStyle.Secondary" Style="font-size: 1.25rem; padding: 15px 30px; background-color: #6c757d; color: white;" />
+            </RadzenCard>
+        </RadzenCard>
+    </NotAuthorized>
+</AuthorizeView>
 
 @code {
-    
+    private List<Project> myProjects = new List<Project>();
+    private List<Conversation> myConversations = new List<Conversation>();
+    private List<ProjectTask> myTasks = new List<ProjectTask>();
+
+    protected async override Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user.Identity.IsAuthenticated)
+        {
+            myProjects = await ProjectService.GetMyProjects();
+            myConversations = await ConversationService.GetMyConversations();
+            myTasks = await ProjectTaskService.GetMyProjectTasks();
+        }
+    }
+
+    private void NavigateToRegistration()
+    {
+        NavigationManager.NavigateTo("/Account/Register");
+    }
+
+    private void NavigateToLogin()
+    {
+        NavigationManager.NavigateTo("/Account/Login");
+    }
+
+    private void NavigateToProject(int projectId)
+    {
+        NavigationManager.NavigateTo($"projects/details?id={projectId}");
+    }
+
+    private void NavigateToConversation(int conversationId)
+    {
+        NavigationManager.NavigateTo($"messages/conversation?id={conversationId}");
+    }
+
+    private async Task NavigateToProjectTask(int taskId)
+    {
+        int projectId = await ProjectTaskService.GetProjectId(taskId);
+        NavigationManager.NavigateTo($"projects/tasks?id={projectId}");
+    }
 }

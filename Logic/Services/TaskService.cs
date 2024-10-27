@@ -70,6 +70,58 @@ namespace TeaWork.Logic.Services
                 throw new NotImplementedException();
             }
         }
+        public async Task<List<ProjectTask>> GetMyProjectTasks()
+        {
+
+            try
+            {
+                List<ProjectTask> myTasks = new List<ProjectTask>();
+                using var _context = _dbContextFactory.CreateDbContext();
+                ApplicationUser currentUser = await _userIdentity.GetLoggedUser();
+
+                
+                var projecttaks = await _context.TaskDistributions
+                    .Where(x => x.UserId.Equals(currentUser.Id))
+                    .ToListAsync();
+                foreach (var task in projecttaks) 
+                {
+                    var projecttask = await _context.ProjectTasks.FirstOrDefaultAsync(x => x.Id == task.TaskId);
+                    if (projecttask != null)
+                    {
+                        myTasks.Add(projecttask);
+                    }
+                }
+
+                return myTasks;
+            }
+            catch (Exception ex)
+            {
+                throw new NotImplementedException();
+            }
+        }
+        public async Task<int> GetProjectId(int taskId)
+        {
+
+            try
+            {
+                using var _context = _dbContextFactory.CreateDbContext();
+
+                var toDoListId = await _context.ProjectTasks
+                    .Where(x => x.Id == taskId)
+                    .Select(x => x.ToDoListId)
+                    .FirstOrDefaultAsync();
+
+                var project = await _context.Projects
+                    .Where(x => x.ToDoListId == toDoListId)
+                    .FirstOrDefaultAsync();
+
+                return project.Id;
+            }
+            catch (Exception ex)
+            {
+                throw new NotImplementedException();
+            }
+        }
         public async Task AddTaskDistribution(int taskId, string userId)
         {
             

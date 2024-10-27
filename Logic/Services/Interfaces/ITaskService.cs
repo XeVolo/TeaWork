@@ -9,5 +9,7 @@ namespace TeaWork.Logic.Services.Interfaces
         Task<List<ProjectTask>> GetProjectTasks(int projectId);
         Task AddTaskDistribution(int taskId, string userId);
         Task AddComment(DesignConceptDto taskCommentData, int taskId);
+        Task<int> GetProjectId(int taskId);
+        Task<List<ProjectTask>> GetMyProjectTasks();
     }
 }

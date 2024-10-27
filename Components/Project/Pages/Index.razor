@@ -4,6 +4,7 @@
 @using TeaWork.Logic.Services.Interfaces
 @using Microsoft.AspNetCore.Authorization
 @inject IProjectService ProjectService
+@inject NavigationManager NavigationManager
 @attribute [Authorize]
 @inherits LayoutComponentBase
 
@@ -16,13 +17,12 @@
     <a href="projects/create">Create New</a>
 </p>
 
-<QuickGrid Items="Projects">
+<QuickGrid 
+    Items="Projects">
     <PropertyColumn Property="project => project.Title" />
     <PropertyColumn Property="project => project.StartDate" />
     <PropertyColumn Property="project => project.Deadline" />
     <PropertyColumn Property="project => project.Description" />
-    <PropertyColumn Property="project => project.ToDoListId" />
-    <PropertyColumn Property="project => project.ProjectConversationId" />
 
     <TemplateColumn Context="project">
         <a href="@($"projects/edit?id={project.Id}")">Edit</a> |
@@ -43,5 +43,4 @@
         ProjectsList = await ProjectService.GetMyProjects() ;
         Projects = ProjectsList.AsQueryable();
     }
-
-    }
+}
