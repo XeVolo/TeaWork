@@ -1,0 +1,101 @@
+﻿
+.project-page {
+    padding: 20px;
+    font-family: Arial, sans-serif;
+}
+
+.section-title {
+    color: #333;
+    font-size: 1.5em;
+    margin-bottom: 1em;
+}
+
+
+.project-details h4 {
+    color: #0056b3;
+    font-weight: bold;
+}
+
+.project-info dt.info-label {
+    font-weight: bold;
+    color: #0056b3;
+}
+
+.project-info dd.info-value {
+    color: #333;
+    margin-left: 0;
+}
+
+
+.loading-text {
+    font-style: italic;
+    color: #888;
+}
+
+
+.navigation-links a {
+    color: #007bff;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+    .navigation-links a:hover {
+        text-decoration: underline;
+    }
+
+.btn-add-concept,
+.btn-submit,
+.btn-add-comment {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 4px;
+    margin-top: 10px;
+    cursor: pointer;
+}
+
+    .btn-add-concept:hover,
+    .btn-submit:hover,
+    .btn-add-comment:hover {
+        background-color: #0056b3;
+    }
+
+.design-concepts .concept-card {
+    background-color: #f4f4f4;
+    border: 1px solid #ddd;
+    padding: 15px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
+
+.concept-info dt.info-label,
+.comment-info dt.info-label {
+    color: #007bff;
+    font-weight: bold;
+}
+
+.comment-card {
+    background-color: #f1f9ff;
+    border: 1px solid #e1e1e1;
+    padding: 15px;
+    border-radius: 5px;
+    margin-top: 10px;
+}
+
+.form-group label {
+    font-weight: bold;
+    color: #333;
+}
+
+.form-input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.error-text {
+    color: #d9534f;
+    font-size: 0.9em;
+}

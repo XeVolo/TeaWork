@@ -1,0 +1,104 @@
+﻿
+.task-board {
+    padding: 20px;
+    font-family: Arial, sans-serif;
+}
+
+
+.task-column {
+    padding: 10px;
+}
+
+.running-column {
+    background-color: #e8f5e9;
+    border-radius: 8px;
+}
+
+.in-progress-column {
+    background-color: #fff3e0;
+    border-radius: 8px;
+}
+
+.finished-column {
+    background-color: #e3f2fd;
+    border-radius: 8px;
+}
+
+
+.task-header {
+    font-size: 1.5em;
+    color: #0056b3;
+    margin-bottom: 1em;
+    text-align: center;
+}
+
+
+.task-card {
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    padding: 15px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
+
+
+.task-info .task-label {
+    font-weight: bold;
+    color: #555;
+    width: 100px;
+}
+
+.task-info .task-value {
+    color: #333;
+    margin-left: 10px;
+}
+
+
+.comment-card {
+    background-color: #f1f9ff;
+    border: 1px solid #e1e1e1;
+    padding: 10px;
+    border-radius: 5px;
+    margin-top: 10px;
+}
+
+.comment-info .comment-label {
+    font-weight: bold;
+    color: #333;
+}
+
+.comment-info .comment-value {
+    color: #666;
+}
+
+
+.form-group label {
+    font-weight: bold;
+    color: #333;
+}
+
+.form-input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.error-text {
+    color: #d9534f;
+    font-size: 0.9em;
+}
+
+
+.btn-add-comment {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+    .btn-add-comment:hover {
+        background-color: #0056b3;
+    }

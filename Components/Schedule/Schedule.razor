@@ -16,8 +16,7 @@
 
 <RadzenScheduler @ref=@scheduler SlotRender=@OnSlotRender style="height: 768px;" TItem="Appointment" Data=@appointments StartProperty="Start" EndProperty="End"
     TextProperty="Text" SelectedIndex="2"
-    SlotSelect=@OnSlotSelect AppointmentSelect=@OnAppointmentSelect AppointmentRender=@OnAppointmentRender
-    AppointmentMove=@OnAppointmentMove >
+    >
     <RadzenDayView />
     <RadzenWeekView />
     <RadzenMonthView />
@@ -25,196 +24,209 @@
 
 @if (projectTasks is not null)
 {
-    <div class="container">
+    <div class="task-board">
         <div class="row">
-            
-            <div class="col-md-4">
-                <h3>Running</h3>
+
+            <div class="col-md-4 task-column running-column">
+                <h3 class="task-header">Running</h3>
                 @foreach (var projectTask in projectTasks.Where(t => t.State == TaskState.Running))
                 {
-                    <dl class="row">
-                        @if (projectTask.User is not null)
-                        {
-                            <dt class="col-sm-4">User</dt>
-                            <dd class="col-sm-8">@projectTask.User.UserName</dd>
-                        }
-                        <dt class="col-sm-4">Title</dt>
-                        <dd class="col-sm-8">@projectTask.Title</dd>
-                        <dt class="col-sm-4">Description</dt>
-                        <dd class="col-sm-8">@projectTask.Description</dd>
-                        <dt class="col-sm-4">Creation Date</dt>
-                        <dd class="col-sm-8">@projectTask.CreationDate</dd>
-                        <dt class="col-sm-4">Deadline</dt>
-                        <dd class="col-sm-8">@projectTask.Deadline</dd>
-                        <dt class="col-sm-4">Priority</dt>
-                        <dd class="col-sm-8">@projectTask.Priority</dd>
-                        @if (projectTask.TasksDistributions is not null)
-                        {
-                            <dt class="col-sm-4">Task assignment:</dt>
-                            @foreach (var user in projectTask.TasksDistributions)
+                    <RadzenCard class="task-card">
+                        <dl class="task-info">
+                            @if (projectTask.User is not null)
                             {
-                                if (user.User is not null)
+                                <dt class="task-label">User</dt>
+                                <dd class="task-value">@projectTask.User.UserName</dd>
+                            }
+                            <dt class="task-label">Title</dt>
+                            <dd class="task-value">@projectTask.Title</dd>
+                            <dt class="task-label">Description</dt>
+                            <dd class="task-value">@projectTask.Description</dd>
+                            <dt class="task-label">Creation Date</dt>
+                            <dd class="task-value">@projectTask.CreationDate</dd>
+                            <dt class="task-label">Deadline</dt>
+                            <dd class="task-value">@projectTask.Deadline</dd>
+                            <dt class="task-label">Priority</dt>
+                            <dd class="task-value">@projectTask.Priority</dd>
+                            @if (projectTask.TasksDistributions is not null)
+                            {
+                                <dt class="task-label">Task Assignment</dt>
+                                @foreach (var user in projectTask.TasksDistributions)
                                 {
-                                    <dd class="col-sm-8">@user.User.UserName</dd>
+                                    if (user.User is not null)
+                                    {
+                                        <dd class="task-value">@user.User.UserName</dd>
+                                    }
                                 }
                             }
-                        }
-                        @if (projectTask.TaskComments is not null)
-                        {
-                            foreach (var taskComment in projectTask.TaskComments)
+                            @if (projectTask.TaskComments is not null)
                             {
-                                <dl class="row">
-                                    @if (taskComment.User is not null)
-                                    {
-                                        <dt class="col-sm-2">User</dt>
-                                        <dd class="col-sm-10">@taskComment.User.UserName</dd>
-                                    }
-                                    <dt class="col-sm-2">Description</dt>
-                                    <dd class="col-sm-10">@taskComment.Description</dd>
-                                </dl>
+                                foreach (var taskComment in projectTask.TaskComments)
+                                {
+                                    <RadzenCard class="comment-card">
+                                        <dl class="comment-info">
+                                            @if (taskComment.User is not null)
+                                            {
+                                                <dt class="comment-label">User</dt>
+                                                <dd class="comment-value">@taskComment.User.UserName</dd>
+                                            }
+                                            <dt class="comment-label">Description</dt>
+                                            <dd class="comment-value">@taskComment.Description</dd>
+                                        </dl>
+                                    </RadzenCard>
+                                }
                             }
-                        }
-                        <EditForm Model="newComment" OnValidSubmit="@(() => AddComment(projectTask.Id))">
-                            <DataAnnotationsValidator />
-                            <ValidationSummary />
+                            <EditForm Model="newComment" OnValidSubmit="@(() => AddComment(projectTask.Id))">
+                                <DataAnnotationsValidator />
+                                <ValidationSummary class="error-text" />
 
-                            <div class="form-group">
-                                <label for="commentDescription">Comment Description:</label>
-                                <InputTextArea id="commentDescription" class="form-control" @bind-Value="newComment.Description" />
-                            </div>
+                                <div class="form-group">
+                                    <label for="commentDescription">Comment Description:</label>
+                                    <InputTextArea id="commentDescription" class="form-input" @bind-Value="newComment.Description" />
+                                </div>
 
-                            <button type="submit" class="btn btn-primary">Add Comment</button>
-                        </EditForm>
-                    </dl>
+                                <button type="submit" class="btn-add-comment">Add Comment</button>
+                            </EditForm>
+                        </dl>
+                    </RadzenCard>
                 }
             </div>
 
             
-            <div class="col-md-4">
-                <h3>In Progress</h3>
+            <div class="col-md-4 task-column in-progress-column">
+                <h3 class="task-header">In Progress</h3>
                 @foreach (var projectTask in projectTasks.Where(t => t.State == TaskState.InProgress))
                 {
-                    <dl class="row">
-                        @if (projectTask.User is not null)
-                        {
-                            <dt class="col-sm-4">User</dt>
-                            <dd class="col-sm-8">@projectTask.User.UserName</dd>
-                        }
-                        <dt class="col-sm-4">Title</dt>
-                        <dd class="col-sm-8">@projectTask.Title</dd>
-                        <dt class="col-sm-4">Description</dt>
-                        <dd class="col-sm-8">@projectTask.Description</dd>
-                        <dt class="col-sm-4">Creation Date</dt>
-                        <dd class="col-sm-8">@projectTask.CreationDate</dd>
-                        <dt class="col-sm-4">Deadline</dt>
-                        <dd class="col-sm-8">@projectTask.Deadline</dd>
-                        <dt class="col-sm-4">Priority</dt>
-                        <dd class="col-sm-8">@projectTask.Priority</dd>
-                        @if (projectTask.TasksDistributions is not null)
-                        {
-                            <dt class="col-sm-4">Task assignment:</dt>
-                            @foreach (var user in projectTask.TasksDistributions)
+                    <RadzenCard class="task-card">
+                        <dl class="task-info">
+                            @if (projectTask.User is not null)
                             {
-                                if (user.User is not null)
+                                <dt class="task-label">User</dt>
+                                <dd class="task-value">@projectTask.User.UserName</dd>
+                            }
+                            <dt class="task-label">Title</dt>
+                            <dd class="task-value">@projectTask.Title</dd>
+                            <dt class="task-label">Description</dt>
+                            <dd class="task-value">@projectTask.Description</dd>
+                            <dt class="task-label">Creation Date</dt>
+                            <dd class="task-value">@projectTask.CreationDate</dd>
+                            <dt class="task-label">Deadline</dt>
+                            <dd class="task-value">@projectTask.Deadline</dd>
+                            <dt class="task-label">Priority</dt>
+                            <dd class="task-value">@projectTask.Priority</dd>
+                            @if (projectTask.TasksDistributions is not null)
+                            {
+                                <dt class="task-label">Task Assignment</dt>
+                                @foreach (var user in projectTask.TasksDistributions)
                                 {
-                                    <dd class="col-sm-8">@user.User.UserName</dd>
+                                    if (user.User is not null)
+                                    {
+                                        <dd class="task-value">@user.User.UserName</dd>
+                                    }
                                 }
                             }
-                        }
-                        @if (projectTask.TaskComments is not null)
-                        {
-                            foreach (var taskComment in projectTask.TaskComments)
+                            @if (projectTask.TaskComments is not null)
                             {
-                            <dl class="row">
-                                @if (taskComment.User is not null)
+                                foreach (var taskComment in projectTask.TaskComments)
                                 {
-                                <dt class="col-sm-2">User</dt>
-                                <dd class="col-sm-10">@taskComment.User.UserName</dd>
+                                    <RadzenCard class="comment-card">
+                                        <dl class="comment-info">
+                                            @if (taskComment.User is not null)
+                                            {
+                                                <dt class="comment-label">User</dt>
+                                                <dd class="comment-value">@taskComment.User.UserName</dd>
+                                            }
+                                            <dt class="comment-label">Description</dt>
+                                            <dd class="comment-value">@taskComment.Description</dd>
+                                        </dl>
+                                    </RadzenCard>
                                 }
-                                <dt class="col-sm-2">Description</dt>
-                                <dd class="col-sm-10">@taskComment.Description</dd>
-                            </dl>
                             }
-                        }
-                        <EditForm Model="newComment" OnValidSubmit="@(() => AddComment(projectTask.Id))">
-                            <DataAnnotationsValidator />
-                            <ValidationSummary />
+                            <EditForm Model="newComment" OnValidSubmit="@(() => AddComment(projectTask.Id))">
+                                <DataAnnotationsValidator />
+                                <ValidationSummary class="error-text" />
 
-                            <div class="form-group">
-                                <label for="commentDescription">Comment Description:</label>
-                                <InputTextArea id="commentDescription" class="form-control" @bind-Value="newComment.Description" />
-                            </div>
+                                <div class="form-group">
+                                    <label for="commentDescription">Comment Description:</label>
+                                    <InputTextArea id="commentDescription" class="form-input" @bind-Value="newComment.Description" />
+                                </div>
 
-                            <button type="submit" class="btn btn-primary">Add Comment</button>
-                        </EditForm>
-                    </dl>
+                                <button type="submit" class="btn-add-comment">Add Comment</button>
+                            </EditForm>
+                        </dl>
+                    </RadzenCard>
                 }
             </div>
 
             
-            <div class="col-md-4">
-                <h3>Finished</h3>
+            <div class="col-md-4 task-column finished-column">
+                <h3 class="task-header">Finished</h3>
                 @foreach (var projectTask in projectTasks.Where(t => t.State == TaskState.Finished))
                 {
-                    <dl class="row">
-                        @if (projectTask.User is not null)
-                        {
-                            <dt class="col-sm-4">User</dt>
-                            <dd class="col-sm-8">@projectTask.User.UserName</dd>
-                        }
-                        <dt class="col-sm-4">Title</dt>
-                        <dd class="col-sm-8">@projectTask.Title</dd>
-                        <dt class="col-sm-4">Description</dt>
-                        <dd class="col-sm-8">@projectTask.Description</dd>
-                        <dt class="col-sm-4">Creation Date</dt>
-                        <dd class="col-sm-8">@projectTask.CreationDate</dd>
-                        <dt class="col-sm-4">Deadline</dt>
-                        <dd class="col-sm-8">@projectTask.Deadline</dd>
-                        <dt class="col-sm-4">Priority</dt>
-                        <dd class="col-sm-8">@projectTask.Priority</dd>
-                        @if (projectTask.TasksDistributions is not null)
-                        {
-                            <dt class="col-sm-4">Task assignment:</dt>
-                            @foreach (var user in projectTask.TasksDistributions)
+                    <RadzenCard class="task-card">
+                        <dl class="task-info">
+                            @if (projectTask.User is not null)
                             {
-                                if (user.User is not null)
+                                <dt class="task-label">User</dt>
+                                <dd class="task-value">@projectTask.User.UserName</dd>
+                            }
+                            <dt class="task-label">Title</dt>
+                            <dd class="task-value">@projectTask.Title</dd>
+                            <dt class="task-label">Description</dt>
+                            <dd class="task-value">@projectTask.Description</dd>
+                            <dt class="task-label">Creation Date</dt>
+                            <dd class="task-value">@projectTask.CreationDate</dd>
+                            <dt class="task-label">Deadline</dt>
+                            <dd class="task-value">@projectTask.Deadline</dd>
+                            <dt class="task-label">Priority</dt>
+                            <dd class="task-value">@projectTask.Priority</dd>
+                            @if (projectTask.TasksDistributions is not null)
+                            {
+                                <dt class="task-label">Task Assignment</dt>
+                                @foreach (var user in projectTask.TasksDistributions)
                                 {
-                                    <dd class="col-sm-8">@user.User.UserName</dd>
+                                    if (user.User is not null)
+                                    {
+                                        <dd class="task-value">@user.User.UserName</dd>
+                                    }
                                 }
                             }
-                        }
-                        @if (projectTask.TaskComments is not null)
-                        {
-                            foreach (var taskComment in projectTask.TaskComments)
+                            @if (projectTask.TaskComments is not null)
                             {
-                                <dl class="row">
-                                    @if (taskComment.User is not null)
-                                    {
-                                        <dt class="col-sm-2">User</dt>
-                                        <dd class="col-sm-10">@taskComment.User.UserName</dd>
-                                    }
-                                    <dt class="col-sm-2">Description</dt>
-                                    <dd class="col-sm-10">@taskComment.Description</dd>
-                                </dl>
+                                foreach (var taskComment in projectTask.TaskComments)
+                                {
+                                    <RadzenCard class="comment-card">
+                                        <dl class="comment-info">
+                                            @if (taskComment.User is not null)
+                                            {
+                                                <dt class="comment-label">User</dt>
+                                                <dd class="comment-value">@taskComment.User.UserName</dd>
+                                            }
+                                            <dt class="comment-label">Description</dt>
+                                            <dd class="comment-value">@taskComment.Description</dd>
+                                        </dl>
+                                    </RadzenCard>
+                                }
                             }
-                        }
-                        <EditForm Model="newComment" OnValidSubmit="@(() => AddComment(projectTask.Id))">
-                            <DataAnnotationsValidator />
-                            <ValidationSummary />
+                            <EditForm Model="newComment" OnValidSubmit="@(() => AddComment(projectTask.Id))">
+                                <DataAnnotationsValidator />
+                                <ValidationSummary class="error-text" />
 
-                            <div class="form-group">
-                                <label for="commentDescription">Comment Description:</label>
-                                <InputTextArea id="commentDescription" class="form-control" @bind-Value="newComment.Description" />
-                            </div>
+                                <div class="form-group">
+                                    <label for="commentDescription">Comment Description:</label>
+                                    <InputTextArea id="commentDescription" class="form-input" @bind-Value="newComment.Description" />
+                                </div>
 
-                            <button type="submit" class="btn btn-primary">Add Comment</button>
-                        </EditForm>
-                    </dl>
+                                <button type="submit" class="btn-add-comment">Add Comment</button>
+                            </EditForm>
+                        </dl>
+                    </RadzenCard>
                 }
             </div>
         </div>
     </div>
 }
+
 
 
 @code {

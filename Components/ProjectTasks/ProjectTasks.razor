@@ -102,44 +102,57 @@
 
 
             <div class="tasks-list">
-            @if (projectTasks is not null)
-            {
-                @foreach (var projectTask in projectTasks)
+                @if (projectTasks is not null)
                 {
-                    <dl class="row">
-                        @if (projectTask.User is not null)
-                        {
-                            <dt class="col-sm-2">User</dt>
-                            <dd class="col-sm-10">@projectTask.User.UserName</dd>
-                        }
-                        <dt class="col-sm-2">Title</dt>
-                        <dd class="col-sm-10">@projectTask.Title</dd>
-                        <dt class="col-sm-2">Description</dt>
-                        <dd class="col-sm-10">@projectTask.Description</dd>
-                        <dt class="col-sm-2">Creation Date</dt>
-                        <dd class="col-sm-10">@projectTask.CreationDate</dd>
-                        <dt class="col-sm-2">Deadline</dt>
-                        <dd class="col-sm-10">@projectTask.Deadline</dd>
-                        <dt class="col-sm-2">State</dt>
-                        <dd class="col-sm-10">@projectTask.State</dd>
-                        <dt class="col-sm-2">Priority</dt>
-                        <dd class="col-sm-10">@projectTask.Priority</dd>
-                        @if(projectTask.TasksDistributions is not null)
-                        {
-                            <dt class="col-sm-2">Task assignment:</dt>
-                            @foreach (var user in projectTask.TasksDistributions)
-                            {
-                                if(user.User is not null)
+
+                    @foreach (var projectTask in projectTasks)
+                    {
+                        <RadzenCard class="rz-my-12 rz-mx-auto">
+                        <div class="task-item">
+                            <dl class="row">
+                                @if (projectTask.User is not null)
                                 {
-                                    <dd class="col-sm-10">@user.User.UserName</dd>
+                                    <dt class="col-sm-2 label">User</dt>
+                                    <dd class="col-sm-10 value">@projectTask.User.UserName</dd>
                                 }
-                                
-                            }
-                        }
-                    </dl>
+                                <dt class="col-sm-2 label">Title</dt>
+                                <dd class="col-sm-10 value">@projectTask.Title</dd>
+                                <dt class="col-sm-2 label">Description</dt>
+                                <dd class="col-sm-10 value">@projectTask.Description</dd>
+                                <dt class="col-sm-2 label">Creation Date</dt>
+                                <dd class="col-sm-10 value">@projectTask.CreationDate</dd>
+                                <dt class="col-sm-2 label">Deadline</dt>
+                                <dd class="col-sm-10 value">@projectTask.Deadline</dd>
+                                <dt class="col-sm-2 label">State</dt>
+                                <dd class="col-sm-10 value">@projectTask.State</dd>
+                                <dt class="col-sm-2 label">Priority</dt>
+                                <dd class="col-sm-10 value">@projectTask.Priority</dd>
 
-                    <button class="btn btn-primary" @onclick="() => ShowAssignModal(projectTask.Id)">Assign a task</button>
+                                @if (projectTask.TasksDistributions is not null)
+                                {
+                                    <dt class="col-sm-2 label">Task Assignment:</dt>
+                                    <dd class="col-sm-10 value">
+                                        <ul class="assigned-users">
+                                            @foreach (var user in projectTask.TasksDistributions)
+                                            {
+                                                if (user.User is not null)
+                                                {
+                                                    <li>@user.User.UserName</li>
+                                                }
+                                            }
+                                        </ul>
+                                    </dd>
+                                }
+                            </dl>
 
+                            <div class="task-buttons">
+                                <button class="btn btn-primary" @onclick="() => ShowAssignModal(projectTask.Id)">Assign a task</button>
+                            </div>
+                        </div>
+                        </RadzenCard>
+                    }
+                }
+            </div>
                     <Modal @ref="assignModal" Title="Assign a task">
                         <BodyTemplate>
                             <EditForm Model="newUser" OnValidSubmit="@(() => AssignTask(selectedProjectTaskId))">
@@ -171,9 +184,9 @@
                             <Button Color="ButtonColor.Secondary" @onclick="HideAssignModal">Close</Button>
                         </FooterTemplate>
                     </Modal>
-                }
-            }
-        </div>
+                
+            
+        
     }
 </div>
 </div>

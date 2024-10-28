@@ -12,111 +12,116 @@
 @attribute [Authorize]
 @implements IAsyncDisposable
 
-<PageTitle>Project design concept</PageTitle>
+<div class="project-page">
+    <PageTitle>Project Design Concept</PageTitle>
 
-<h3>DesignConcept</h3>
-<div>
-    <h4>Project</h4>
-    <hr />
-    @if (project is null)
-    {
-        <p><em>Loading...</em></p>
-    }
-    else
-    {
-        <dl class="row">
-            <dt class="col-sm-2">Title</dt>
-            <dd class="col-sm-10">@project.Title</dd>
-            <dt class="col-sm-2">StartDate</dt>
-            <dd class="col-sm-10">@project.StartDate</dd>
-            <dt class="col-sm-2">Deadline</dt>
-            <dd class="col-sm-10">@project.Deadline</dd>
-            <dt class="col-sm-2">Description</dt>
-            <dd class="col-sm-10">@project.Description</dd>           
-        </dl>
-        <div>
-            <a href="@($"/projects/edit?id={project.Id}")">Edit</a> |
-            <a href="@($"/projects")">Back to List</a>
-        </div>
+    <h3 class="section-title">Design Concept</h3>
+    <div class="project-details">
+        <h4>Project</h4>
+        <hr />
+        @if (project is null)
+        {
+            <p class="loading-text"><em>Loading...</em></p>
+        }
+        else
+        {
+            <dl class="project-info">
+                <dt class="info-label">Title</dt>
+                <dd class="info-value">@project.Title</dd>
+                <dt class="info-label">Start Date</dt>
+                <dd class="info-value">@project.StartDate</dd>
+                <dt class="info-label">Deadline</dt>
+                <dd class="info-value">@project.Deadline</dd>
+                <dt class="info-label">Description</dt>
+                <dd class="info-value">@project.Description</dd>
+            </dl>
+            <div class="navigation-links">
+                <a href="@($"/projects/edit?id={project.Id}")">Edit</a> |
+                <a href="@($"/projects")">Back to List</a>
+            </div>
 
-        <button class="btn btn-primary" @onclick="ShowModal">Add design concept</button>
+            <button class="btn-add-concept" @onclick="ShowModal">Add Design Concept</button>
 
-        <Modal @ref="modal" Title="Add design concept">
-            <BodyTemplate>
-                <EditForm Model="ownDesignConcept" OnValidSubmit="AddDesignConcept">
-                    <DataAnnotationsValidator />
-                    <ValidationSummary class="text-danger" />
-
-                    <div class="form-group">
-                        <label for="title">Title:</label>
-                        <InputText id="title" class="form-control" @bind-Value="ownDesignConcept.Title" />
-                        <ValidationMessage For="() => ownDesignConcept.Title" class="text-danger" />
-                    </div>
-
-                    <div class="form-group">
-                        <label for="description">Description:</label>
-                        <InputText id="description" class="form-control" @bind-Value="ownDesignConcept.Description" />
-                        <ValidationMessage For="() => ownDesignConcept.Description" class="text-danger" />
-                    </div>
-
-                    <button type="submit" class="btn btn-success">Add</button>
-                </EditForm>
-            </BodyTemplate>
-            <FooterTemplate>
-                <Button Color="ButtonColor.Secondary" @onclick="HideModal">Close</Button>
-            </FooterTemplate>
-        </Modal>
-
-
-
-        <div>
-            @if (designConcepts is not null)
-            {
-                @foreach (var designconcept in designConcepts)
-                {
-                    <dl class="row">
-                        @if(designconcept.User is not null)
-                        {
-                        <dt class="col-sm-2">User</dt>
-                        <dd class="col-sm-10">@designconcept.User.UserName</dd>
-                        }
-                        <dt class="col-sm-2">Title</dt>
-                        <dd class="col-sm-10">@designconcept.Title</dd>
-                        <dt class="col-sm-2">Description</dt>
-                        <dd class="col-sm-10">@designconcept.Description</dd>
-                    </dl>
-                    if (designconcept.DesignConceptComments is not null)
-                    {
-                        foreach (var designconceptcomment in designconcept.DesignConceptComments)
-                        {
-                            <dl class="row">
-                                @if (designconceptcomment.User is not null)
-                                {
-                                    <dt class="col-sm-2">User</dt>
-                                    <dd class="col-sm-10">@designconceptcomment.User.UserName</dd>
-                                }
-                                <dt class="col-sm-2">Description</dt>
-                                <dd class="col-sm-10">@designconceptcomment.Description</dd>
-                            </dl>
-                        }
-                    }
-                    <EditForm Model="newComment" OnValidSubmit="@(() => AddComment(designconcept.Id))">
+            <Modal @ref="modal" Title="Add Design Concept">
+                <BodyTemplate>
+                    <EditForm Model="ownDesignConcept" OnValidSubmit="AddDesignConcept">
                         <DataAnnotationsValidator />
-                        <ValidationSummary />
+                        <ValidationSummary class="error-text" />
 
                         <div class="form-group">
-                            <label for="commentDescription">Comment Description:</label>
-                            <InputTextArea id="commentDescription" class="form-control" @bind-Value="newComment.Description" />
+                            <label for="title">Title:</label>
+                            <InputText id="title" class="form-input" @bind-Value="ownDesignConcept.Title" />
+                            <ValidationMessage For="() => ownDesignConcept.Title" class="error-text" />
                         </div>
 
-                        <button type="submit" class="btn btn-primary">Add Comment</button>
-                    </EditForm>
+                        <div class="form-group">
+                            <label for="description">Description:</label>
+                            <InputText id="description" class="form-input" @bind-Value="ownDesignConcept.Description" />
+                            <ValidationMessage For="() => ownDesignConcept.Description" class="error-text" />
+                        </div>
 
+                        <button type="submit" class="btn-submit">Add</button>
+                    </EditForm>
+                </BodyTemplate>
+                <FooterTemplate>
+                    <Button Color="ButtonColor.Secondary" @onclick="HideModal">Close</Button>
+                </FooterTemplate>
+            </Modal>
+
+            <div class="design-concepts">
+                @if (designConcepts is not null)
+                {
+                    @foreach (var designconcept in designConcepts)
+                    {
+                        <RadzenCard class="concept-card">
+                            <dl class="concept-info">
+                                @if (designconcept.User is not null)
+                                {
+                                    <dt class="info-label">User</dt>
+                                    <dd class="info-value">@designconcept.User.UserName</dd>
+                                }
+                                <dt class="info-label">Title</dt>
+                                <dd class="info-value">@designconcept.Title</dd>
+                                <dt class="info-label">Description</dt>
+                                <dd class="info-value">@designconcept.Description</dd>
+                            </dl>
+
+                            @if (designconcept.DesignConceptComments is not null)
+                            {
+                                foreach (var designconceptcomment in designconcept.DesignConceptComments)
+                                {
+                                    <RadzenCard class="comment-card">
+                                        <dl class="comment-info">
+                                            @if (designconceptcomment.User is not null)
+                                            {
+                                                <dt class="info-label">User</dt>
+                                                <dd class="info-value">@designconceptcomment.User.UserName</dd>
+                                            }
+                                            <dt class="info-label">Description</dt>
+                                            <dd class="info-value">@designconceptcomment.Description</dd>
+                                        </dl>
+                                    </RadzenCard>
+                                }
+                            }
+                            <EditForm Model="newComment" OnValidSubmit="@(() => AddComment(designconcept.Id))">
+                                <DataAnnotationsValidator />
+                                <ValidationSummary class="error-text" />
+
+                                <div class="form-group">
+                                    <label for="commentDescription">Comment Description:</label>
+                                    <InputTextArea id="commentDescription" class="form-input" @bind-Value="newComment.Description" />
+                                </div>
+
+                                <button type="submit" class="btn-add-comment">Add Comment</button>
+                            </EditForm>
+                        </RadzenCard>
+                    }
                 }
-            }
-        </div>
-    }
+            </div>
+        }
+    </div>
 </div>
+
 
 @code {
     private HubConnection? hubConnection;
