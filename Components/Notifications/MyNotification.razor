@@ -22,12 +22,8 @@
     <PropertyColumn Property="notification => notification.CreationDate" />
     <PropertyColumn Property="notification => notification.NotificationType" />
     <PropertyColumn Property="notification => notification.Status" />
-
-    <TemplateColumn Context="notification">       
-        <a href="@($"notifications/details?id={notification.Id}")">Details</a> |
-    </TemplateColumn>
 </QuickGrid>
-
+<button @onclick="() => ClearNotifications()">Clear notifications</button>
 <h3>Invitations</h3>
 
 <QuickGrid Items="Invitations">
@@ -50,21 +46,30 @@
 
     protected async override Task OnInitializedAsync()
     {
-        NotificationList = await NotificationService.GetMyAllNotifications();
+        NotificationList = await NotificationService.GetMyNewNotifications();
         Notifications = NotificationList.AsQueryable();
 
         InvitationList = await InvitationService.GetNewInvitations();
         Invitations = InvitationList.AsQueryable();
     }
+    private async Task ClearNotifications()
+    {
+        foreach(var notification in NotificationList)
+        {
+            await NotificationService.NotificationDisplayed(notification);
+        }
+        NotificationList = await NotificationService.GetMyNewNotifications();
+        await InvokeAsync(StateHasChanged);
+    }
     private async void AcceptInvitation(int invitationId)
     {
         await InvitationService.AcceptInvitation(invitationId);
-        InvokeAsync(StateHasChanged);
+        await InvokeAsync(StateHasChanged);
     }
 
     private async void DeclineInvitation(int invitationId)
     {
         await InvitationService.DeclineInvitation(invitationId);
-        InvokeAsync(StateHasChanged);
+        await InvokeAsync(StateHasChanged);
     }
 }

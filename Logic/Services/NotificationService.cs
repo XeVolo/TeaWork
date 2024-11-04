@@ -91,9 +91,19 @@ namespace TeaWork.Logic.Services
                 throw new NotImplementedException();
             }
         }
-        public async Task NotificationDisplayed()
+        public async Task NotificationDisplayed(Notification notification)
         {
-
+            try
+            {
+                using var _context = _dbContextFactory.CreateDbContext();
+                notification.Status = NotificationonStatus.Seen;
+                _context.Attach(notification!).State = EntityState.Modified;
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new NotImplementedException();
+            }
         }
         public async Task<List<Notification>> GetMyNewNotifications()
         {

@@ -30,26 +30,12 @@ namespace TeaWork.Logic.Hubs
             await base.OnConnectedAsync();
         }
 
-
-        public async Task SendMessage(int messageId)
-        {
-            await Clients.All.SendAsync("ReceiveMessage", messageId);
-        }
-        public async Task SendGroupMessage(int messageId,string groupName)
-        {
-            await Clients.Group(groupName).SendAsync("ReceiveMessage", messageId);
-        }
-
-        public async Task SendMessageNotification(string senderId, string message)
-        {
-            await Clients.All.SendAsync("ReceiveMessageNotification", senderId, message);
-        }
+        public async Task SendGroupMessage(int messageId, string groupName)
+           => await Clients.Group(groupName).SendAsync("ReceiveMessage", messageId);
         public async Task SendGroupMessageNotification(string senderId, string message, string groupName)
-        {
-            await Clients.Group(groupName).SendAsync("ReceiveMessageNotification", senderId, message);
-        }
+           => await Clients.Group(groupName).SendAsync("ReceiveMessageNotification", senderId, message);
 
-        public async Task SendGroupDesignConcept(string groupName) 
+        public async Task SendGroupDesignConcept(string groupName)
             => await Clients.Group(groupName).SendAsync("ReceiveDesignConcept");
 
         public async Task SendGroupDesignConceptNotification(string title, string message, string groupName)
@@ -58,18 +44,16 @@ namespace TeaWork.Logic.Hubs
         public async Task SendGroupDesignConceptCommentNotification(string title, string message, string groupName)
             => await Clients.Group(groupName).SendAsync("ReceiveDesignConceptCommentNotification", title, message);
 
-
-
         public async Task SendGroupTask(string groupName)
             => await Clients.Group(groupName).SendAsync("ReceiveTask");
 
         public async Task SendGroupTaskNotification(string title, string message, string groupName)
             => await Clients.Group(groupName).SendAsync("ReceiveTaskNotification", title, message);
 
+        public async Task SendInvitationNotification(string title, string description, string groupName)
+           => await Clients.Group(groupName).SendAsync("ReceiveInvationNotification", title, description);
 
-        public async Task SendInvitationNotification(string title, string description)
-        {
-            await Clients.All.SendAsync("ReceiveInvationNotification", title, description);
-        }
+
+
     }
 }

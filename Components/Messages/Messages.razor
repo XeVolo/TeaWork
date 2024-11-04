@@ -30,7 +30,9 @@
         conversationsList = await ConversationService.GetMyConversations();
         foreach (var conversation in conversationsList)
         {
-            navItems.Add(new NavItem { Href = ($"messages/conversation?id={conversation.Id}"), IconName = IconName.Envelope, Text = conversation.Id.ToString() });
+            string name = conversation.Name ?? conversation.Id.ToString();
+            
+            navItems.Add(new NavItem { Href = ($"messages/conversation?id={conversation.Id}"), IconName = IconName.Envelope, Text = name });
         }
         navItems.Add(new NavItem { Href = ($"messages/newconversation"), IconName = IconName.Plus, Text = "New Conversation" });
         return navItems;

@@ -4,6 +4,8 @@
     {
         Message,
         Invitation,
-        Task
+        Task,
+        DesignConcept,
+        Comment
     }
 }

@@ -1,11 +1,13 @@
 ﻿@inherits LayoutComponentBase
 @using Microsoft.AspNetCore.SignalR.Client
 @using TeaWork.Logic.Services.Interfaces
+@using TeaWork.Logic.Dto
 @using TeaWork.Data.Models
 @inject NavigationManager NavigationManager
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject IUserService UserService
 @inject IProjectService ProjectService
+@inject INotificationService NotificationService
 @using Orientation = Radzen.Orientation;
 <RadzenComponents @rendermode="InteractiveServer" />
 
@@ -72,34 +74,74 @@
                     .Build();
 
                 await hubConnection.StartAsync();
-            
+
 
                 hubConnection.On<string, string>("ReceiveMessageNotification", (senderId, message) =>
                 {
                     ShowMessage(senderId, message);
+                    NotificationDto newNotification = new NotificationDto
+                    {
+                        UserId = currentUser,
+                        Title = senderId,
+                        Description = message,
+                        NotifiType = Data.Enums.NotificationType.Message
+                    };
+                    NotificationService.NewNotification(newNotification);
                     InvokeAsync(StateHasChanged);
                 });
 
                 hubConnection.On<string, string>("ReceiveInvationNotification", (title, description) =>
                 {
                     ShowMessage(title, description);
+                    NotificationDto newNotification = new NotificationDto
+                    {
+                        UserId = currentUser,
+                        Title = title,
+                        Description = description,
+                        NotifiType = Data.Enums.NotificationType.Invitation
+                    };
+                    NotificationService.NewNotification(newNotification);
                     InvokeAsync(StateHasChanged);
                 });
 
                 hubConnection.On<string, string>("ReceiveDesignConceptNotification", (title, message) =>
                 {
                     ShowMessage(title, message);
+                    NotificationDto newNotification = new NotificationDto
+                    {
+                        UserId = currentUser,
+                        Title = title,
+                        Description = message,
+                        NotifiType = Data.Enums.NotificationType.DesignConcept
+                    };
+                    NotificationService.NewNotification(newNotification);
                     InvokeAsync(StateHasChanged);
                 });
 
                 hubConnection.On<string, string>("ReceiveDesignConceptCommentNotification", (title, message) =>
                 {
                     ShowMessage(title, message);
+                    NotificationDto newNotification = new NotificationDto
+                    {
+                        UserId = currentUser,
+                        Title = title,
+                        Description = message,
+                        NotifiType = Data.Enums.NotificationType.Comment
+                    };
+                    NotificationService.NewNotification(newNotification);
                     InvokeAsync(StateHasChanged);
                 });
                 hubConnection.On<string, string>("ReceiveTaskNotification", (title, message) =>
                 {
                     ShowMessage(title, message);
+                    NotificationDto newNotification = new NotificationDto
+                    {
+                        UserId = currentUser,
+                        Title = title,
+                        Description = message,
+                        NotifiType = Data.Enums.NotificationType.Task
+                    };
+                    NotificationService.NewNotification(newNotification);
                     InvokeAsync(StateHasChanged);
                 });
                 

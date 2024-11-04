@@ -130,7 +130,7 @@
 
                     if (hubConnection is not null)
                     {
-                        await hubConnection.SendAsync("SendInvitationNotification", notif.Title, notif.Description);
+                        await hubConnection.SendAsync("SendInvitationNotification", notif.Title, notif.Description, userId);
                     }
                     }
                 }
