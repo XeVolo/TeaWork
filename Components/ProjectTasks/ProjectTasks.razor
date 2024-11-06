@@ -147,6 +147,8 @@
 
                             <div class="task-buttons">
                                 <button class="btn btn-primary" @onclick="() => ShowAssignModal(projectTask.Id)">Assign a task</button>
+                                <button class="btn btn-primary" @onclick="() => ShowPriorityModal(projectTask.Id)">Change priority</button>
+                                <button class="btn btn-primary" @onclick="() => ShowStateModal(projectTask.Id)">Change state</button>
                             </div>
                         </div>
                         </RadzenCard>
@@ -184,6 +186,58 @@
                             <Button Color="ButtonColor.Secondary" @onclick="HideAssignModal">Close</Button>
                         </FooterTemplate>
                     </Modal>
+
+            <Modal @ref="priorityModal" Title="Change Priority">
+                <BodyTemplate>
+                    <EditForm Model="newPriority" OnValidSubmit="@(() => ChangePriorityTask(selectedProjectTaskId))">
+                        <DataAnnotationsValidator />
+                        <ValidationSummary class="text-danger" />
+
+                        <div class="form-group">
+                            <label for="priority">Priority:</label>
+                            <InputSelect id="priority" class="form-control" @bind-Value="newPriority">
+                                <option value="">-- Change priority --</option>
+                                
+                                    @foreach (TaskPriority priority in Enum.GetValues(typeof(TaskPriority)))
+                                    {
+                                        <option value="@priority">@priority</option>
+                                    }
+                                
+                            </InputSelect>
+                        </div>
+                        <button type="submit" class="btn btn-success">Change</button>
+                    </EditForm>
+                </BodyTemplate>
+                <FooterTemplate>
+                    <Button Color="ButtonColor.Secondary" @onclick="HidePriorityModal">Close</Button>
+                </FooterTemplate>
+            </Modal>
+
+            <Modal @ref="stateModal" Title="Change State">
+                <BodyTemplate>
+                    <EditForm Model="newState" OnValidSubmit="@(() => ChangeStateTask(selectedProjectTaskId))">
+                        <DataAnnotationsValidator />
+                        <ValidationSummary class="text-danger" />
+
+                        <div class="form-group">
+                            <label for="state">State:</label>
+                            <InputSelect id="state" class="form-control" @bind-Value="newState">
+                                <option value="">-- Change state --</option>
+
+                                @foreach (TaskState state in Enum.GetValues(typeof(TaskState)))
+                                {
+                                    <option value="@state">@state</option>
+                                }
+
+                            </InputSelect>
+                        </div>
+                        <button type="submit" class="btn btn-success">Change</button>
+                    </EditForm>
+                </BodyTemplate>
+                <FooterTemplate>
+                    <Button Color="ButtonColor.Secondary" @onclick="HideStateModal">Close</Button>
+                </FooterTemplate>
+            </Modal>
                 
             
         
@@ -197,8 +251,12 @@
     private List<ProjectTask>? projectTasks;
     private Modal modal = default!;
     private Modal assignModal = default!;
+    private Modal priorityModal = default!;
+    private Modal stateModal = default!;
     private ProjectTaskAddDto newProjectTask = new ProjectTaskAddDto();
     private UserDto newUser = new UserDto();
+    private TaskPriority newPriority = new TaskPriority();
+    private TaskState newState = new TaskState();
     private int selectedProjectTaskId;
     private string? currentUser;
 
@@ -296,6 +354,40 @@
             await InvokeAsync(StateHasChanged);
         }
     }
+    public async Task ChangePriorityTask(int projectTaskId)
+    {
+        
+            await ProjectTaskService.ChangePriorityTask(projectTaskId, newPriority);
+            project = await ProjectService.GetProjectById(Id);
+            projectTasks = await ProjectTaskService.GetProjectTasks(Id);
+
+            if (hubConnection is not null)
+            {
+                //await hubConnection.SendAsync("SendGroupTask", project.ProjectConversationId.ToString());
+            }
+
+            newPriority = new TaskPriority();
+            await HidePriorityModal();
+            await InvokeAsync(StateHasChanged);
+        
+    }
+    public async Task ChangeStateTask(int projectTaskId)
+    {
+
+        await ProjectTaskService.ChangeStateTask(projectTaskId, newState);
+        project = await ProjectService.GetProjectById(Id);
+        projectTasks = await ProjectTaskService.GetProjectTasks(Id);
+
+        if (hubConnection is not null)
+        {
+            //await hubConnection.SendAsync("SendGroupTask", project.ProjectConversationId.ToString());
+        }
+
+        newState = new TaskState();
+        await HideStateModal();
+        await InvokeAsync(StateHasChanged);
+
+    }
     private async Task ShowModal()
     {
         await modal.ShowAsync();
@@ -310,11 +402,30 @@
         selectedProjectTaskId = taskId;
         await assignModal.ShowAsync();
     }
+    private async Task ShowPriorityModal(int taskId)
+    {
+        selectedProjectTaskId = taskId;
+        await priorityModal.ShowAsync();
+    }
+    private async Task ShowStateModal(int taskId)
+    {
+        selectedProjectTaskId = taskId;
+        await stateModal.ShowAsync();
+    }
 
     private async Task HideAssignModal()
     {
         await assignModal.HideAsync();
     }
+    private async Task HidePriorityModal()
+    {
+        await priorityModal.HideAsync();
+    }
+    private async Task HideStateModal()
+    {
+        await stateModal.HideAsync();
+    }
+
     public async ValueTask DisposeAsync()
     {
         if (hubConnection is not null)

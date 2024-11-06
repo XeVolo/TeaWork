@@ -5,6 +5,9 @@ using TeaWork.Logic.Dto;
 using TeaWork.Logic.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using TeaWork.Logic.DbContextFactory;
+using TeaWork.Data.Enums;
+using System.Threading.Tasks;
+using TeaWork.Components.Notifications;
 
 namespace TeaWork.Logic.Services
 {
@@ -164,6 +167,42 @@ namespace TeaWork.Logic.Services
                     IsDeleted = false,
                 };
                 _context.TaskComments.Add(taskComment);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new NotImplementedException();
+            }
+        }
+        public async Task ChangePriorityTask(int projectTaskId, TaskPriority priority)
+        {
+            try
+            {
+                using var _context = _dbContextFactory.CreateDbContext();
+                var projecttask = await _context.ProjectTasks.FirstOrDefaultAsync(x => x.Id == projectTaskId);
+                if (projecttask != null)
+                {
+                    projecttask.Priority = priority;
+                    _context.Attach(projecttask).State = EntityState.Modified;
+                }
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new NotImplementedException();
+            }
+        }
+        public async Task ChangeStateTask(int projectTaskId, TaskState state)
+        {
+            try
+            {
+                using var _context = _dbContextFactory.CreateDbContext();
+                var projecttask = await _context.ProjectTasks.FirstOrDefaultAsync(x => x.Id == projectTaskId);
+                if (projecttask != null)
+                {
+                    projecttask.State = state;
+                    _context.Attach(projecttask).State = EntityState.Modified;
+                }
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)

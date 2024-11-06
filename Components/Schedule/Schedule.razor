@@ -15,8 +15,7 @@
 @attribute [Authorize]
 
 <RadzenScheduler @ref=@scheduler SlotRender=@OnSlotRender style="height: 768px;" TItem="Appointment" Data=@appointments StartProperty="Start" EndProperty="End"
-    TextProperty="Text" SelectedIndex="2"
-    >
+                 TextProperty="Text" SelectedIndex="2" AppointmentRender=@OnAppointmentRender>
     <RadzenDayView />
     <RadzenWeekView />
     <RadzenMonthView />
@@ -322,7 +321,6 @@
 
     void OnAppointmentRender(SchedulerAppointmentRenderEventArgs<Appointment> args)
     {
-        // Never call StateHasChanged in AppointmentRender - would lead to infinite loop
 
         if (args.Data.Text == "Deadline")
         {
