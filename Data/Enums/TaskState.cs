@@ -2,7 +2,7 @@
 {
     public enum TaskState
     {
-        Running,
+        NotStarted,
         InProgress,
         Finished
     }

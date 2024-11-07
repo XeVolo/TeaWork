@@ -27,8 +27,8 @@
         <div class="row">
 
             <div class="col-md-4 task-column running-column">
-                <h3 class="task-header">Running</h3>
-                @foreach (var projectTask in projectTasks.Where(t => t.State == TaskState.Running))
+                <h3 class="task-header">Not Started</h3>
+                @foreach (var projectTask in projectTasks.Where(t => t.State == TaskState.NotStarted))
                 {
                     <RadzenCard class="task-card">
                         <dl class="task-info">

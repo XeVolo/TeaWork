@@ -63,6 +63,7 @@ namespace TeaWork.Logic.Services
                 var projecttaks = await _context.ProjectTasks
                     .Where(x => x.ToDoListId == project.ToDoListId)
                     .Include(x => x.TaskComments)
+                        .ThenInclude(y => y.User)
                     .Include(x => x.TasksDistributions)
                         .ThenInclude(y => y.User)
                     .ToListAsync();
