@@ -9,6 +9,7 @@
 @using Microsoft.EntityFrameworkCore
 @inject IConversationService ConversationService
 @inject IUserService UserService
+@inject IJSRuntime JS
 @implements IAsyncDisposable
 @attribute [StreamRendering]
 @inject AuthenticationStateProvider AuthenticationStateProvider
@@ -40,13 +41,13 @@
                 {
                     @if (messages != null)
                     {
-                        <div class="message-list">
+                        <div id="messageList" class="message-list">
                             @foreach (var mess in messages)
                             {
                                 <div class="message @(mess.Sender.Id == currentUser ? "my-message" : "other-message")">
                                     <div class="message-sender">@mess.Sender.Email</div>
                                     <div class="message-content">@mess.Content</div>
-                                </div>
+                                </div>                                                            
                             }
                         </div>
                     }
@@ -66,11 +67,22 @@
         </div>
     </div>
 </div>
+<script>
+    window.scrollToBottom = function (elementId) {
+        const element = document.getElementById(elementId);
+        if (element) {
+            element.scrollTop = element.scrollHeight;
+        } else {
+            console.log("Nie znaleziono elementu: " + elementId);
+        }
+    };
+</script>
 
 @code {
     private Conversation? conversation;
     private string? conversationName;
     private string? currentUser;
+    private bool _shouldScrollToBottom;
 
     [SupplyParameterFromQuery]
     public int Id { get; set; }
@@ -78,7 +90,14 @@
     private HubConnection? hubConnection;
     private List<Message> messages = new List<Message>();
     private string? newMessage;
-
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (_shouldScrollToBottom)
+        {
+            _shouldScrollToBottom = false;
+            await ScrollToBottom();
+        }
+    }
     protected override async Task OnInitializedAsync()
     {
         currentUser = await UserService.GetLoggedUserId();
@@ -94,6 +113,7 @@
                     conversation = await ConversationService.GetConversationById(Id);
                     conversationName = await ConversationService.GetConversationName(Id);
                     messages = await ConversationService.GetMessegesByConversation(Id);
+                    _shouldScrollToBottom = true;
                     await InvokeAsync(StateHasChanged);
                 });
             await hubConnection.StartAsync();
@@ -111,6 +131,7 @@
             {
                 NavigationManager.NavigateTo("/messages");
             }
+            _shouldScrollToBottom = true;
         }
         catch (Exception ex)
         {
@@ -139,6 +160,10 @@
         {            
             Console.WriteLine($"ERROR: {ex.Message}");
         }
+    }
+    private async Task ScrollToBottom()
+    {
+        await JS.InvokeVoidAsync("scrollToBottom", "messageList");
     }
     public async ValueTask DisposeAsync()
     {
