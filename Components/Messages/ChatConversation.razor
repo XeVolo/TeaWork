@@ -29,7 +29,7 @@
             <h1>Conversation</h1>
 
             <div class="conversation-section">
-                <h4>Conversation</h4>
+                <h4>@conversationName</h4>
                 <hr />
 
                 @if (conversation is null)
@@ -38,8 +38,6 @@
                 }
                 else
                 {
-                    <h5>Conversation ID: @conversation.Id</h5>
-
                     @if (messages != null)
                     {
                         <div class="message-list">
@@ -70,8 +68,9 @@
 </div>
 
 @code {
-    Conversation? conversation;
-    private string currentUser;
+    private Conversation? conversation;
+    private string? conversationName;
+    private string? currentUser;
 
     [SupplyParameterFromQuery]
     public int Id { get; set; }
@@ -93,6 +92,7 @@
             hubConnection.On<int>("ReceiveMessage", async (messageId) =>
                 {                    
                     conversation = await ConversationService.GetConversationById(Id);
+                    conversationName = await ConversationService.GetConversationName(Id);
                     messages = await ConversationService.GetMessegesByConversation(Id);
                     await InvokeAsync(StateHasChanged);
                 });
@@ -105,6 +105,7 @@
         try
         {
             conversation = await ConversationService.GetConversationById(Id);
+            conversationName = await ConversationService.GetConversationName(Id);
             messages = await ConversationService.GetMessegesByConversation(Id);
             if (conversation == null)
             {

@@ -174,6 +174,48 @@ namespace TeaWork.Logic.Services
                 throw new NotImplementedException();
             }
         }
+        public async Task<string> GetConversationName(int conversationId)
+        {
+            try
+            {               
+                using var _context = _dbContextFactory.CreateDbContext();
+                ApplicationUser currentUser = await _userIdentity.GetLoggedUser();
+                var conversation = await _context.Conversations
+                    .Include(x=>x.ConversationMembers)
+                    .FirstOrDefaultAsync(x => x.Id == conversationId); ;
+                if (conversation != null)
+                {
+                    if (conversation.ConversationType.Equals(ConversationType.GroupChat))
+                    {
+                        string name = conversation.Name ?? conversation.Id.ToString();
+                        return name;
+                    }
+                    else
+                    {
+                        if (conversation.ConversationMembers != null)
+                        {                           
+                            foreach (var member in conversation.ConversationMembers)
+                            {
+                                if (!member.UserId!.Equals(currentUser.Id))
+                                {
+                                    var name= await _context.Users
+                                            .Where(x => x.Id.Equals(member.UserId))
+                                            .Select(x => x.Email)
+                                            .FirstOrDefaultAsync();
+                                    return name!;
+                                }
+                            }
+                            
+                        }
+                    }
+                }
+                return conversationId.ToString();
+            }
+            catch (Exception ex)
+            {
+                throw new NotImplementedException();
+            }
+        }
 
     }
 }

@@ -42,7 +42,7 @@
                         <Template Context="conversation">
                             <RadzenCard Variant="Variant.Outlined" class="rz-p-0" Style="width: 100%; overflow: hidden; margin-bottom: 10px;">
                                 <RadzenColumn Size="12" class="rz-p-4 product-title">
-                                    <RadzenText TextStyle="TextStyle.H6" TagName="TagName.H5" class=".rz-color-black">@conversation.Id</RadzenText>
+                                    <RadzenText TextStyle="TextStyle.H6" TagName="TagName.H5" class=".rz-color-black">@conversation.Name</RadzenText>
                                 </RadzenColumn>
                                 <RadzenColumn Size="12" class="rz-p-4">
                                     <RadzenButton Text="Conversation" Click="() => NavigateToConversation(conversation.Id)" Style="width: 100%; background-color: #007bff; color: white;" />
@@ -130,10 +130,13 @@
         {
             myProjects = await ProjectService.GetMyProjects();
             myConversations = await ConversationService.GetMyConversations();
+            foreach(var conversation in myConversations)
+            {
+                conversation.Name = await ConversationService.GetConversationName(conversation.Id);
+            }
             myTasks = await ProjectTaskService.GetMyProjectTasks();
         }
     }
-
     private void NavigateToRegistration()
     {
         NavigationManager.NavigateTo("/Account/Register");
