@@ -2,6 +2,7 @@
 @using TeaWork.Data.Models
 @using TeaWork.Logic.Services.Interfaces
 @using Microsoft.AspNetCore.SignalR.Client
+@using TeaWork.Data.Enums
 @inject NavigationManager NavigationManager
 @inject IProjectService ProjectService
 @inject IUserService UserService
@@ -43,15 +44,21 @@
             <h3>Project members</h3>
             @foreach(ProjectMember member in projectMembers)
             {
-                if (member.User != null)
+                <RadzenCard Style="width: 30%; margin: 5px; padding: 20px; text-align: center; background-color: #f9f9f9;">
+                @if (member.User != null)
                 {
                     <dt class="col-sm-2">User</dt>                
                     <dd class="col-sm-10">@member.User.UserName</dd>
-
+                    
                     <dt class="col-sm-2">Role</dt>
                     <dd class="col-sm-10">@member.Role</dd>
-                }
 
+                    @if (!member.Role.Equals(ProjectMemberRole.Admin))
+                    {
+                        <dd><RadzenButton Text="Delete User" Click="() => DeleteUser(member.UserId!)" Style="background-color: #007bff; color: white;" /></dd>
+                    }
+                }
+                </RadzenCard>
             }
             }
         </dl>
@@ -69,12 +76,20 @@
 
         <button @onclick="FindUser">Send</button>
 
-        <Modal @ref="modal" Title="Uwaga!">
+        <Modal @ref="modalFailure" Title="Uwaga!">
             <BodyTemplate>
                 Nie znaleziono użytkownika z podanym adresem.
             </BodyTemplate>
             <FooterTemplate>
                 <Button Color="ButtonColor.Secondary" @onclick="HideModal">Close</Button>
+            </FooterTemplate>
+        </Modal>
+        <Modal @ref="modalSuccess" Title="Uwaga!">
+            <BodyTemplate>
+                Wysłano zaproszenie
+            </BodyTemplate>
+            <FooterTemplate>
+                <Button Color="ButtonColor.Secondary" @onclick="HideSuccessModal">Close</Button>
             </FooterTemplate>
         </Modal>
     }
@@ -85,7 +100,8 @@
     private Project? project;
     private List<ProjectMember>? projectMembers;
     private string? userInput;
-    private Modal modal = default!;
+    private Modal modalFailure = default!;
+    private Modal modalSuccess = default!;
     private string? currentUser;
 
     [SupplyParameterFromQuery]
@@ -125,18 +141,19 @@
                 {
                     if(await InvitationService.IsInvitationExist(userId,Id)==false)
                     {
-                    await InvitationService.SendInvitation(userId, Id);
-                    Notification notif = await NotificationService.NewInvitation(userId, Id);
+                        await InvitationService.SendInvitation(userId, Id);
+                        Notification notif = await NotificationService.NewInvitation(userId, Id);
 
-                    if (hubConnection is not null)
-                    {
-                        await hubConnection.SendAsync("SendInvitationNotification", notif.Title, notif.Description, userId);
-                    }
+                        if (hubConnection is not null)
+                        {
+                            await hubConnection.SendAsync("SendInvitationNotification", notif.Title, notif.Description, userId);
+                        }
+                        userInput = "";
+                        await ShowSuccessModal();
                     }
                 }
                 else
                 {
-                    userInput = "";
                     await ShowModal();
                 }
             }
@@ -145,17 +162,38 @@
         {
             Console.WriteLine($"ERROR: {ex.Message}");
         }
-
-
+    }
+    private async Task DeleteUser(string userId)
+    {
+        try
+        {
+            await ProjectService.DeleteUserFromProject(userId, Id);
+            project = await ProjectService.GetProjectById(Id);
+            projectMembers = project.ProjectMembers;
+            await InvokeAsync(StateHasChanged);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"ERROR: {ex.Message}");
+        }
     }
     private async Task ShowModal()
     {
-        await modal.ShowAsync();
+        await modalFailure.ShowAsync();
     }
 
     private async Task HideModal()
     {
-        await modal.HideAsync();
+        await modalFailure.HideAsync();
+    }
+    private async Task ShowSuccessModal()
+    {
+        await modalSuccess.ShowAsync();
+    }
+
+    private async Task HideSuccessModal()
+    {
+        await modalSuccess.HideAsync();
     }
     public async ValueTask DisposeAsync()
     {

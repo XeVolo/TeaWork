@@ -6,6 +6,8 @@ using TeaWork.Data;
 using TeaWork.Logic.Dto;
 using TeaWork.Logic.Services.Interfaces;
 using TeaWork.Logic.DbContextFactory;
+using System.Data;
+using System.Linq.Dynamic.Core;
 
 namespace TeaWork.Logic.Services
 {
@@ -145,6 +147,72 @@ namespace TeaWork.Logic.Services
                 ProjectMember projectMember = new ProjectMember { UserId = user.Id, ProjectId = project.Id, Role = role };
             _context.ProjectMembers.Add(projectMember);
             await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public async Task DeleteUserFromProject(string userId, int projectId)
+        {
+            try
+            {
+                using var _context = _dbContextFactory.CreateDbContext();
+
+                var project = await _context.Projects.FirstOrDefaultAsync(m => m.Id == projectId);
+                if (project != null)
+                {
+                    var conversationMember = await _context.ConversationMembers
+                        .Where(x => x.UserId.Equals(userId))
+                        .Where(x => x.ConversationId == project.ProjectConversationId)
+                        .FirstOrDefaultAsync();
+                    if (conversationMember != null)
+                    {
+                        _context.ConversationMembers.Remove(conversationMember);
+                        await _context.SaveChangesAsync();
+                    }
+                    var projectMember = await _context.ProjectMembers
+                        .Where(x => x.UserId.Equals(userId))
+                        .Where(x => x.ProjectId == project.Id)
+                        .FirstOrDefaultAsync();
+                    if (projectMember != null) 
+                    { 
+                        _context.ProjectMembers.Remove(projectMember);
+                        await _context.SaveChangesAsync();
+                    }
+                    var projectTasks = await _context.ProjectTasks
+                        .Where(x => x.ToDoListId == project.ToDoListId)
+                        .Include(x =>x.TasksDistributions)
+                        .ToListAsync();
+                    List<TaskDistribution> taskDistributions = new List<TaskDistribution>();
+                    foreach (var task in projectTasks)
+                    {
+                        if (task.TasksDistributions != null)
+                        {
+                            foreach (var taskDistribution in task.TasksDistributions)
+                            {
+                                if (taskDistribution.UserId.Equals(userId))
+                                {
+                                    taskDistributions.Add(taskDistribution);
+                                }
+                            }
+                        }
+                    }
+                    foreach(var task in taskDistributions)
+                    {
+                        _context.TaskDistributions.Remove(task);
+                        await _context.SaveChangesAsync();
+                    }
+
+                    var invitation =await _context.Invitations
+                        .Where(x => x.UserId.Equals(userId))
+                        .Where(x => x.ProjectId == project.Id)
+                        .FirstOrDefaultAsync();
+                    _context.Invitations.Remove(invitation);
+                    await _context.SaveChangesAsync();
+
+                }
             }
             catch (Exception ex)
             {

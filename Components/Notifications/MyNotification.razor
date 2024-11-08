@@ -59,17 +59,28 @@
             await NotificationService.NotificationDisplayed(notification);
         }
         NotificationList = await NotificationService.GetMyNewNotifications();
+        Notifications = NotificationList.AsQueryable();
         await InvokeAsync(StateHasChanged);
     }
     private async void AcceptInvitation(int invitationId)
     {
         await InvitationService.AcceptInvitation(invitationId);
+        NotificationList = await NotificationService.GetMyNewNotifications();
+        Notifications = NotificationList.AsQueryable();
+
+        InvitationList = await InvitationService.GetNewInvitations();
+        Invitations = InvitationList.AsQueryable();
         await InvokeAsync(StateHasChanged);
     }
 
     private async void DeclineInvitation(int invitationId)
     {
         await InvitationService.DeclineInvitation(invitationId);
+        NotificationList = await NotificationService.GetMyNewNotifications();
+        Notifications = NotificationList.AsQueryable();
+
+        InvitationList = await InvitationService.GetNewInvitations();
+        Invitations = InvitationList.AsQueryable();
         await InvokeAsync(StateHasChanged);
     }
 }
