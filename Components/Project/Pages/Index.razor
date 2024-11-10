@@ -3,44 +3,105 @@
 @using TeaWork.Data.Models
 @using TeaWork.Logic.Services.Interfaces
 @using Microsoft.AspNetCore.Authorization
+@using TeaWork.Logic.Dto
 @inject IProjectService ProjectService
 @inject NavigationManager NavigationManager
 @attribute [Authorize]
 @inherits LayoutComponentBase
 
+<PageTitle>Projects</PageTitle>
+<RadzenButton id="RadzenButton" Text="Create New Project" Click="() => ShowModal()" Style="width: 100%;" />
+<h1> Your Projects:</h1>
+<div class="projects-container">
+    @if (Projects is not null && Projects.Any())
+    {
+        @foreach (var project in Projects)
+        {
+            <RadzenCard class="project-card rz-my-12 rz-px-4 rz-py-4">
+                <h3>@project.Title</h3>
 
-<PageTitle>Index</PageTitle>
+                <dl class="row">
+                    <dt class="col-sm-4">Start Date</dt>
+                    <dd class="col-sm-8">@project.StartDate.ToString("yyyy-MM-dd")</dd>
 
-<h1>Index</h1>
+                    <dt class="col-sm-4">Deadline</dt>
+                    <dd class="col-sm-8">@project.Deadline.ToString("yyyy-MM-dd")</dd>
 
-<p>
-    <a href="projects/create">Create New</a>
-</p>
+                    <dt class="col-sm-4">Description</dt>
+                    <dd class="col-sm-8">@project.Description</dd>
+                </dl>
 
-<QuickGrid 
-    Items="Projects">
-    <PropertyColumn Property="project => project.Title" />
-    <PropertyColumn Property="project => project.StartDate" />
-    <PropertyColumn Property="project => project.Deadline" />
-    <PropertyColumn Property="project => project.Description" />
-
-    <TemplateColumn Context="project">
-        <a href="@($"projects/edit?id={project.Id}")">Edit</a> |
-        <a href="@($"projects/details?id={project.Id}")">Details</a> |
-        <a href="@($"projects/designconcept?id={project.Id}")">Design Concept</a> |
-        <a href="@($"projects/tasks?id={project.Id}")">To Do List</a> |
-        <a href="@($"projects/schedule?id={project.Id}")">Schedule</a> |
-        <a href="@($"projects/delete?id={project.Id}")">Delete</a>
-    </TemplateColumn>
-</QuickGrid>
+                <div class="action-links">
+                    <a href="@($"projects/details?id={project.Id}")" class="btn btn-link">Details</a>
+                    <a href="@($"projects/designconcept?id={project.Id}")" class="btn btn-link">Design Concept</a>
+                    <a href="@($"projects/tasks?id={project.Id}")" class="btn btn-link">To Do List</a>
+                    <a href="@($"projects/schedule?id={project.Id}")" class="btn btn-link">Schedule</a>
+                </div>
+            </RadzenCard>
+        }
+    }
+    else
+    {
+        <p>No projects available.</p>
+    }
+    <Modal @ref="modal" Title="Create task">
+        <BodyTemplate>
+            <EditForm Model="project" OnValidSubmit="AddProject">
+                <DataAnnotationsValidator />
+                <ValidationSummary class="text-danger" />
+                <div class="mb-3">
+                    <label for="title" class="form-label">Title:</label>
+                    <InputText id="title" @bind-Value="project.Title" class="form-control" />
+                    <ValidationMessage For="() => project.Title" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="deadline" class="form-label">Deadline:</label>
+                    <RadzenDatePicker TValue="DateTime?" Value=@project.Deadline Change="@(args => project.Deadline = args)" Name="RadzenDatePickerChangeEvent" />
+                    <ValidationMessage For="() => project.Deadline" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="description" class="form-label">Description:</label>
+                    <InputTextArea id="description" @bind-Value="project.Description" class="form-control" />
+                    <ValidationMessage For="() => project.Description" class="text-danger" />
+                </div>
+                <button type="submit" class="btn btn-primary">Create</button>
+            </EditForm>
+        </BodyTemplate>
+        <FooterTemplate>
+            <Button Color="ButtonColor.Secondary" @onclick="HideModal">Close</Button>
+        </FooterTemplate>
+    </Modal>
+</div>
 
 @code{
+    private Modal modal = default!;
+    private List<Project> Projects= new List<Project>();
+    public ProjectAddDto project = new ProjectAddDto();
 
-    private List<Project> ProjectsList= new List<Project>();
-    IQueryable<Project>? Projects;
     protected async override Task OnInitializedAsync()
     {
-        ProjectsList = await ProjectService.GetMyProjects() ;
-        Projects = ProjectsList.AsQueryable();
+        project.Deadline = DateTime.Now;
+        Projects = await ProjectService.GetMyProjects();
+    }
+    public async Task AddProject()
+    {
+        if (project != null)
+        {
+            await ProjectService.Add(project);
+
+            project = new ProjectAddDto();
+            await HideModal();
+            Projects = await ProjectService.GetMyProjects();
+            await InvokeAsync(StateHasChanged);
+        }
+    }
+    private async Task ShowModal()
+    {
+        await modal.ShowAsync();
+    }
+
+    private async Task HideModal()
+    {
+        await modal.HideAsync();
     }
 }

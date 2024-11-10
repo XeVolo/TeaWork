@@ -35,12 +35,7 @@
                 <dt class="info-label">Description</dt>
                 <dd class="info-value">@project.Description</dd>
             </dl>
-            <div class="navigation-links">
-                <a href="@($"/projects/edit?id={project.Id}")">Edit</a> |
-                <a href="@($"/projects")">Back to List</a>
-            </div>
-
-            <button class="btn-add-concept" @onclick="ShowModal">Add Design Concept</button>
+            <RadzenButton id="RadzenButton" Text="Add design concept" Click="() => ShowModal()" Style="width: 100%;" />
 
             <Modal @ref="modal" Title="Add Design Concept">
                 <BodyTemplate>
@@ -56,7 +51,7 @@
 
                         <div class="form-group">
                             <label for="description">Description:</label>
-                            <InputText id="description" class="form-input" @bind-Value="ownDesignConcept.Description" />
+                            <InputTextArea id="description" class="form-input" @bind-Value="ownDesignConcept.Description" />
                             <ValidationMessage For="() => ownDesignConcept.Description" class="error-text" />
                         </div>
 
