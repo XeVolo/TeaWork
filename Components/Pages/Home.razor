@@ -26,7 +26,7 @@
                                     <RadzenText TextStyle="TextStyle.H6" TagName="TagName.H5" class=".rz-color-black">@project.Title</RadzenText>
                                 </RadzenColumn>
                                 <RadzenColumn Size="12" class="rz-p-4">
-                                    <RadzenButton Text="Project Panel" Click="() => NavigateToProject(project.Id)" Style="width: 100%; background-color: #007bff; color: white;" />
+                                    <RadzenButton id="RadzenButton" Text="Project Panel" Click="() => NavigateToProject(project.Id)" Style="width: 100%;" />
                                 </RadzenColumn>
                             </RadzenCard>
                         </Template>
@@ -45,7 +45,7 @@
                                     <RadzenText TextStyle="TextStyle.H6" TagName="TagName.H5" class=".rz-color-black">@conversation.Name</RadzenText>
                                 </RadzenColumn>
                                 <RadzenColumn Size="12" class="rz-p-4">
-                                    <RadzenButton Text="Conversation" Click="() => NavigateToConversation(conversation.Id)" Style="width: 100%; background-color: #007bff; color: white;" />
+                                    <RadzenButton id="RadzenButton" Text="Conversation" Click="() => NavigateToConversation(conversation.Id)" Style="width: 100%;" />
                                 </RadzenColumn>
                             </RadzenCard>
                         </Template>
@@ -64,7 +64,7 @@
                                     <RadzenText TextStyle="TextStyle.H6" TagName="TagName.H5" class=".rz-color-black">@projectTask.Title</RadzenText>
                                 </RadzenColumn>
                                 <RadzenColumn Size="12" class="rz-p-4">
-                                    <RadzenButton Text="Details" Click="() => NavigateToProjectTask(projectTask.Id)" Style="width: 100%; background-color: #007bff; color: white;" />
+                                    <RadzenButton id="RadzenButton" Text="Details" Click="() => NavigateToProjectTask(projectTask.Id)" Style="width: 100%;" />
                                 </RadzenColumn>
                             </RadzenCard>
                         </Template>
