@@ -9,6 +9,7 @@
 @inject INotificationService NotificationService
 @inject IDesignConceptService DesignConceptService
 @inject IBlobStorageService BlobStorageService
+@inject IJSRuntime JS
 @using Microsoft.AspNetCore.Authorization
 @attribute [Authorize]
 
@@ -57,9 +58,11 @@
                         <td>
                             <a class="text-primary"><i class="fa-solid fa-paperclip"></i> @attachment.FileName</a>
                         </td>
-
                         <td>
-                            <button class="oi oi-delete" aria-hidden="true" @onclick="() => OnFileDeleteClick(attachment)"></button>
+                            <button class="btn btn-primary" @onclick="() => OnFileDownloadClick(attachment)">Download</button>
+                        </td>
+                        <td>
+                            <button class="oi oi-delete" aria-hidden="true" @onclick="() => OnFileDeleteClick(attachment)">Delete</button>
                         </td>
                     </tr>
                 }
@@ -73,6 +76,10 @@
         </div>
     }
 </div>
+
+<script>
+    
+</script>
 
 @code {
     private string warninngMessage = "";
@@ -143,5 +150,15 @@
         }
         this.StateHasChanged();
     }
-
+    private async Task OnFileDownloadClick(FileUploadViewModel attachment)
+    {
+        try
+        {
+            
+        }
+        catch (Exception ex)
+        {
+            warninngMessage = $"Failed to initiate file download: {ex.Message}";
+        }
+    }
 }

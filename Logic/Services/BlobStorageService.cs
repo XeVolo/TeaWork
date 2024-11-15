@@ -59,5 +59,35 @@ namespace TeaWork.Logic.Services
                 throw;
             }
         }
+        public async Task<(Stream FileStream, string ContentType)> DownloadFileFromBlobAsync(string fileName)
+        {
+            try
+            {
+                var container = new BlobContainerClient(_blobStorageConnection, _blobContainerName);
+                var blob = container.GetBlobClient(fileName);
+
+                if (await blob.ExistsAsync())
+                {
+                    var memoryStream = new MemoryStream();
+                    var properties = await blob.GetPropertiesAsync();
+                    var contentType = properties.Value.ContentType;
+
+                    await blob.DownloadToAsync(memoryStream);
+                    memoryStream.Position = 0;
+
+                    return (memoryStream, contentType ?? "application/octet-stream");
+                }
+                else
+                {
+                    throw new FileNotFoundException($"File '{fileName}' not found in blob storage.");
+                }
+            }
+            catch (Exception ex)
+            {
+                //_logger?.LogError(ex.ToString());
+                throw;
+            }
+        }
+        
     }
 }
