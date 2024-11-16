@@ -16,7 +16,7 @@
 
 <PageTitle>Files</PageTitle>
 
-<h4>File Upload (Azure Blob Storage)</h4>
+<h4>Project Files </h4>
 <div class="row">
     <div class="col-sm-6">
         <label>
@@ -28,9 +28,7 @@
         }
     </div>
     <div class="col-sm-2">
-        <button type="button" disabled="@fileLoading" class="btn btn-primary" @onclick="OnUploadSubmit">
-            Upload File
-        </button>
+        <RadzenButton Text="Upload File" Disabled="@fileLoading" Click="OnUploadSubmit" Style="width: 70%" />
     </div>
 </div>
 @if (displayMessage.Length > 0)
@@ -42,33 +40,42 @@
 <br />
 <div class="row">
     @if (projectFiles.Count > 0)
-    {
-        <table class="table table-responsive table-bordered">
-            <thead class="text-primary">
-                <tr>
-                    <th>File</th>
-                    <th>Download</th>
-                    <th>Delete</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var attachment in projectFiles)
-                {
-
-                    <tr>
-                        <td>
-                             @attachment.FileName
-                        </td>
-                        <td>
-                            <button class="btn btn-primary" @onclick="() => OnFileDownloadClick(attachment)">Download</button>
-                        </td>
-                        <td>
-                            <button class="oi oi-delete" aria-hidden="true" @onclick="() => OnFileDeleteClick(attachment)">Delete</button>
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
+    {     
+        <RadzenDataList AllowVirtualization="true" Style="height:400px;"
+                        AllowPaging="true" Data="@projectFiles" TItem="ProjectFile" PageSize="5" 
+                        PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true" >
+            <Template Context="projectFile">
+                <RadzenCard Variant="Variant.Outlined" class="rz-p-0" Style="width: 100%; overflow: hidden;">
+                    <RadzenRow Gap="0">
+                        <RadzenColumn Size="12" SizeLG="2" class="rz-p-4 product-title">
+                            <RadzenText TextStyle="TextStyle.H6" TagName="TagName.H5" class="rz-color-on-secondary-lighter">@(projectFile.FileName)</RadzenText>
+                        </RadzenColumn>
+                        <RadzenColumn Size="12" SizeLG="6" class="rz-p-4">
+                            <RadzenRow Gap="0">
+                                <RadzenColumn Size="12" SizeMD="6" SizeLG="2">
+                                    <RadzenText TextStyle="TextStyle.H6" TagName="TagName.H5" class="rz-mb-0">Size</RadzenText>
+                                    <RadzenText TextStyle="TextStyle.Body2">@(projectFile.FileSize)</RadzenText>
+                                </RadzenColumn>
+                                <RadzenColumn Size="12" SizeMD="6" SizeLG="4">
+                                    <RadzenText TextStyle="TextStyle.H6" TagName="TagName.H5" class="rz-mb-0">User</RadzenText>
+                                    <RadzenText TextStyle="TextStyle.Body2">@(projectFile.User?.Email)</RadzenText>
+                                </RadzenColumn>
+                                <RadzenColumn Size="12" SizeMD="6" SizeLG="2">
+                                    <RadzenText TextStyle="TextStyle.H6" TagName="TagName.H5" class="rz-mb-0">Upload Date</RadzenText>
+                                    <RadzenText TextStyle="TextStyle.Body2">@(projectFile.UploadDate)</RadzenText>
+                                </RadzenColumn>                               
+                            </RadzenRow>
+                        </RadzenColumn>
+                        <RadzenColumn Size="12" SizeLG="2" class="rz-p-4">
+                            <RadzenButton Text="Download" Click="() => OnFileDownloadClick(projectFile)" Style="width: 70%" />
+                        </RadzenColumn>
+                        <RadzenColumn Size="12" SizeLG="2" class="rz-p-4">
+                            <RadzenButton Text="Delete" Click="() =>  OnFileDeleteClick(projectFile)" Style="width: 70%" />
+                        </RadzenColumn>
+                    </RadzenRow>
+                </RadzenCard>
+            </Template>
+        </RadzenDataList>
     }
     else
     {

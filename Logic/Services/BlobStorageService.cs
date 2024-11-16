@@ -62,6 +62,7 @@ namespace TeaWork.Logic.Services
                 var files = await _context.ProjectFiles
                     .Where(x => x.ProjectId == projectId)
                     .Where(x=>x.IsDeleted==false)
+                    .Include(x=>x.User)
                     .ToListAsync();
                 return files;
             }
