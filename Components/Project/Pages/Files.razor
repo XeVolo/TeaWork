@@ -128,25 +128,28 @@
     private async void OnUploadSubmit()
     {
         fileLoading = true;
-        foreach (var file in selectedFiles)
+        if (selectedFiles != null)
         {
-            try
+            foreach (var file in selectedFiles)
             {
-                ProjectFile projectFile = await BlobStorageService.AddFile(file.Name, file.ContentType, Convert.ToInt32(file.Size), Id);
-                bool uploaded = await BlobStorageService.UploadFileToBlobAsync(projectFile, file.OpenReadStream(20971520));
-                if (uploaded)
-                {                  
-                    displayMessage = projectFile.FileName + " Uploaded!!";
+                try
+                {
+                    ProjectFile projectFile = await BlobStorageService.AddFile(file.Name, file.ContentType, Convert.ToInt32(file.Size), Id);
+                    bool uploaded = await BlobStorageService.UploadFileToBlobAsync(projectFile, file.OpenReadStream(20971520));
+                    if (uploaded)
+                    {
+                        displayMessage = projectFile.FileName + " Uploaded!!";
+                    }
+                    else
+                    {
+                        warninngMessage = "File Upload failed, Please try again!!";
+                    }
+
                 }
-                else
+                catch (Exception ex)
                 {
                     warninngMessage = "File Upload failed, Please try again!!";
                 }
-
-            }
-            catch (Exception ex)
-            {
-                warninngMessage = "File Upload failed, Please try again!!";
             }
         }
         fileLoading = false;
