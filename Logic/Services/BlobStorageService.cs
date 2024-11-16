@@ -3,6 +3,12 @@ using Azure.Storage.Blobs;
 using Microsoft.AspNetCore.Components.Authorization;
 using TeaWork.Logic.DbContextFactory;
 using TeaWork.Logic.Services.Interfaces;
+using TeaWork.Data.Models;
+using TeaWork.Data.Enums;
+using TeaWork.Data;
+using Microsoft.EntityFrameworkCore;
+using TeaWork.Components.Notifications;
+using Microsoft.CodeAnalysis;
 
 namespace TeaWork.Logic.Services
 {
@@ -21,45 +27,100 @@ namespace TeaWork.Logic.Services
             _userIdentity = userIdentity;
             _blobStorageConnection = configuration.GetConnectionString("AzureStorageAcount");
         }
-        public async Task<string> UploadFileToBlobAsync(string strFileName, string contecntType, Stream fileStream)
+
+        public async Task<ProjectFile> AddFile(string fileName, string fileType,int fileSize,int projectId)
         {
             try
             {
+                using var _context = _dbContextFactory.CreateDbContext();               
+                ApplicationUser currentUser = await _userIdentity.GetLoggedUser();
+                ProjectFile projectFile = new ProjectFile
+                {
+                    FileName = fileName,
+                    ContentType = fileType,
+                    FileSize = fileSize,
+                    ProjectId = projectId,
+                    UserId = currentUser.Id,
+                    UploadDate = DateTime.Now,
+                    IsDeleted = false,
+                };
+
+                _context.ProjectFiles.Add(projectFile);
+                await _context.SaveChangesAsync();
+                return projectFile;
+            }
+            catch (Exception ex)
+            {
+                throw new NotImplementedException();
+            }
+        }
+        public async Task<List<ProjectFile>> GetFilesById(int projectId)
+        {
+            try
+            {
+                using var _context = _dbContextFactory.CreateDbContext();
+                var files = await _context.ProjectFiles
+                    .Where(x => x.ProjectId == projectId)
+                    .Where(x=>x.IsDeleted==false)
+                    .ToListAsync();
+                return files;
+            }
+            catch (Exception ex)
+            {
+                throw new NotImplementedException();
+            }
+        }
+        public async Task<bool> UploadFileToBlobAsync(ProjectFile projectFile, Stream fileStream)
+        {
+            try
+            {
+                using var _context = _dbContextFactory.CreateDbContext();
                 var container = new BlobContainerClient(_blobStorageConnection, _blobContainerName);
                 var createResponse = await container.CreateIfNotExistsAsync();
                 if (createResponse != null && createResponse.GetRawResponse().Status == 201)
                     await container.SetAccessPolicyAsync(Azure.Storage.Blobs.Models.PublicAccessType.Blob);
-                var blob = container.GetBlobClient(strFileName);
+                var blob = container.GetBlobClient(projectFile.Id.ToString());
                 await blob.DeleteIfExistsAsync(DeleteSnapshotsOption.IncludeSnapshots);
-                await blob.UploadAsync(fileStream, new BlobHttpHeaders { ContentType = contecntType });
+                await blob.UploadAsync(fileStream, new BlobHttpHeaders { ContentType = projectFile.ContentType });
                 var urlString = blob.Uri.ToString();
-                return urlString;
+                projectFile.FileStorageUrl = urlString;
+                _context.Attach(projectFile).State = EntityState.Modified;
+                await _context.SaveChangesAsync();
+                return true;
             }
             catch (Exception ex)
             {
                 //_logger?.LogError(ex.ToString());
-                throw;
+                throw new NotImplementedException();
             }
         }
         public async Task<bool> DeleteFileToBlobAsync(string strFileName)
         {
             try
             {
+                using var _context = _dbContextFactory.CreateDbContext();
+                var file = await _context.ProjectFiles.FirstOrDefaultAsync(x => x.Id ==Convert.ToInt32(strFileName));
                 var container = new BlobContainerClient(_blobStorageConnection, _blobContainerName);
                 var createResponse = await container.CreateIfNotExistsAsync();
                 if (createResponse != null && createResponse.GetRawResponse().Status == 201)
                     await container.SetAccessPolicyAsync(Azure.Storage.Blobs.Models.PublicAccessType.Blob);
                 var blob = container.GetBlobClient(strFileName);
                 await blob.DeleteIfExistsAsync(DeleteSnapshotsOption.IncludeSnapshots);
+                if (file != null)
+                {
+                    file.IsDeleted = true;
+                    _context.Attach(file).State = EntityState.Modified;
+                    await _context.SaveChangesAsync();
+                }
                 return true;
             }
             catch (Exception ex)
             {
                 //_logger?.LogError(ex.ToString());
-                throw;
+                throw new NotImplementedException();
             }
         }
-        public async Task<(Stream FileStream, string ContentType)> DownloadFileFromBlobAsync(string fileName)
+        public async Task<(byte[] FileContent, string ContentType)> DownloadFileFromBlobAsync(string fileName)
         {
             try
             {
@@ -73,9 +134,7 @@ namespace TeaWork.Logic.Services
                     var contentType = properties.Value.ContentType;
 
                     await blob.DownloadToAsync(memoryStream);
-                    memoryStream.Position = 0;
-
-                    return (memoryStream, contentType ?? "application/octet-stream");
+                    return (memoryStream.ToArray(), contentType ?? "application/octet-stream");
                 }
                 else
                 {
@@ -84,10 +143,9 @@ namespace TeaWork.Logic.Services
             }
             catch (Exception ex)
             {
-                //_logger?.LogError(ex.ToString());
-                throw;
+                throw new NotImplementedException();
             }
         }
-        
+
     }
 }

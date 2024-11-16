@@ -76,7 +76,7 @@ namespace TeaWork.Logic.Services
                 var project = await _context.Projects.FirstOrDefaultAsync(x => x.Id == invitation.ProjectId);
                 var conversation = await _context.Conversations.FirstOrDefaultAsync(x => x.Id == project.ProjectConversationId);
                 invitation.Status= InvitationStatus.Accepted;
-
+                _context.Attach(invitation).State = EntityState.Modified;
                 await _projectService.AddProjectMember(project, currentUser, ProjectMemberRole.User);
                 await _conversationService.AddMember(conversation, currentUser.Id);
                 await _context.SaveChangesAsync();
@@ -94,6 +94,7 @@ namespace TeaWork.Logic.Services
                 using var _context = _dbContextFactory.CreateDbContext();
                 var invitation = _context.Invitations.FirstOrDefault(x => x.Id == invitationId);
                 invitation.Status = InvitationStatus.Rejected;
+                _context.Attach(invitation).State = EntityState.Modified;
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)

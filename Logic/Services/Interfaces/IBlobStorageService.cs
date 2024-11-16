@@ -1,9 +1,13 @@
-﻿namespace TeaWork.Logic.Services.Interfaces
+﻿using TeaWork.Data.Models;
+
+namespace TeaWork.Logic.Services.Interfaces
 {
     public interface IBlobStorageService
     {
-        Task<string> UploadFileToBlobAsync(string strFileName, string contecntType, Stream fileStream);
+        Task<ProjectFile> AddFile(string fileName, string fileType, int fileSize, int projectId);
+        Task<List<ProjectFile>> GetFilesById(int projectId);
+        Task<bool> UploadFileToBlobAsync(ProjectFile projectFile, Stream fileStream);
         Task<bool> DeleteFileToBlobAsync(string strFileName);
-        Task<(Stream FileStream, string ContentType)> DownloadFileFromBlobAsync(string fileName);
+        Task<(byte[] FileContent, string ContentType)> DownloadFileFromBlobAsync(string fileName);
     }
 }

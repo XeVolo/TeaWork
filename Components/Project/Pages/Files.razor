@@ -41,22 +41,23 @@
 }
 <br />
 <div class="row">
-    @if (fileUploadViewModels.Count > 0)
+    @if (projectFiles.Count > 0)
     {
         <table class="table table-responsive table-bordered">
             <thead class="text-primary">
                 <tr>
                     <th>File</th>
-                    <th>Action</th>
+                    <th>Download</th>
+                    <th>Delete</th>
                 </tr>
             </thead>
             <tbody>
-                @foreach (var attachment in fileUploadViewModels)
+                @foreach (var attachment in projectFiles)
                 {
 
                     <tr>
                         <td>
-                            <a class="text-primary"><i class="fa-solid fa-paperclip"></i> @attachment.FileName</a>
+                             @attachment.FileName
                         </td>
                         <td>
                             <button class="btn btn-primary" @onclick="() => OnFileDownloadClick(attachment)">Download</button>
@@ -78,7 +79,13 @@
 </div>
 
 <script>
-    
+    function downloadFile(url, fileName) {
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = fileName;
+        a.click();
+        a.remove();
+    }
 </script>
 
 @code {
@@ -90,7 +97,21 @@
     private bool fileLoading;
     string Message = "No file(s) selected";
     IReadOnlyList<IBrowserFile> selectedFiles;
-    private List<FileUploadViewModel> fileUploadViewModels = new();
+    private List<ProjectFile> projectFiles = new();
+
+    [SupplyParameterFromQuery]
+    public int Id { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        projectFiles = await BlobStorageService.GetFilesById(Id);
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+
+        projectFiles = await BlobStorageService.GetFilesById(Id);
+    }
     private void OnInputFileChange(InputFileChangeEventArgs e)
     {
         selectedFiles = e.GetMultipleFiles();
@@ -104,22 +125,16 @@
         {
             try
             {
-                var trustedFileNameForFileStorage = file.Name;
-                var blobUrl = await BlobStorageService.UploadFileToBlobAsync(trustedFileNameForFileStorage, file.ContentType, file.OpenReadStream(20971520));
-                if (blobUrl != null)
-                {
-                    FileUploadViewModel fileUploadViewModel = new FileUploadViewModel()
-                        {
-                            FileName = trustedFileNameForFileStorage,
-                            FileStorageUrl = blobUrl,
-                            ContentType = file.ContentType,
-                        };
-
-                    fileUploadViewModels.Add(fileUploadViewModel);
-                    displayMessage = trustedFileNameForFileStorage + " Uploaded!!";
+                ProjectFile projectFile = await BlobStorageService.AddFile(file.Name, file.ContentType, Convert.ToInt32(file.Size), Id);
+                bool uploaded = await BlobStorageService.UploadFileToBlobAsync(projectFile, file.OpenReadStream(20971520));
+                if (uploaded)
+                {                  
+                    displayMessage = projectFile.FileName + " Uploaded!!";
                 }
                 else
+                {
                     warninngMessage = "File Upload failed, Please try again!!";
+                }
 
             }
             catch (Exception ex)
@@ -127,20 +142,22 @@
                 warninngMessage = "File Upload failed, Please try again!!";
             }
         }
-
         fileLoading = false;
-        this.StateHasChanged();
+        projectFiles = await BlobStorageService.GetFilesById(Id);
+        await InvokeAsync(StateHasChanged);
+        
     }
 
-    private async void OnFileDeleteClick(FileUploadViewModel attachment)
+    private async void OnFileDeleteClick(ProjectFile attachment)
     {
         try
         {
-            var deleteResponse = await BlobStorageService.DeleteFileToBlobAsync(attachment.FileName);
+            var deleteResponse = await BlobStorageService.DeleteFileToBlobAsync(attachment.Id.ToString());
             if (deleteResponse)
             {
-                fileUploadViewModels.Remove(attachment);
                 displayMessage = attachment.FileName + " Deleted!!";
+                projectFiles = await BlobStorageService.GetFilesById(Id);
+                await InvokeAsync(StateHasChanged);
             }
 
         }
@@ -150,15 +167,19 @@
         }
         this.StateHasChanged();
     }
-    private async Task OnFileDownloadClick(FileUploadViewModel attachment)
+
+    private async Task OnFileDownloadClick(ProjectFile attachment)
     {
         try
         {
-            
+            var (fileContent, contentType) = await BlobStorageService.DownloadFileFromBlobAsync(attachment.Id.ToString());
+            var base64 = Convert.ToBase64String(fileContent);
+            var url = $"data:{contentType};base64,{base64}";
+            await JS.InvokeVoidAsync("downloadFile", url, attachment.FileName);
         }
         catch (Exception ex)
         {
-            warninngMessage = $"Failed to initiate file download: {ex.Message}";
+            warninngMessage = "Something went wrong! Please try again.";
         }
     }
 }

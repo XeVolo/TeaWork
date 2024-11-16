@@ -28,6 +28,7 @@
                         <RadzenButton id="RadzenButton" Style="width: 200px;" Disabled="@IsDisabled" Text="Details" Click="NavigateToDetails" ButtonStyle="ButtonStyle.Primary" />
                         <RadzenButton id="RadzenButton" Style="width: 200px;" Disabled="@IsDisabled" Text="Schedule" Click="NavigateToSchedule" ButtonStyle="ButtonStyle.Primary" />
                         <RadzenButton id="RadzenButton" Style="width: 250px;" Disabled="@IsDisabled" Text="Design Concept" Click="NavigateToDesignConcept" ButtonStyle="ButtonStyle.Primary" />
+                        <RadzenButton id="RadzenButton" Style="width: 150px;" Disabled="@IsDisabled" Text="Files" Click="NavigateToFiles" ButtonStyle="ButtonStyle.Primary" />
                         </RadzenStack>
                 </Authorized>
                 <NotAuthorized>
@@ -170,6 +171,10 @@
     private void NavigateToDetails()
     {
         NavigationManager.NavigateTo($"projects/details?id={value}");
+    }
+    private void NavigateToFiles()
+    {
+        NavigationManager.NavigateTo($"projects/files?id={value}");
     }
     private void NavigateToDesignConcept()
     {

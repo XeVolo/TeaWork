@@ -19,7 +19,7 @@ namespace TeaWork.Data
         public DbSet<TaskComment> TaskComments { get; set; }
         public DbSet<Notification> Notifications { get; set; }
         public DbSet<Invitation> Invitations { get; set; }
-
+        public DbSet<ProjectFile> ProjectFiles { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

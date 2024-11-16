@@ -13,6 +13,7 @@
         public virtual List<ProjectMember>? ProjectMembers { get; set; }
         public virtual List<Invitation>? Invitations { get; set; }
         public virtual List<OwnDesignConcept>? OwnDesignConcepts { get; set; }
+        public virtual List<ProjectFile>? ProjectFiles { get; set; }
         public virtual ToDoList? ToDoList { get; set; }
         public virtual Conversation? Conversation { get; set; }
     }
