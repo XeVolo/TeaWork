@@ -144,8 +144,8 @@
         {
             Message message = await ConversationService.NewMessage(Id, mymessage);
             string messageContent = message.Content;
-            string messageResult = messageContent.Length > 15
-                            ? messageContent.Substring(0, 15) + "..."
+            string messageResult = messageContent.Length > 30
+                            ? messageContent.Substring(0, 30) + "..."
                             : messageContent;
 
             if (hubConnection is not null)

@@ -55,26 +55,31 @@
 
                     @if (!member.Role.Equals(ProjectMemberRole.Admin))
                     {
-                        <dd><RadzenButton Text="Delete User" Click="() => DeleteUser(member.UserId!)" Style="background-color: #007bff; color: white;" /></dd>
+                                <dd><RadzenButton Text="Delete User" Click="() => DeleteUser(member.UserId!)" Style="background-color: #8b0000; color: black; font-weight:bold;" /></dd>
                     }
                 }
                 </RadzenCard>
             }
             }
         </dl>
-        <div>
-            <a href="@($"/projects/edit?id={project.Id}")">Edit</a> |
-            <a href="@($"/projects")">Back to List</a>
-        </div>
+        <RadzenButton id="RadzenButton" Text="Add Project Member" Click="() => ShowAddUserModal()" Style="width: 100%;" />
 
-        <div class="form-group">
-            <label>
-                User:
-                <input @bind="userInput" />
-            </label>
-        </div>
-
-        <button @onclick="FindUser">Send</button>
+        <Modal @ref="modalAddUser" Title="Send Invitation">
+            <BodyTemplate>
+                <EditForm Model="this" OnValidSubmit="FindUser">
+                    <DataAnnotationsValidator />
+                    <ValidationSummary class="error-text" />
+                    <div class="form-group">
+                        <label for="userInput">User Email:</label>
+                        <InputText id="userInput" class="form-input" @bind-Value="userInput" />
+                    </div>
+                    <button type="submit" class="btn-submit">Send</button>
+                </EditForm>
+            </BodyTemplate>
+            <FooterTemplate>
+                <Button Color="ButtonColor.Secondary" @onclick="HideAddUserModal">Close</Button>
+            </FooterTemplate>
+        </Modal>
 
         <Modal @ref="modalFailure" Title="Uwaga!">
             <BodyTemplate>
@@ -100,6 +105,7 @@
     private Project? project;
     private List<ProjectMember>? projectMembers;
     private string? userInput;
+    private Modal modalAddUser = default!;
     private Modal modalFailure = default!;
     private Modal modalSuccess = default!;
     private string? currentUser;
@@ -194,6 +200,16 @@
     private async Task HideSuccessModal()
     {
         await modalSuccess.HideAsync();
+    }
+    private async Task ShowAddUserModal()
+    {
+        await modalAddUser.ShowAsync();
+    }
+
+    private async Task HideAddUserModal()
+    {
+        userInput = "";
+        await modalAddUser.HideAsync();
     }
     public async ValueTask DisposeAsync()
     {

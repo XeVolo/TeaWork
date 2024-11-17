@@ -12,14 +12,33 @@
 
 <PageTitle>Find User</PageTitle>
 
-<div class="form-group">
-    <label>
-        User:
-        <input @bind="userInput" />
-    </label>
+<div class="container-fluid">
+    <div class="row">
+
+        <div class="col-md-3">
+            <Messages />
+        </div>       
+    </div>
 </div>
 
 <button @onclick="FindUser">Send</button>
+
+<Modal @ref="modalAddUser" Title="Send Invitation">
+    <BodyTemplate>
+        <EditForm Model="this" OnValidSubmit="FindUser">
+            <DataAnnotationsValidator />
+            <ValidationSummary class="error-text" />
+            <div class="form-group">
+                <label for="userInput">User Email:</label>
+                <InputText id="userInput" class="form-input" @bind-Value="userInput" />
+            </div>
+            <button type="submit" class="btn-submit">Send</button>
+        </EditForm>
+    </BodyTemplate>
+    <FooterTemplate>
+        <Button Color="ButtonColor.Secondary" @onclick="HideAddUserModal">Close</Button>
+    </FooterTemplate>
+</Modal>
 
 <Modal @ref="modal" Title="Uwaga!">
     <BodyTemplate>
@@ -34,8 +53,13 @@
     private HubConnection? hubConnection;
     private string? userInput;
     private Modal modal = default!;
+    private Modal modalAddUser = default!;
     private string? currentUser;
 
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await ShowAddUserModal();
+    }
     private async Task FindUser()
     {
         try
@@ -44,10 +68,10 @@
             if (userInput != null)
             {
                 userId = await UserService.FindUserByEmail(userInput);
-                if (userId != null)
+                var loggedUserId = await UserService.GetLoggedUserId();
+                if (userId != null && !userId.Equals(loggedUserId))
                 {
                     var conversation = await ConversationService.AddConversation(Data.Enums.ConversationType.PrivateChat,userInput);
-                    var loggedUserId = await UserService.GetLoggedUserId();
                     await ConversationService.AddMember(conversation, userId);
                     await ConversationService.AddMember(conversation, loggedUserId);
                     NavigationManager.NavigateTo($"/messages/conversation?id={conversation.Id}");
@@ -74,5 +98,14 @@
     private async Task HideModal()
     {
         await modal.HideAsync();
+    }
+    private async Task ShowAddUserModal()
+    {
+        await modalAddUser.ShowAsync();
+    }
+
+    private async Task HideAddUserModal()
+    {
+        await modalAddUser.HideAsync();
     }
 }

@@ -123,8 +123,7 @@
     private Project? project;
     private List<OwnDesignConcept>? designConcepts;
     private string? userInput;
-    private Modal modal = default!;
-    private bool showForm = false; 
+    private Modal modal = default!; 
     private DesignConceptDto ownDesignConcept = new DesignConceptDto();
     private DesignConceptDto newComment = new DesignConceptDto();
     private string? currentUser;
@@ -164,10 +163,6 @@
             NavigationManager.NavigateTo("notfound");
         }
     }
-    private void ToggleFormVisibility()
-    {
-        showForm = !showForm;
-    }
     public async Task AddDesignConcept()
     {
         await DesignConceptService.Add(ownDesignConcept, Id);
@@ -186,7 +181,6 @@
         }
 
         ownDesignConcept = new DesignConceptDto();
-        showForm = false;
         await HideModal();
         await InvokeAsync(StateHasChanged);
     }
