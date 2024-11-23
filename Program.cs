@@ -41,6 +41,7 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IDesignConceptService, DesignConceptService>();
 builder.Services.AddScoped<INotificationService, TeaWork.Logic.Services.NotificationService>();
 builder.Services.AddScoped<ITaskService, TaskService>();
+builder.Services.AddScoped<IReportService, ReportService>();
 builder.Services.AddScoped<IInvitationService, InvitationService>();
 builder.Services.AddScoped<IBlobStorageService, BlobStorageService>();
 

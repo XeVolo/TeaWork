@@ -3,11 +3,14 @@
 @using TeaWork.Logic.Services.Interfaces
 @using Microsoft.AspNetCore.SignalR.Client
 @using TeaWork.Data.Enums
+@using TeaWork.Logic.Dto
 @inject NavigationManager NavigationManager
 @inject IProjectService ProjectService
 @inject IUserService UserService
 @inject INotificationService NotificationService
 @inject IInvitationService InvitationService
+@inject IReportService ReportService
+@inject IJSRuntime JS
 @using Microsoft.AspNetCore.Authorization
 @attribute [Authorize]
 @implements IAsyncDisposable
@@ -64,6 +67,8 @@
         </dl>
         <RadzenButton id="RadzenButton" Text="Add Project Member" Click="() => ShowAddUserModal()" Style="width: 100%;" />
 
+        <RadzenButton id="RadzenButton" Text="Create project summary report" Click="() => ShowReport()" Style="width: 100%;" />
+
         <Modal @ref="modalAddUser" Title="Send Invitation">
             <BodyTemplate>
                 <EditForm Model="this" OnValidSubmit="FindUser">
@@ -78,6 +83,33 @@
             </BodyTemplate>
             <FooterTemplate>
                 <Button Color="ButtonColor.Secondary" @onclick="HideAddUserModal">Close</Button>
+            </FooterTemplate>
+        </Modal>
+        <Modal @ref="modalReport" Title="Complete the project summary report">
+            <BodyTemplate>
+                <EditForm Model="reportForm" OnValidSubmit="DownloadReport">
+                    <DataAnnotationsValidator />
+                    <ValidationSummary class="error-text" />
+                    <div class="form-group">
+                        <label for="Summary">Summary:</label>
+                        <InputTextArea id="Summary" class="form-input" @bind-Value="reportForm.Summary" />
+                    </div>
+                    @foreach(var user in reportForm.UserForms)
+                    {
+                        <div class="form-group">
+                            <label for="Descriprion">@($"Evaluate the {@user.User}'s work and involvement on the project")</label>
+                            <InputTextArea id="Description" class="form-input" @bind-Value="user.Descriprion" />
+                        </div>
+                    }
+                    <div class="form-group">
+                        <label for="AdditionalComment">Additional observations:</label>
+                        <InputTextArea id="AdditionalComment" class="form-input" @bind-Value="reportForm.AdditionalComment" />
+                    </div>
+                    <button type="submit" class="btn-submit">Send</button>
+                </EditForm>
+            </BodyTemplate>
+            <FooterTemplate>
+                <Button Color="ButtonColor.Secondary" @onclick="HideReport">Close</Button>
             </FooterTemplate>
         </Modal>
 
@@ -100,6 +132,19 @@
     }
 </div>
 
+
+<script>
+    function saveAsFile(filename, bytesBase64) {
+        const link = document.createElement('a');
+        link.href = 'data:application/octet-stream;base64,' + bytesBase64;
+        link.download = filename;
+        link.click();
+        link.remove();
+    }
+</script>
+
+
+
 @code {
     private HubConnection? hubConnection;
     private Project? project;
@@ -108,7 +153,9 @@
     private Modal modalAddUser = default!;
     private Modal modalFailure = default!;
     private Modal modalSuccess = default!;
+    private Modal modalReport= default!;
     private string? currentUser;
+    private ReportForm? reportForm;
 
     [SupplyParameterFromQuery]
     public int Id { get; set; }
@@ -128,6 +175,18 @@
 
         project = await ProjectService.GetProjectById(Id);
         projectMembers = project.ProjectMembers;
+        reportForm = new ReportForm { UserForms = new List<UserForm>()};
+        if (projectMembers != null)
+        {
+            foreach (var member in projectMembers)
+            {
+                if (member.User != null)
+                {
+                    reportForm.UserForms.Add(new UserForm { User = member.User.UserName });
+                }
+            }
+        }
+
 
         if (project is null)
         {
@@ -182,6 +241,20 @@
         {
             Console.WriteLine($"ERROR: {ex.Message}");
         }
+    }   
+    private async Task DownloadReport()
+    {
+        try
+        {
+            var fileBytes = await ReportService.GenerateReport(reportForm,Id);
+            var fileName = "RaportProjektu.pdf";
+            var fileBase64 = Convert.ToBase64String(fileBytes);
+            await JS.InvokeVoidAsync("saveAsFile", fileName, fileBase64);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"ERROR: {ex.Message}");
+        }
     }
     private async Task ShowModal()
     {
@@ -201,15 +274,23 @@
     {
         await modalSuccess.HideAsync();
     }
+
     private async Task ShowAddUserModal()
     {
         await modalAddUser.ShowAsync();
     }
-
     private async Task HideAddUserModal()
     {
         userInput = "";
         await modalAddUser.HideAsync();
+    }
+    private async Task ShowReport()
+    {
+        await modalReport.ShowAsync();
+    }
+    private async Task HideReport()
+    {
+        await modalReport.HideAsync();
     }
     public async ValueTask DisposeAsync()
     {
