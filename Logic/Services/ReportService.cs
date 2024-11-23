@@ -6,6 +6,8 @@ using PdfSharpCore.Pdf;
 using System.Threading.Tasks;
 using TeaWork.Logic.Dto;
 using TeaWork.Data.Models;
+using TeaWork.Data;
+using PdfSharpCore.Drawing.Layout;
 
 namespace TeaWork.Logic.Services
 {
@@ -39,14 +41,15 @@ namespace TeaWork.Logic.Services
                 var document = new PdfDocument();
                 var page = document.AddPage();
                 var gfx = XGraphics.FromPdfPage(page);
+                var textFormatter = new XTextFormatter(gfx);
                 var project = await _projectService.GetProjectById(projectId);
                 var projectTasks = await _taskService.GetProjectTasks(projectId);
                 var projectDesignConcept = await _designConceptService.GetDesignConcepts(projectId);
-
+                ApplicationUser currentUser = await _userIdentity.GetLoggedUser();
 
                 double yPoint = 40;
-                gfx.DrawString("A report summarizing work on the project", new XFont("Arial", 20, XFontStyle.Bold), XBrushes.Black, new XPoint(40, yPoint));
-                yPoint += 30;
+                textFormatter.DrawString($"{currentUser.Email}'s report summarizing work on the project", new XFont("Arial", 20, XFontStyle.Bold), XBrushes.Black, new XRect(40, yPoint, 500, 80), XStringFormats.TopLeft);
+                yPoint += 80;
 
                 gfx.DrawString($"Title: {project.Title}", new XFont("Arial", 12), XBrushes.Black, new XPoint(40, yPoint));
                 yPoint += 20;
@@ -83,21 +86,89 @@ namespace TeaWork.Logic.Services
                     {
                         page = document.AddPage();
                         gfx = XGraphics.FromPdfPage(page);
+                        textFormatter = new XTextFormatter(gfx);
                         yPoint = 40;
                     }
+                }
+                if (yPoint > page.Height - 380)
+                {
+                    page = document.AddPage();
+                    gfx = XGraphics.FromPdfPage(page);
+                    textFormatter = new XTextFormatter(gfx);
+                    yPoint = 40;
                 }
                 yPoint += 50;
                 gfx.DrawString("User participation in the implementation of tasks:", new XFont("Arial", 14), XBrushes.Black, new XPoint(40, yPoint));
                 var taskContributions = GetTaskContributions(projectTasks);
-                DrawPieChart(gfx, taskContributions, new XPoint(200, yPoint + 100));
+                DrawPieChart(gfx, taskContributions, new XPoint(250, yPoint + 100));
                 yPoint += 230;
 
-                
+                if (yPoint > page.Height - 200)
+                {
+                    page = document.AddPage();
+                    gfx = XGraphics.FromPdfPage(page);
+                    textFormatter = new XTextFormatter(gfx);
+                    yPoint = 40;
+                }
                 gfx.DrawString("User participation in concept creation:", new XFont("Arial", 14), XBrushes.Black, new XPoint(40, yPoint));
                 var conceptContributions = GetConceptContributions(projectDesignConcept);
-                DrawPieChart(gfx, conceptContributions, new XPoint(200, yPoint + 100));
+                DrawPieChart(gfx, conceptContributions, new XPoint(250, yPoint + 100));
+                yPoint += 230;
 
-                
+                if (yPoint > page.Height - 50)
+                {
+                    page = document.AddPage();
+                    gfx = XGraphics.FromPdfPage(page);
+                    textFormatter = new XTextFormatter(gfx);
+                    yPoint = 40;
+                }
+
+                yPoint += 20;
+                gfx.DrawString("Survey Summary:", new XFont("Arial", 14, XFontStyle.Bold), XBrushes.Black, new XPoint(40, yPoint));
+
+                if (!string.IsNullOrWhiteSpace(reportForm.Summary))
+                {
+                    yPoint += 20;
+                    gfx.DrawString($"Project summary:", new XFont("Arial", 12), XBrushes.Black, new XPoint(40, yPoint));
+                    yPoint += 15;
+                    textFormatter.DrawString(reportForm.Summary, new XFont("Arial", 10), XBrushes.Black, new XRect(40, yPoint, 500, 60), XStringFormats.TopLeft);
+                    yPoint += 60; 
+                }
+
+                gfx.DrawString("My opinions about users:", new XFont("Arial", 12), XBrushes.Black, new XPoint(40, yPoint));
+                yPoint += 20;
+
+                foreach (var userForm in reportForm.UserForms)
+                {
+                    if (!string.IsNullOrWhiteSpace(userForm.User))
+                    {
+                        gfx.DrawString($"User: {userForm.User}", new XFont("Arial", 10, XFontStyle.Bold), XBrushes.Black, new XPoint(40, yPoint));
+                        yPoint += 15;
+                    }
+
+                    if (!string.IsNullOrWhiteSpace(userForm.Descriprion))
+                    {
+                        textFormatter.DrawString(userForm.Descriprion, new XFont("Arial", 10), XBrushes.Black, new XRect(40, yPoint, 500, 60), XStringFormats.TopLeft);
+                        yPoint += 60; 
+                    }
+                    yPoint += 10;
+                    if (yPoint > page.Height - 60)
+                    {
+                        page = document.AddPage();
+                        gfx = XGraphics.FromPdfPage(page);
+                        textFormatter = new XTextFormatter(gfx);
+                        yPoint = 40;
+                    }
+                }
+              
+                if (!string.IsNullOrWhiteSpace(reportForm.AdditionalComment))
+                {
+                    yPoint += 20;
+                    gfx.DrawString("Additional comment:", new XFont("Arial", 12), XBrushes.Black, new XPoint(40, yPoint));
+                    yPoint += 15;
+                    textFormatter.DrawString(reportForm.AdditionalComment, new XFont("Arial", 10), XBrushes.Black, new XRect(40, yPoint, 500, 60), XStringFormats.TopLeft);
+                }
+
                 using var stream = new MemoryStream();
                 document.Save(stream);
                 return stream.ToArray();
