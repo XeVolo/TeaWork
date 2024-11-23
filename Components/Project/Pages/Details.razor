@@ -65,9 +65,8 @@
             }
             }
         </dl>
-        <RadzenButton id="RadzenButton" Text="Add Project Member" Click="() => ShowAddUserModal()" Style="width: 100%;" />
-
-        <RadzenButton id="RadzenButton" Text="Create project summary report" Click="() => ShowReport()" Style="width: 100%;" />
+        <RadzenButton id="RadzenButton" Text="Add Project Member" Click="() => ShowAddUserModal()" Style="width: 100%;margin:10px;" />
+        <RadzenButton id="RadzenButton" Text="Create project summary report" Click="() => ShowReport()" Style="width: 100%;margin:10px;" />
 
         <Modal @ref="modalAddUser" Title="Send Invitation">
             <BodyTemplate>
@@ -250,6 +249,7 @@
             var fileName = "RaportProjektu.pdf";
             var fileBase64 = Convert.ToBase64String(fileBytes);
             await JS.InvokeVoidAsync("saveAsFile", fileName, fileBase64);
+            await HideReport();
         }
         catch (Exception ex)
         {
