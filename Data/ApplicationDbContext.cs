@@ -20,6 +20,7 @@ namespace TeaWork.Data
         public DbSet<Notification> Notifications { get; set; }
         public DbSet<Invitation> Invitations { get; set; }
         public DbSet<ProjectFile> ProjectFiles { get; set; }
+        public DbSet<PrivateTask> PrivateTasks { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

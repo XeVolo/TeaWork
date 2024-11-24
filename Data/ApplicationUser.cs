@@ -17,7 +17,7 @@ namespace TeaWork.Data
         public virtual List<Notification>? Notifications { get; set; }
         public virtual List<DesignConceptComment>? DesignConceptComments { get; set; }
         public virtual List<ProjectFile>? ProjectFiles { get; set; }
-
+        public virtual List<PrivateTask>? PrivateTasks { get; set; }
         public virtual List<Invitation>? Invitations { get; set; }
 
     }

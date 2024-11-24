@@ -1,0 +1,160 @@
+﻿@page "/privateschedule"
+@inject DialogService DialogService
+@using TeaWork.Data.Models
+@using TeaWork.Logic.Dto
+@using TeaWork.Logic.Services.Interfaces
+@using Microsoft.AspNetCore.SignalR.Client
+@using TeaWork.Data.Enums
+@inject NavigationManager NavigationManager
+@inject IProjectService ProjectService
+@inject IUserService UserService
+@inject INotificationService NotificationService
+@inject IDesignConceptService DesignConceptService
+@inject ITaskService ProjectTaskService
+@inject TooltipService TooltipService
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize]
+
+<RadzenScheduler @ref=@scheduler SlotRender=@OnSlotRender style="height: 768px;" TItem="PrivateAppointment" Data=@appointments StartProperty="Start" EndProperty="End"
+                 TextProperty="Text" SelectedIndex="2" SlotSelect=@OnSlotSelect AppointmentSelect=@OnAppointmentSelect AppointmentRender=@OnAppointmentRender
+                 AppointmentMove=@OnAppointmentMove AppointmentMouseEnter=@OnAppointmentMouseEnter AppointmentMouseLeave=@OnAppointmentMouseLeave>
+    <RadzenDayView />
+    <RadzenWeekView />
+    <RadzenMonthView />
+</RadzenScheduler>
+
+@code {
+    RadzenScheduler<PrivateAppointment> scheduler;
+    Dictionary<DateTime, string> events = new Dictionary<DateTime, string>();
+    IList<PrivateAppointment> appointments = new List<PrivateAppointment>();
+    private List<ProjectTask>? myTasks;
+    private List<PrivateTask>? myPrivateTasks;
+ 
+    protected override async Task OnInitializedAsync()
+    {
+        myTasks = await ProjectTaskService.GetMyProjectTasks();
+        myPrivateTasks = await ProjectTaskService.GetMyPrivateTasks();
+        foreach (var task in myTasks)
+        {
+            PrivateAppointment appointment = new PrivateAppointment { Start = task.CreationDate, End = task.Deadline, Text = task.Title, Color ="Green", Description="Project Task" };
+            appointments.Add(appointment);
+        }
+        foreach(var task in myPrivateTasks)
+        {
+            PrivateAppointment appointment = new PrivateAppointment {Id=task.Id, Start = task.Start, End = task.End, Text = task.Title, Color = "Blue", Description = task.Description };
+            appointments.Add(appointment);
+        }
+        await scheduler.Reload();
+    }
+
+    void OnSlotRender(SchedulerSlotRenderEventArgs args)
+    {
+        if (args.View.Text == "Month" && args.Start.Date == DateTime.Today)
+        {
+            args.Attributes["style"] = "background: var(--rz-scheduler-highlight-background-color, rgba(255,220,40,.2));";
+        }
+    }
+
+    async Task OnSlotSelect(SchedulerSlotSelectEventArgs args)
+    {
+        if (args.View.Text != "Year")
+        {
+            PrivateAppointment data = await DialogService.OpenAsync<AddAppointmentPage>("Add Appointment",
+                new Dictionary<string, object> { { "Start", args.Start }, { "End", args.End } });
+
+            if (data != null)
+            {
+                data.Color = "Blue";
+                data.Id = await ProjectTaskService.AddPrivateTask(data.Start, data.End, data.Text, data.Description);
+                appointments.Add(data);                
+                await scheduler.Reload();
+            }
+        }
+    }
+
+    async Task OnAppointmentSelect(SchedulerAppointmentSelectEventArgs<PrivateAppointment> args)
+    {
+        if (!args.Data.Color.Equals("Green") && args.Data.Id!=null)
+        {
+            var copy = new PrivateAppointment
+                {
+                    Id=args.Data.Id,
+                    Start = args.Data.Start,
+                    End = args.Data.End,
+                    Text = args.Data.Text,
+                    Description = args.Data.Description
+                };
+
+            var data = await DialogService.OpenAsync<EditAppointmentPage>("Edit Appointment", new Dictionary<string, object> { { "Appointment", copy } });
+
+            if (data != null)
+            {               
+                args.Data.Start = data.Start;
+                args.Data.End = data.End;
+                args.Data.Text = data.Text;
+                args.Data.Description = data.Description;
+                await ProjectTaskService.EditPrivateTask((int)args.Data.Id, data.Start, data.End, data.Text, data.Description);
+            }
+
+            await scheduler.Reload();
+        }
+    }
+
+    void OnAppointmentRender(SchedulerAppointmentRenderEventArgs<PrivateAppointment> args)
+    {
+
+        if (args.Data.Color == "Green")
+        {
+            args.Attributes["style"] = "background: green";
+        }
+    }
+
+    async Task OnAppointmentMove(SchedulerAppointmentMoveEventArgs args)
+    {
+        var draggedAppointment = appointments.FirstOrDefault(x => x == args.Appointment.Data);
+
+        if (draggedAppointment != null && !draggedAppointment.Color.Equals("Green") && draggedAppointment.Id!=null)
+        {
+            draggedAppointment.Start = draggedAppointment.Start + args.TimeSpan;
+
+            draggedAppointment.End = draggedAppointment.End + args.TimeSpan;
+
+            await ProjectTaskService.EditPrivateTask((int)draggedAppointment.Id, draggedAppointment.Start, draggedAppointment.End, draggedAppointment.Text, draggedAppointment.Description);
+
+            await scheduler.Reload();
+        }
+    }
+    void OnAppointmentMouseEnter(SchedulerAppointmentMouseEventArgs<PrivateAppointment> args)
+    {
+        TooltipService.Open(args.Element, ts =>
+    @<RadzenStack Orientation="Radzen.Orientation.Vertical" Gap="0" class="rz-p-6" Style="min-width: 250px; max-width: 500px;">
+        <RadzenText TextStyle="TextStyle.H4" class="rz-mb-4" Style="color: var(--rz-tooltip-color);">
+            @args.Data.Text
+        </RadzenText>
+        <RadzenText TextStyle="TextStyle.H4" class="rz-mb-4" Style="color: var(--rz-tooltip-color);">
+            @args.Data.Description
+        </RadzenText>
+        <RadzenStack Orientation="Radzen.Orientation.Horizontal" Gap="4px">
+            <RadzenText TextStyle="TextStyle.Body2" Style="color: var(--rz-tooltip-color); width: 44px;">
+                <strong>Start</strong>
+            </RadzenText>
+            <RadzenText TextStyle="TextStyle.Body2" Style="color: var(--rz-tooltip-color);">
+                @args.Data.Start.ToString("hh:mm ⋅ dddd, MMMM d")
+            </RadzenText>
+        </RadzenStack>
+        <RadzenStack Orientation="Radzen.Orientation.Horizontal" Gap="4px">
+            <RadzenText TextStyle="TextStyle.Body2" Style="color: var(--rz-tooltip-color); width: 44px;">
+                <strong>End</strong>
+            </RadzenText>
+            <RadzenText TextStyle="TextStyle.Body2" Style="color: var(--rz-tooltip-color);">
+                @args.Data.End.ToString("hh:mm ⋅ dddd, MMMM d")
+            </RadzenText>
+        </RadzenStack>
+    </RadzenStack>, new TooltipOptions { Position = TooltipPosition.Bottom, Duration = null });
+    }
+
+    void OnAppointmentMouseLeave(SchedulerAppointmentMouseEventArgs<PrivateAppointment> args)
+    {
+        TooltipService.Close();
+    }
+}

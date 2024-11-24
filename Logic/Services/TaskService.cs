@@ -211,5 +211,73 @@ namespace TeaWork.Logic.Services
                 throw new NotImplementedException();
             }
         }
+
+        public async Task<int> AddPrivateTask(DateTime start,DateTime end, string title, string? description)
+        {
+
+            try
+            {
+                using var _context = _dbContextFactory.CreateDbContext();
+                ApplicationUser currentUser = await _userIdentity.GetLoggedUser();
+
+                PrivateTask privateTask = new PrivateTask
+                {
+                    Start = start,
+                    End = end,
+                    Title = title,
+                    Description = description,
+                    UserId = currentUser.Id,
+                };
+                _context.PrivateTasks.Add(privateTask);
+                await _context.SaveChangesAsync();
+                return privateTask.Id;
+            }
+            catch (Exception ex)
+            {
+                throw new NotImplementedException();
+            }
+        }
+        public async Task EditPrivateTask(int taskId, DateTime start, DateTime end, string title, string? description)
+        {
+
+            try
+            {
+                using var _context = _dbContextFactory.CreateDbContext();
+                var privateTaskToEdit = await _context.PrivateTasks.FirstOrDefaultAsync(m => m.Id == taskId);
+                if (privateTaskToEdit != null)
+                {
+                    privateTaskToEdit.Title = title;
+                    privateTaskToEdit.Description = description;
+                    privateTaskToEdit.Start = start;
+                    privateTaskToEdit.End = end;
+                    _context.Attach(privateTaskToEdit!).State = EntityState.Modified;
+                    await _context.SaveChangesAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new NotImplementedException();
+            }
+        }
+        public async Task<List<PrivateTask>> GetMyPrivateTasks()
+        {
+
+            try
+            {
+                using var _context = _dbContextFactory.CreateDbContext();
+                ApplicationUser currentUser = await _userIdentity.GetLoggedUser();
+
+
+                var privateTasks = await _context.PrivateTasks
+                    .Where(x => x.UserId.Equals(currentUser.Id))
+                    .ToListAsync();       
+                return privateTasks;
+            }
+            catch (Exception ex)
+            {
+                throw new NotImplementedException();
+            }
+        }
+
     }
 }

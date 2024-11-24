@@ -14,5 +14,8 @@ namespace TeaWork.Logic.Services.Interfaces
         Task<List<ProjectTask>> GetMyProjectTasks();
         Task ChangePriorityTask(int projectTaskId, TaskPriority priority);
         Task ChangeStateTask(int projectTaskId, TaskState state);
+        Task<int> AddPrivateTask(DateTime start, DateTime end, string title, string? description);
+        Task EditPrivateTask(int taskId, DateTime start, DateTime end, string title, string? description);
+        Task<List<PrivateTask>> GetMyPrivateTasks();
     }
 }
