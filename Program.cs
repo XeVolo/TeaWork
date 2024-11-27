@@ -10,6 +10,8 @@ using TeaWork.Logic.Services;
 using TeaWork.Logic.Hubs;
 using Radzen;
 using TeaWork.Logic.DbContextFactory;
+using Microsoft.AspNetCore.Localization;
+using System.Globalization;
 
 var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
@@ -44,6 +46,11 @@ builder.Services.AddScoped<ITaskService, TaskService>();
 builder.Services.AddScoped<IReportService, ReportService>();
 builder.Services.AddScoped<IInvitationService, InvitationService>();
 builder.Services.AddScoped<IBlobStorageService, BlobStorageService>();
+
+builder.Services.AddLocalization();
+builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+builder.Services.AddScoped<LanguageService>();
+
 
 builder.Services.AddAuthentication(options =>
     {
@@ -80,7 +87,6 @@ builder.Services.AddSignalR();
 
 var app = builder.Build();
 app.UseResponseCompression();
-
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -92,16 +98,26 @@ else
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
-
+// Lista obs³ugiwanych kultur
+var supportedCultures = new[]
+{
+    new CultureInfo("en"),
+    new CultureInfo("pl"),
+};
+app.UseRequestLocalization(new RequestLocalizationOptions
+{
+    DefaultRequestCulture = new RequestCulture("en"),
+    SupportedCultures = supportedCultures,
+    SupportedUICultures = supportedCultures
+});
 app.UseHttpsRedirection();
 
 app.UseStaticFiles();
 app.UseAntiforgery();
 
+
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
-
-// Add additional endpoints required by the Identity /Account Razor components.
 app.MapAdditionalIdentityEndpoints();
 
 app.MapHub<CommunicationHub>("/communicationhub");
