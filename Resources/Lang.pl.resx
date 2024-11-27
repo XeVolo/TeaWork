@@ -159,4 +159,53 @@
   <data name="Notifications" xml:space="preserve">
     <value>Powiadomienia</value>
   </data>
+  <data name="WelcomeText" xml:space="preserve">
+    <value>Witaj ponownie w TeaWork!</value>
+  </data>
+  <data name="Overview" xml:space="preserve">
+    <value>Oto krótki przegląd Twoich projektów, konwersacji i zadań.</value>
+  </data>
+  <data name="Conversations" xml:space="preserve">
+    <value>Konwersacje</value>
+  </data>
+  <data name="Tasks" xml:space="preserve">
+    <value>Zadania</value>
+  </data>
+  <data name="ProjectPanel" xml:space="preserve">
+    <value>Panel Projektu</value>
+  </data>
+  <data name="Conversation" xml:space="preserve">
+    <value>Conversation</value>
+  </data>
+  <data name="Welcome" xml:space="preserve">
+    <value>Witaj w TeaWork!</value>
+  </data>
+  <data name="PlatformDesc" xml:space="preserve">
+    <value>Platforma przeznaczona do wspierania efektywnej współpracy studentów nad projektami grupowymi.</value>
+  </data>
+  <data name="ProjectMen" xml:space="preserve">
+    <value>Zarządanie projektami</value>
+  </data>
+  <data name="OrganizeProj" xml:space="preserve">
+    <value>Twórz nowe projekty, śledź postępy i przypisuj zadania swojemu zespołowi.</value>
+  </data>
+  <data name="Communication" xml:space="preserve">
+    <value>Komunikacja</value>
+  </data>
+  <data name="Communication2" xml:space="preserve">
+    <value>Pozostań w kontakcie w czasie rzeczywistym, udostępniaj pliki i wydajnie współpracuj.</value>
+  </data>
+  <data name="Progress" xml:space="preserve">
+    <value>Śledzenie postępów</value>
+  </data>
+  <data name="Progress2" xml:space="preserve">
+    <value>Monitoruj status zadań i motywuj swój zespół do terminowej realizacji celów.</value>
+  </data>
+  <data name="Join" xml:space="preserve">
+    <value>Dołącz do tysięcy studentów pracujących efektywnie i bezstresowo nad swoimi projektami.
+</value>
+  </data>
+  <data name="Join1" xml:space="preserve">
+    <value>Dołącz do TeaWork już dziś!</value>
+  </data>
 </root>

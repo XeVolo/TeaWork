@@ -10,14 +10,14 @@
 <AuthorizeView>
     <Authorized>
         <header class="text-center mb-5">
-            <h1 class="display-4 text-primary">Welcome Back to TeaWork!</h1>
-            <p class="lead text-secondary" style="font-size: 1.5rem;">Here's a quick overview of your projects, conversations and tasks.</p>
+            <h1 class="display-4 text-primary">@Localizer["WelcomeText"]}</h1>
+            <p class="lead text-secondary" style="font-size: 1.5rem;">@Localizer["Overview"]</p>
         </header>
         <RadzenRow>
 
             <RadzenColumn Size="4">
                 <RadzenCard Style="padding: 20px; text-align: center; background-color: #f9f9f9;">
-                    <h4 class="text-primary">My Projects</h4>
+                    <h4 class="text-primary">@Localizer["Projects"]</h4>
                     <RadzenDataList AllowVirtualization="true" Style="height:400px;overflow:auto;"
                                     Data="@myProjects" TItem="Project">
                         <Template Context="project">
@@ -26,7 +26,7 @@
                                     <RadzenText TextStyle="TextStyle.H6" TagName="TagName.H5" class=".rz-color-black">@project.Title</RadzenText>
                                 </RadzenColumn>
                                 <RadzenColumn Size="12" class="rz-p-4">
-                                    <RadzenButton id="RadzenButton" Text="Project Panel" Click="() => NavigateToProject(project.Id)" Style="width: 100%;" />
+                                    <RadzenButton id="RadzenButton" Text="@Localizer["ProjectPanel"]" Click="() => NavigateToProject(project.Id)" Style="width: 100%;" />
                                 </RadzenColumn>
                             </RadzenCard>
                         </Template>
@@ -36,7 +36,7 @@
 
             <RadzenColumn Size="4">
                 <RadzenCard Style="padding: 20px; text-align: center; background-color: #f9f9f9;">
-                    <h4 class="text-primary">My Conversations</h4>
+                    <h4 class="text-primary">@Localizer["Conversations"]</h4>
                     <RadzenDataList AllowVirtualization="true" Style="height:400px;overflow:auto;"
                                     Data="@myConversations" TItem="Conversation">
                         <Template Context="conversation">
@@ -45,7 +45,7 @@
                                     <RadzenText TextStyle="TextStyle.H6" TagName="TagName.H5" class=".rz-color-black">@conversation.Name</RadzenText>
                                 </RadzenColumn>
                                 <RadzenColumn Size="12" class="rz-p-4">
-                                    <RadzenButton id="RadzenButton" Text="Conversation" Click="() => NavigateToConversation(conversation.Id)" Style="width: 100%;" />
+                                    <RadzenButton id="RadzenButton" Text="@Localizer["Conversation"]" Click="() => NavigateToConversation(conversation.Id)" Style="width: 100%;" />
                                 </RadzenColumn>
                             </RadzenCard>
                         </Template>
@@ -55,7 +55,7 @@
 
             <RadzenColumn Size="4">
                 <RadzenCard Style="padding: 20px; text-align: center; background-color: #f9f9f9;">
-                    <h4 class="text-primary">My Tasks</h4>
+                    <h4 class="text-primary">@Localizer["Tasks"]</h4>
                     <RadzenDataList AllowVirtualization="true" Style="height:400px;overflow:auto;"
                                     Data="@myTasks" TItem="ProjectTask">
                         <Template Context="projectTask">
@@ -64,7 +64,7 @@
                                     <RadzenText TextStyle="TextStyle.H6" TagName="TagName.H5" class=".rz-color-black">@projectTask.Title</RadzenText>
                                 </RadzenColumn>
                                 <RadzenColumn Size="12" class="rz-p-4">
-                                    <RadzenButton id="RadzenButton" Text="Details" Click="() => NavigateToProjectTask(projectTask.Id)" Style="width: 100%;" />
+                                    <RadzenButton id="RadzenButton" Text="@Localizer["Details"]" Click="() => NavigateToProjectTask(projectTask.Id)" Style="width: 100%;" />
                                 </RadzenColumn>
                             </RadzenCard>
                         </Template>
@@ -78,39 +78,39 @@
         <RadzenCard Style="margin-top: 40px; max-width: 1000px; margin-left: auto; margin-right: auto; padding: 40px; background-color: #ffffff;">
             <header class="text-center">
                 <RadzenImage Path="teaworklogo.png" Style="width: 120px; margin-bottom: 30px;" />
-                <h1 class="display-2 text-primary">Welcome to TeaWork!</h1>
-                <p class="lead text-secondary" style="font-size: 1.5rem;">A platform designed for efficient student collaboration on group projects.</p>
+                <h1 class="display-2 text-primary">@Localizer["Welcome"]</h1>
+                <p class="lead text-secondary" style="font-size: 1.5rem;">@Localizer["PlatformDesc"]</p>
             </header>
 
             <RadzenRow>
                 <RadzenColumn Size="4">
                     <div class="text-center">
                         <i class="bi bi-kanban-fill feature-icon-large"></i>
-                        <h4 style="font-size: 1.5rem; color: #007bff;">Project Management</h4>
-                        <p style="font-size: 1.2rem;">Organize projects, track progress, and assign tasks with your team.</p>
+                        <h4 style="font-size: 1.5rem; color: #007bff;">@Localizer["ProjectMen"]</h4>
+                        <p style="font-size: 1.2rem;">@Localizer["OrganizeProj"]</p>
                     </div>
                 </RadzenColumn>
                 <RadzenColumn Size="4">
                     <div class="text-center">
                         <i class="bi bi-chat-dots-fill feature-icon-large"></i>
-                        <h4 style="font-size: 1.5rem; color: #007bff;">Communication</h4>
-                        <p style="font-size: 1.2rem;">Stay connected in real-time, share files, and collaborate efficiently.</p>
+                        <h4 style="font-size: 1.5rem; color: #007bff;">@Localizer["Communication"]</h4>
+                        <p style="font-size: 1.2rem;">@Localizer["Communication2"]</p>
                     </div>
                 </RadzenColumn>
                 <RadzenColumn Size="4">
                     <div class="text-center">
                         <i class="bi bi-check2-circle feature-icon-large"></i>
-                        <h4 style="font-size: 1.5rem; color: #007bff;">Progress Tracking</h4>
-                        <p style="font-size: 1.2rem;">Monitor task status and motivate your team to achieve goals on time.</p>
+                        <h4 style="font-size: 1.5rem; color: #007bff;">@Localizer["Progress"]</h4>
+                        <p style="font-size: 1.2rem;">@Localizer["Progress2"]</p>
                     </div>
                 </RadzenColumn>
             </RadzenRow>
 
             <RadzenCard Class="mt-5 text-center call-to-action">
-                <h2 style="font-size: 2rem; color: #007bff;">Join TeaWork Today!</h2>
-                <p style="font-size: 1.25rem;">Join thousands of students working efficiently and stress-free on their projects.</p>
-                <RadzenButton Text="Sign Up" Click="NavigateToRegistration" ButtonStyle="ButtonStyle.Primary" Style="font-size: 1.25rem; padding: 15px 30px; margin-right: 15px; background-color: #007bff; color: white;" />
-                <RadzenButton Text="Log In" Click="NavigateToLogin" ButtonStyle="ButtonStyle.Secondary" Style="font-size: 1.25rem; padding: 15px 30px; background-color: #6c757d; color: white;" />
+                <h2 style="font-size: 2rem; color: #007bff;">@Localizer["Join1"]</h2>
+                <p style="font-size: 1.25rem;">@Localizer["Join"]</p>
+                <RadzenButton Text="@Localizer["Register"]" Click="NavigateToRegistration" ButtonStyle="ButtonStyle.Primary" Style="font-size: 1.25rem; padding: 15px 30px; margin-right: 15px; background-color: #007bff; color: white;" />
+                <RadzenButton Text="@Localizer["Login"]" Click="NavigateToLogin" ButtonStyle="ButtonStyle.Secondary" Style="font-size: 1.25rem; padding: 15px 30px; background-color: #6c757d; color: white;" />
             </RadzenCard>
         </RadzenCard>
     </NotAuthorized>

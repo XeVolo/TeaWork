@@ -149,7 +149,6 @@
   </data>
   <data name="LogOut" xml:space="preserve">
     <value>Logout</value>
-    <comment>Wyloguj</comment>
   </data>
   <data name="Register" xml:space="preserve">
     <value>Register</value>
@@ -159,5 +158,53 @@
   </data>
   <data name="Notifications" xml:space="preserve">
     <value>Notifications</value>
+  </data>
+  <data name="WelcomeText" xml:space="preserve">
+    <value>Welcome Back to TeaWork!</value>
+  </data>
+  <data name="Overview" xml:space="preserve">
+    <value>Here's a quick overview of your projects, conversations and tasks.</value>
+  </data>
+  <data name="Conversations" xml:space="preserve">
+    <value>Conversations</value>
+  </data>
+  <data name="Tasks" xml:space="preserve">
+    <value>Tasks</value>
+  </data>
+  <data name="ProjectPanel" xml:space="preserve">
+    <value>Project Panel</value>
+  </data>
+  <data name="Conversation" xml:space="preserve">
+    <value>Conversation</value>
+  </data>
+  <data name="Welcome" xml:space="preserve">
+    <value>Welcome to TeaWork!</value>
+  </data>
+  <data name="PlatformDesc" xml:space="preserve">
+    <value>A platform designed for efficient student collaboration on group projects.</value>
+  </data>
+  <data name="ProjectMen" xml:space="preserve">
+    <value>Project Management</value>
+  </data>
+  <data name="OrganizeProj" xml:space="preserve">
+    <value>Organize projects, track progress, and assign tasks with your team.</value>
+  </data>
+  <data name="Communication" xml:space="preserve">
+    <value>Communication</value>
+  </data>
+  <data name="Communication2" xml:space="preserve">
+    <value>Stay connected in real-time, share files, and collaborate efficiently.</value>
+  </data>
+  <data name="Progress" xml:space="preserve">
+    <value>Progress Tracking</value>
+  </data>
+  <data name="Progress2" xml:space="preserve">
+    <value>Monitor task status and motivate your team to achieve goals on time.</value>
+  </data>
+  <data name="Join" xml:space="preserve">
+    <value>Join thousands of students working efficiently and stress-free on their projects.</value>
+  </data>
+  <data name="Join1" xml:space="preserve">
+    <value>Join TeaWork Today!</value>
   </data>
 </root>
