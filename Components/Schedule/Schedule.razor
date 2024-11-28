@@ -27,29 +27,29 @@
         <div class="row">
 
             <div class="col-md-4 task-column running-column">
-                <h3 class="task-header">Not Started</h3>
+                <h3 class="task-header">@Localizer["NotStarted"]</h3>
                 @foreach (var projectTask in projectTasks.Where(t => t.State == TaskState.NotStarted))
                 {
                     <RadzenCard class="task-card">
                         <dl class="task-info">
                             @if (projectTask.User is not null)
                             {
-                                <dt class="task-label">User</dt>
+                                <dt class="task-label">@Localizer["User"]</dt>
                                 <dd class="task-value">@projectTask.User.UserName</dd>
                             }
-                            <dt class="task-label">Title</dt>
+                            <dt class="task-label">@Localizer["Name"]</dt>
                             <dd class="task-value">@projectTask.Title</dd>
-                            <dt class="task-label">Description</dt>
+                            <dt class="task-label">@Localizer["Description"]</dt>
                             <dd class="task-value">@projectTask.Description</dd>
-                            <dt class="task-label">Beginning</dt>
+                            <dt class="task-label">@Localizer["Beginning"]</dt>
                             <dd class="task-value">@projectTask.CreationDate</dd>
-                            <dt class="task-label">Deadline</dt>
+                            <dt class="task-label">@Localizer["Deadline"]</dt>
                             <dd class="task-value">@projectTask.Deadline</dd>
-                            <dt class="task-label">Priority</dt>
-                            <dd class="task-value">@projectTask.Priority</dd>
+                            <dt class="task-label">@Localizer["Priority"]</dt>
+                            <dd class="task-value">@Localizer[projectTask.Priority.ToString()]</dd>
                             @if (projectTask.TasksDistributions is not null)
                             {
-                                <dt class="task-label">Task Assignment</dt>
+                                <dt class="task-label">@Localizer["TaskAssignment"]</dt>
                                 @foreach (var user in projectTask.TasksDistributions)
                                 {
                                     if (user.User is not null)
@@ -66,10 +66,10 @@
                                         <dl class="comment-info">
                                             @if (taskComment.User is not null)
                                             {
-                                                <dt class="comment-label">User</dt>
+                                                <dt class="comment-label">@Localizer["User"]</dt>
                                                 <dd class="comment-value">@taskComment.User.UserName</dd>
                                             }
-                                            <dt class="comment-label">Description</dt>
+                                            <dt class="comment-label">@Localizer["Description"]</dt>
                                             <dd class="comment-value">@taskComment.Description</dd>
                                         </dl>
                                     </RadzenCard>
@@ -80,11 +80,10 @@
                                 <ValidationSummary class="error-text" />
 
                                 <div class="form-group">
-                                    <label for="commentDescription">Comment Description:</label>
                                     <InputTextArea id="commentDescription" class="form-input" @bind-Value="newComment.Description" />
                                 </div>
 
-                                <button type="submit" class="btn-add-comment">Add Comment</button>
+                                <button type="submit" class="btn-add-comment">@Localizer["AddComment"]</button>
                             </EditForm>
                         </dl>
                     </RadzenCard>
@@ -93,29 +92,29 @@
 
             
             <div class="col-md-4 task-column in-progress-column">
-                <h3 class="task-header">In Progress</h3>
+                <h3 class="task-header">@Localizer["InProgress"]</h3>
                 @foreach (var projectTask in projectTasks.Where(t => t.State == TaskState.InProgress))
                 {
                     <RadzenCard class="task-card">
                         <dl class="task-info">
                             @if (projectTask.User is not null)
                             {
-                                <dt class="task-label">User</dt>
+                                <dt class="task-label">@Localizer["User"]</dt>
                                 <dd class="task-value">@projectTask.User.UserName</dd>
                             }
-                            <dt class="task-label">Title</dt>
+                            <dt class="task-label">@Localizer["Name"]</dt>
                             <dd class="task-value">@projectTask.Title</dd>
-                            <dt class="task-label">Description</dt>
+                            <dt class="task-label">@Localizer["Description"]</dt>
                             <dd class="task-value">@projectTask.Description</dd>
-                            <dt class="task-label">Beginning</dt>
+                            <dt class="task-label">@Localizer["Beginning"]</dt>
                             <dd class="task-value">@projectTask.CreationDate</dd>
-                            <dt class="task-label">Deadline</dt>
+                            <dt class="task-label">@Localizer["Deadline"]</dt>
                             <dd class="task-value">@projectTask.Deadline</dd>
-                            <dt class="task-label">Priority</dt>
-                            <dd class="task-value">@projectTask.Priority</dd>
+                            <dt class="task-label">@Localizer["Priority"]</dt>
+                            <dd class="task-value">@Localizer[projectTask.Priority.ToString()]</dd>
                             @if (projectTask.TasksDistributions is not null)
                             {
-                                <dt class="task-label">Task Assignment</dt>
+                                <dt class="task-label">@Localizer["TaskAssignment"]</dt>
                                 @foreach (var user in projectTask.TasksDistributions)
                                 {
                                     if (user.User is not null)
@@ -132,10 +131,10 @@
                                         <dl class="comment-info">
                                             @if (taskComment.User is not null)
                                             {
-                                                <dt class="comment-label">User</dt>
+                                                <dt class="comment-label">@Localizer["User"]</dt>
                                                 <dd class="comment-value">@taskComment.User.UserName</dd>
                                             }
-                                            <dt class="comment-label">Description</dt>
+                                            <dt class="comment-label">@Localizer["Description"]</dt>
                                             <dd class="comment-value">@taskComment.Description</dd>
                                         </dl>
                                     </RadzenCard>
@@ -146,11 +145,10 @@
                                 <ValidationSummary class="error-text" />
 
                                 <div class="form-group">
-                                    <label for="commentDescription">Comment Description:</label>
                                     <InputTextArea id="commentDescription" class="form-input" @bind-Value="newComment.Description" />
                                 </div>
 
-                                <button type="submit" class="btn-add-comment">Add Comment</button>
+                                <button type="submit" class="btn-add-comment">@Localizer["AddComment"]</button>
                             </EditForm>
                         </dl>
                     </RadzenCard>
@@ -159,29 +157,29 @@
 
             
             <div class="col-md-4 task-column finished-column">
-                <h3 class="task-header">Finished</h3>
+                <h3 class="task-header">@Localizer["Finished"]</h3>
                 @foreach (var projectTask in projectTasks.Where(t => t.State == TaskState.Finished))
                 {
                     <RadzenCard class="task-card">
                         <dl class="task-info">
                             @if (projectTask.User is not null)
                             {
-                                <dt class="task-label">User</dt>
+                                <dt class="task-label">@Localizer["User"]</dt>
                                 <dd class="task-value">@projectTask.User.UserName</dd>
                             }
-                            <dt class="task-label">Title</dt>
+                            <dt class="task-label">@Localizer["Name"]</dt>
                             <dd class="task-value">@projectTask.Title</dd>
-                            <dt class="task-label">Description</dt>
+                            <dt class="task-label">@Localizer["Description"]</dt>
                             <dd class="task-value">@projectTask.Description</dd>
-                            <dt class="task-label">Beginning</dt>
+                            <dt class="task-label">@Localizer["Beginning"]</dt>
                             <dd class="task-value">@projectTask.CreationDate</dd>
-                            <dt class="task-label">Deadline</dt>
+                            <dt class="task-label">@Localizer["Deadline"]</dt>
                             <dd class="task-value">@projectTask.Deadline</dd>
-                            <dt class="task-label">Priority</dt>
-                            <dd class="task-value">@projectTask.Priority</dd>
+                            <dt class="task-label">@Localizer["Priority"]</dt>
+                            <dd class="task-value">@Localizer[projectTask.Priority.ToString()]</dd>
                             @if (projectTask.TasksDistributions is not null)
                             {
-                                <dt class="task-label">Task Assignment</dt>
+                                <dt class="task-label">@Localizer["TaskAssignment"]</dt>
                                 @foreach (var user in projectTask.TasksDistributions)
                                 {
                                     if (user.User is not null)
@@ -198,10 +196,10 @@
                                         <dl class="comment-info">
                                             @if (taskComment.User is not null)
                                             {
-                                                <dt class="comment-label">User</dt>
+                                                <dt class="comment-label">@Localizer["User"]</dt>
                                                 <dd class="comment-value">@taskComment.User.UserName</dd>
                                             }
-                                            <dt class="comment-label">Description</dt>
+                                            <dt class="comment-label">@Localizer["Description"]</dt>
                                             <dd class="comment-value">@taskComment.Description</dd>
                                         </dl>
                                     </RadzenCard>
@@ -212,11 +210,10 @@
                                 <ValidationSummary class="error-text" />
 
                                 <div class="form-group">
-                                    <label for="commentDescription">Comment Description:</label>
                                     <InputTextArea id="commentDescription" class="form-input" @bind-Value="newComment.Description" />
                                 </div>
 
-                                <button type="submit" class="btn-add-comment">Add Comment</button>
+                                <button type="submit" class="btn-add-comment">@Localizer["AddComment"]</button>
                             </EditForm>
                         </dl>
                     </RadzenCard>

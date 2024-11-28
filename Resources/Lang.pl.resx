@@ -208,4 +208,64 @@
   <data name="Join1" xml:space="preserve">
     <value>Dołącz do TeaWork już dziś!</value>
   </data>
+  <data name="NotStarted" xml:space="preserve">
+    <value>Nie zaczęte</value>
+  </data>
+  <data name="User" xml:space="preserve">
+    <value>Użytkownik</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Nazwa</value>
+  </data>
+  <data name="Description" xml:space="preserve">
+    <value>Opis</value>
+  </data>
+  <data name="Beginning" xml:space="preserve">
+    <value>Czas roczpoczęcia</value>
+  </data>
+  <data name="Deadline" xml:space="preserve">
+    <value>Termin ostateczny</value>
+  </data>
+  <data name="Priority" xml:space="preserve">
+    <value>Priorytet</value>
+  </data>
+  <data name="TaskAssignment" xml:space="preserve">
+    <value>Przydział zadań</value>
+  </data>
+  <data name="AddComment" xml:space="preserve">
+    <value>Dodaj komentarz</value>
+  </data>
+  <data name="InProgress" xml:space="preserve">
+    <value>W trakcie realizacji</value>
+  </data>
+  <data name="Finished" xml:space="preserve">
+    <value>Ukończone</value>
+  </data>
+  <data name="Critical" xml:space="preserve">
+    <value>Krytyczny</value>
+  </data>
+  <data name="High" xml:space="preserve">
+    <value>Wysoki</value>
+  </data>
+  <data name="Medium" xml:space="preserve">
+    <value>Średni</value>
+  </data>
+  <data name="Low" xml:space="preserve">
+    <value>Niski</value>
+  </data>
+  <data name="Title" xml:space="preserve">
+    <value>Tytuł</value>
+  </data>
+  <data name="Start" xml:space="preserve">
+    <value>Początek</value>
+  </data>
+  <data name="End" xml:space="preserve">
+    <value>Koniec</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Zapisz</value>
+  </data>
+  <data name="StartDate" xml:space="preserve">
+    <value>Data rozpoczęcia</value>
+  </data>
 </root>
