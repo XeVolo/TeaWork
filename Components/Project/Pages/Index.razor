@@ -10,8 +10,8 @@
 @inherits LayoutComponentBase
 
 <PageTitle>Projects</PageTitle>
-<RadzenButton id="RadzenButton" Text="Create New Project" Click="() => ShowModal()" Style="width: 100%;" />
-<h1> Your Projects:</h1>
+<RadzenButton id="RadzenButton" Text="@Localizer["CreateProject"]" Click="() => ShowModal()" Style="width: 100%;" />
+<h1> @Localizer["YourProjects"]:</h1>
 <div class="projects-container">
     @if (Projects is not null && Projects.Any())
     {
@@ -21,54 +21,54 @@
                 <h3>@project.Title</h3>
 
                 <dl class="row">
-                    <dt class="col-sm-4">Start Date</dt>
+                    <dt class="col-sm-4">@Localizer["StartDate"]</dt>
                     <dd class="col-sm-8">@project.StartDate.ToString("yyyy-MM-dd")</dd>
 
-                    <dt class="col-sm-4">Deadline</dt>
+                    <dt class="col-sm-4">@Localizer["Deadline"]</dt>
                     <dd class="col-sm-8">@project.Deadline.ToString("yyyy-MM-dd")</dd>
 
-                    <dt class="col-sm-4">Description</dt>
+                    <dt class="col-sm-4">@Localizer["Description"]</dt>
                     <dd class="col-sm-8">@project.Description</dd>
                 </dl>
 
                 <div class="action-links">
-                    <a href="@($"projects/details?id={project.Id}")" class="btn btn-link">Details</a>
-                    <a href="@($"projects/designconcept?id={project.Id}")" class="btn btn-link">Design Concept</a>
-                    <a href="@($"projects/tasks?id={project.Id}")" class="btn btn-link">To Do List</a>
-                    <a href="@($"projects/schedule?id={project.Id}")" class="btn btn-link">Schedule</a>
+                    <a href="@($"projects/details?id={project.Id}")" class="btn btn-link">@Localizer["Details"]</a>
+                    <a href="@($"projects/designconcept?id={project.Id}")" class="btn btn-link">@Localizer["DesignConcept"]</a>
+                    <a href="@($"projects/tasks?id={project.Id}")" class="btn btn-link">@Localizer["ToDoList"]</a>
+                    <a href="@($"projects/schedule?id={project.Id}")" class="btn btn-link">@Localizer["Schedule"]</a>
                 </div>
             </RadzenCard>
         }
     }
     else
     {
-        <p>No projects available.</p>
+        <p>@Localizer["NoProjects"]</p>
     }
-    <Modal @ref="modal" Title="Create task">
+    <Modal @ref="modal" Title="@Localizer["CreateProject"]">
         <BodyTemplate>
             <EditForm Model="project" OnValidSubmit="AddProject">
                 <DataAnnotationsValidator />
                 <ValidationSummary class="text-danger" />
                 <div class="mb-3">
-                    <label for="title" class="form-label">Title:</label>
+                    <label for="title" class="form-label">@Localizer["Title"]:</label>
                     <InputText id="title" @bind-Value="project.Title" class="form-control" />
                     <ValidationMessage For="() => project.Title" class="text-danger" />
                 </div>
                 <div class="mb-3">
-                    <label for="deadline" class="form-label">Deadline:</label>
+                    <label for="deadline" class="form-label">@Localizer["Deadline"]:</label>
                     <RadzenDatePicker TValue="DateTime?" Value=@project.Deadline Change="@(args => project.Deadline = args)" Name="RadzenDatePickerChangeEvent" />
                     <ValidationMessage For="() => project.Deadline" class="text-danger" />
                 </div>
                 <div class="mb-3">
-                    <label for="description" class="form-label">Description:</label>
+                    <label for="description" class="form-label">@Localizer["Description"]:</label>
                     <InputTextArea id="description" @bind-Value="project.Description" class="form-control" />
                     <ValidationMessage For="() => project.Description" class="text-danger" />
                 </div>
-                <button type="submit" class="btn btn-primary">Create</button>
+                <button type="submit" class="btn btn-primary">@Localizer["Create"]</button>
             </EditForm>
         </BodyTemplate>
         <FooterTemplate>
-            <Button Color="ButtonColor.Secondary" @onclick="HideModal">Close</Button>
+            <Button Color="ButtonColor.Secondary" @onclick="HideModal">@Localizer["Close"]</Button>
         </FooterTemplate>
     </Modal>
 </div>

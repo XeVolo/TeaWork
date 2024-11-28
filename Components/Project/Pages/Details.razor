@@ -17,71 +17,67 @@
 
 <PageTitle>Details</PageTitle>
 
-<h1>Details</h1>
+<h1>@Localizer["Details"]</h1>
 
 <div>
-    <h4>Project</h4>
+    <h4>@Localizer["Project"]</h4>
     <hr />
     @if (project is null)
     {
-        <p><em>Loading...</em></p>
+        <p><em>@Localizer["Loading"]...</em></p>
     }
     else
     {
         <dl class="row">
-            <dt class="col-sm-2">Title</dt>
+            <dt class="col-sm-2">@Localizer["Title"]</dt>
             <dd class="col-sm-10">@project.Title</dd>
-            <dt class="col-sm-2">StartDate</dt>
+            <dt class="col-sm-2">@Localizer["StartDate"]</dt>
             <dd class="col-sm-10">@project.StartDate</dd>
-            <dt class="col-sm-2">Deadline</dt>
+            <dt class="col-sm-2">@Localizer["Deadline"]</dt>
             <dd class="col-sm-10">@project.Deadline</dd>
-            <dt class="col-sm-2">Description</dt>
-            <dd class="col-sm-10">@project.Description</dd>
-            <dt class="col-sm-2">ToDoListId</dt>
-            <dd class="col-sm-10">@project.ToDoListId</dd>
-            <dt class="col-sm-2">ProjectConversationId</dt>
-            <dd class="col-sm-10">@project.ProjectConversationId</dd>
+            <dt class="col-sm-2">@Localizer["Description"]</dt>
+            <dd class="col-sm-10">@project.Description</dd>            
 
             @if(projectMembers!=null)
             {
-            <h3>Project members</h3>
+                <h3>@Localizer["ProjectMembers"]</h3>
             @foreach(ProjectMember member in projectMembers)
             {
                 <RadzenCard Style="width: 30%; margin: 5px; padding: 20px; text-align: center; background-color: #f9f9f9;">
                 @if (member.User != null)
                 {
-                    <dt class="col-sm-2">User</dt>                
-                    <dd class="col-sm-10">@member.User.UserName</dd>
-                    
-                    <dt class="col-sm-2">Role</dt>
+                            <dt class="col-sm-2">@Localizer["User"]</dt>
+                            <dd class="col-sm-10">@member.User.UserName</dd>
+
+                            <dt class="col-sm-2">@Localizer["Role"]</dt>
                     <dd class="col-sm-10">@member.Role</dd>
 
                     @if (!member.Role.Equals(ProjectMemberRole.Admin))
                     {
-                                <dd><RadzenButton Text="Delete User" Click="() => DeleteUser(member.UserId!)" Style="background-color: #8b0000; color: black; font-weight:bold;" /></dd>
+                                <dd><RadzenButton Text="@Localizer["DeleteUser"]" Click="() => DeleteUser(member.UserId!)" Style="background-color: #8b0000; color: black; font-weight:bold;" /></dd>
                     }
                 }
                 </RadzenCard>
             }
             }
         </dl>
-        <RadzenButton id="RadzenButton" Text="Add Project Member" Click="() => ShowAddUserModal()" Style="width: 100%;margin:10px;" />
-        <RadzenButton id="RadzenButton" Text="Create project summary report" Click="() => ShowReport()" Style="width: 100%;margin:10px;" />
+        <RadzenButton id="RadzenButton" Text="@Localizer["AddProjectMember"]" Click="() => ShowAddUserModal()" Style="width: 100%;margin:10px;" />
+        <RadzenButton id="RadzenButton" Text="@Localizer["CreateRaport"]" Click="() => ShowReport()" Style="width: 100%;margin:10px;" />
 
-        <Modal @ref="modalAddUser" Title="Send Invitation">
+        <Modal @ref="modalAddUser" Title="@Localizer["SendInvitation"]">
             <BodyTemplate>
                 <EditForm Model="this" OnValidSubmit="FindUser">
                     <DataAnnotationsValidator />
                     <ValidationSummary class="error-text" />
                     <div class="form-group">
-                        <label for="userInput">User Email:</label>
+                        <label for="userInput">@Localizer["UserEmail"]:</label>
                         <InputText id="userInput" class="form-input" @bind-Value="userInput" />
                     </div>
-                    <button type="submit" class="btn-submit">Send</button>
+                    <button type="submit" class="btn-submit">@Localizer["Send"]</button>
                 </EditForm>
             </BodyTemplate>
             <FooterTemplate>
-                <Button Color="ButtonColor.Secondary" @onclick="HideAddUserModal">Close</Button>
+                <Button Color="ButtonColor.Secondary" @onclick="HideAddUserModal">@Localizer["Close"]</Button>
             </FooterTemplate>
         </Modal>
         <Modal @ref="modalReport" Title="Complete the project summary report">

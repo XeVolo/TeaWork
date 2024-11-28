@@ -277,9 +277,8 @@
   <data name="SelectState" xml:space="preserve">
     <value>Wybierz stan</value>
   </data>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="SelectPriority" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
+  <data name="SelectPriority" xml:space="preserve">
+    <value>Wybierz priorytet</value>
   </data>
   <data name="Add" xml:space="preserve">
     <value>Dodaj</value>
@@ -307,5 +306,59 @@
   </data>
   <data name="Change" xml:space="preserve">
     <value>Zmień</value>
+  </data>
+  <data name="CreateProject" xml:space="preserve">
+    <value>Stwórz nowy projekt</value>
+  </data>
+  <data name="YourProjects" xml:space="preserve">
+    <value>Twoje Projekty</value>
+  </data>
+  <data name="NoProjects" xml:space="preserve">
+    <value>Brak aktywnych projektów</value>
+  </data>
+  <data name="Create" xml:space="preserve">
+    <value>Stwórz</value>
+  </data>
+  <data name="UploadFile" xml:space="preserve">
+    <value>Prześlij plik</value>
+  </data>
+  <data name="Success" xml:space="preserve">
+    <value>Sukces</value>
+  </data>
+  <data name="Size" xml:space="preserve">
+    <value>Rozmiar</value>
+  </data>
+  <data name="UploadDate" xml:space="preserve">
+    <value>Data przesłania</value>
+  </data>
+  <data name="Download" xml:space="preserve">
+    <value>Pobierz</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Usuń</value>
+  </data>
+  <data name="NoFiles" xml:space="preserve">
+    <value>Brak Plików</value>
+  </data>
+  <data name="ProjectMembers" xml:space="preserve">
+    <value>Członkowie projektu</value>
+  </data>
+  <data name="Role" xml:space="preserve">
+    <value>Rola</value>
+  </data>
+  <data name="DeleteUser" xml:space="preserve">
+    <value>Usuń użytkownika</value>
+  </data>
+  <data name="AddProjectMember" xml:space="preserve">
+    <value>Dodaj członka projektu</value>
+  </data>
+  <data name="CreateReport" xml:space="preserve">
+    <value>Stwórz raport podsumowujący</value>
+  </data>
+  <data name="SendInvitation" xml:space="preserve">
+    <value>Wyślij zaproszenie</value>
+  </data>
+  <data name="UserEmail" xml:space="preserve">
+    <value>Email użytkownika</value>
   </data>
 </root>

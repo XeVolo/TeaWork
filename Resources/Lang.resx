@@ -306,4 +306,58 @@
   <data name="Change" xml:space="preserve">
     <value>Change</value>
   </data>
+  <data name="CreateProject" xml:space="preserve">
+    <value>Create New Project</value>
+  </data>
+  <data name="YourProjects" xml:space="preserve">
+    <value>Your Projects</value>
+  </data>
+  <data name="NoProjects" xml:space="preserve">
+    <value>No projects available.</value>
+  </data>
+  <data name="Create" xml:space="preserve">
+    <value>Create</value>
+  </data>
+  <data name="UploadFile" xml:space="preserve">
+    <value>Upload File</value>
+  </data>
+  <data name="Success" xml:space="preserve">
+    <value>Success</value>
+  </data>
+  <data name="Size" xml:space="preserve">
+    <value>Size</value>
+  </data>
+  <data name="UploadDate" xml:space="preserve">
+    <value>Upload Date</value>
+  </data>
+  <data name="Download" xml:space="preserve">
+    <value>Download</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="NoFiles" xml:space="preserve">
+    <value>No Files</value>
+  </data>
+  <data name="ProjectMembers" xml:space="preserve">
+    <value>Project Members</value>
+  </data>
+  <data name="Role" xml:space="preserve">
+    <value>Role</value>
+  </data>
+  <data name="DeleteUser" xml:space="preserve">
+    <value>Delete User</value>
+  </data>
+  <data name="AddProjectMember" xml:space="preserve">
+    <value>Add project member</value>
+  </data>
+  <data name="CreateReport" xml:space="preserve">
+    <value>Create project summary report</value>
+  </data>
+  <data name="SendInvitation" xml:space="preserve">
+    <value>Send Invitation</value>
+  </data>
+  <data name="UserEmail" xml:space="preserve">
+    <value>User Email</value>
+  </data>
 </root>
