@@ -16,13 +16,13 @@
 
 <PageTitle>Project tasks</PageTitle>
 <div class="container">
-<h3 class="page-title">Project Tasks</h3>
+    <h3 class="page-title">@Localizer["ToDoList"]</h3>
     <div class="project-details">
-        <h4 class="section-title">Project</h4>
+        <h4 class="section-title">@Localizer["Project"]</h4>
     <hr />
     @if (project is null)
     {
-        <p><em>Loading...</em></p>
+            <p><em>@Localizer["Loading"]...</em></p>
     }
     else
     {
@@ -37,67 +37,67 @@
             <dd class="col-sm-10">@project.Description</dd>
             </dl>
 
-            <RadzenButton id="RadzenButton" Text="Add Project Task" Click="() => ShowModal()" Style="width: 100%;" />
+            <RadzenButton id="RadzenButton" Text="@Localizer["AddTask"]" Click="() => ShowModal()" Style="width: 100%;" />
 
-        <Modal @ref="modal" Title="Add task">
+            <Modal @ref="modal" Title="@Localizer["AddTask"]">
             <BodyTemplate>
                     <EditForm Model="newProjectTask" OnValidSubmit="AddProjectTask" class="task-form">
                     <DataAnnotationsValidator />
                     <ValidationSummary class="text-danger" />
 
                     <div class="form-group">
-                        <label for="title">Title:</label>
+                            <label for="title">@Localizer["Title"]:</label>
                         <InputText id="title" class="form-control" @bind-Value="newProjectTask.Title" />
                         <ValidationMessage For="() => newProjectTask.Title" class="text-danger" />
                     </div>
 
                     <div class="form-group">
-                        <label for="description">Description:</label>
+                            <label for="description">@Localizer["Description"]:</label>
                         <InputTextArea id="description" class="form-control" @bind-Value="newProjectTask.Description" />
                         <ValidationMessage For="() => newProjectTask.Description" class="text-danger" />
                     </div>
 
                     <div class="form-group">
-                        <label for="start">Beginning of the task:</label>
+                            <label for="start">@Localizer["Beginning"]:</label>
                         <RadzenDatePicker TValue="DateTime?" Value=@newProjectTask.Start Change="@(args => newProjectTask.Start = args)" Name="RadzenDatePickerChangeEvent" />
                         <ValidationMessage For="() => newProjectTask.Start" class="text-danger" />
                     </div>
 
                     <div class="form-group">
-                        <label for="deadline">Deadline:</label>
+                            <label for="deadline">@Localizer["Deadline"]:</label>
                         <RadzenDatePicker TValue="DateTime?" Value=@newProjectTask.Deadline Change="@(args => newProjectTask.Deadline = args)" Name="RadzenDatePickerChangeEvent" />
                         <ValidationMessage For="() => newProjectTask.Deadline" class="text-danger" />
                     </div>
 
                     <div class="form-group">
-                        <label for="state">State:</label>
+                            <label for="state">@Localizer["State"]:</label>
                         <InputSelect id="state" class="form-control" @bind-Value="newProjectTask.State">
-                            <option value="">-- Wybierz stan --</option>
+                                <option value="">-- @Localizer["SelectState"] --</option>
                             @foreach (var state in Enum.GetValues<TaskState>())
                             {
-                                <option value="@state">@state</option>
+                                    <option value="@state">@Localizer[state.ToString()]</option>
                             }
                         </InputSelect>
                         <ValidationMessage For="() => newProjectTask.State" class="text-danger" />
                     </div>
 
                     <div class="form-group">
-                        <label for="priority">Priority:</label>
+                            <label for="priority">@Localizer["Priority"]:</label>
                         <InputSelect id="priority" class="form-control" @bind-Value="newProjectTask.Priority">
-                            <option value="">-- Wybierz priorytet --</option>
+                                <option value="">-- @Localizer["SelectPriority"] --</option>
                             @foreach (var priority in Enum.GetValues<TaskPriority>())
                             {
-                                <option value="@priority">@priority</option>
+                                    <option value="@priority">@Localizer[priority.ToString()]</option>
                             }
                         </InputSelect>
                         <ValidationMessage For="() => newProjectTask.Priority" class="text-danger" />
                     </div>
 
-                    <button type="submit" class="btn btn-success">Add</button>
+                        <button type="submit" class="btn btn-success">@Localizer["Add"]</button>
                 </EditForm>
             </BodyTemplate>
             <FooterTemplate>
-                <Button Color="ButtonColor.Secondary" @onclick="HideModal">Close</Button>
+                    <Button Color="ButtonColor.Secondary" @onclick="HideModal">@Localizer["Close"]</Button>
             </FooterTemplate>
         </Modal>
 
@@ -114,25 +114,25 @@
                             <dl class="row">
                                 @if (projectTask.User is not null)
                                 {
-                                    <dt class="col-sm-2 label">User</dt>
+                                        <dt class="col-sm-2 label">@Localizer["User"]</dt>
                                     <dd class="col-sm-10 value">@projectTask.User.UserName</dd>
                                 }
-                                <dt class="col-sm-2 label">Title</dt>
+                                    <dt class="col-sm-2 label">@Localizer["Title"]</dt>
                                 <dd class="col-sm-10 value">@projectTask.Title</dd>
-                                <dt class="col-sm-2 label">Description</dt>
+                                    <dt class="col-sm-2 label">@Localizer["Description"]</dt>
                                 <dd class="col-sm-10 value">@projectTask.Description</dd>
-                                <dt class="col-sm-2 label">Creation Date</dt>
+                                    <dt class="col-sm-2 label">@Localizer["Beginning"]</dt>
                                 <dd class="col-sm-10 value">@projectTask.CreationDate</dd>
-                                <dt class="col-sm-2 label">Deadline</dt>
+                                    <dt class="col-sm-2 label">@Localizer["Deadline"]</dt>
                                 <dd class="col-sm-10 value">@projectTask.Deadline</dd>
-                                <dt class="col-sm-2 label">State</dt>
-                                <dd class="col-sm-10 value">@projectTask.State</dd>
-                                <dt class="col-sm-2 label">Priority</dt>
-                                <dd class="col-sm-10 value">@projectTask.Priority</dd>
+                                    <dt class="col-sm-2 label">@Localizer["State"]</dt>
+                                    <dd class="col-sm-10 value">@Localizer[projectTask.State.ToString()]</dd>
+                                    <dt class="col-sm-2 label">@Localizer["Priority"]</dt>
+                                    <dd class="col-sm-10 value">@Localizer[projectTask.Priority.ToString()]</dd>
 
                                 @if (projectTask.TasksDistributions is not null)
                                 {
-                                    <dt class="col-sm-2 label">Task Assignment:</dt>
+                                        <dt class="col-sm-2 label">@Localizer["TaskAssignment"]:</dt>
                                     <dd class="col-sm-10 value">
                                         <ul class="assigned-users">
                                             @foreach (var user in projectTask.TasksDistributions)
@@ -148,25 +148,25 @@
                             </dl>
 
                             <div class="task-buttons">
-                                <button class="btn btn-primary" @onclick="() => ShowAssignModal(projectTask.Id)">Assign a task</button>
-                                <button class="btn btn-primary" @onclick="() => ShowPriorityModal(projectTask.Id)">Change priority</button>
-                                <button class="btn btn-primary" @onclick="() => ShowStateModal(projectTask.Id)">Change state</button>
+                                    <button class="btn btn-primary" @onclick="() => ShowAssignModal(projectTask.Id)">@Localizer["AssignTask"]</button>
+                                    <button class="btn btn-primary" @onclick="() => ShowPriorityModal(projectTask.Id)">@Localizer["ChangePriority"]</button>
+                                    <button class="btn btn-primary" @onclick="() => ShowStateModal(projectTask.Id)">@Localizer["ChangeState"]</button>
                             </div>
                         </div>
                         </RadzenCard>
                     }
                 }
             </div>
-            <Modal @ref="assignModal" Title="Assign a task">
+            <Modal @ref="assignModal" Title="@Localizer["AssignTask"]">
                 <BodyTemplate>
                     <EditForm Model="newUser" OnValidSubmit="@(() => AssignTask(selectedProjectTaskId))">
                         <DataAnnotationsValidator />
                         <ValidationSummary class="text-danger" />                        
 
                         <div class="form-group">
-                            <label for="priority">User:</label>
+                            <label for="priority">@Localizer["User"]:</label>
                             <InputSelect id="user" class="form-control" @bind-Value="newUser.Id">
-                                <option value="">-- Assign user --</option>
+                                <option value="">-- @Localizer["AssignUser"] --</option>
                                 @if (users is not null)
                                 {
                                     @foreach (var user in users)
@@ -179,65 +179,65 @@
 
                             <ValidationMessage For="() => newUser.Name" class="text-danger" />
                         </div>
-                        
 
-                        <button type="submit" class="btn btn-success">Add</button>
+
+                        <button type="submit" class="btn btn-success">@Localizer["Add"]</button>
                     </EditForm>
                 </BodyTemplate>
                 <FooterTemplate>
-                    <Button Color="ButtonColor.Secondary" @onclick="HideAssignModal">Close</Button>
+                    <Button Color="ButtonColor.Secondary" @onclick="HideAssignModal">@Localizer["Close"]</Button>
                 </FooterTemplate>
             </Modal>
 
-            <Modal @ref="priorityModal" Title="Change Priority">
+            <Modal @ref="priorityModal" Title="@Localizer["ChangePriority"]">
                 <BodyTemplate>
                     <EditForm Model="newPriority" OnValidSubmit="@(() => ChangePriorityTask(selectedProjectTaskId))">
                         <DataAnnotationsValidator />
                         <ValidationSummary class="text-danger" />
 
                         <div class="form-group">
-                            <label for="priority">Priority:</label>
+                            <label for="priority">@Localizer["Priority"]:</label>
                             <InputSelect id="priority" class="form-control" @bind-Value="newPriority">
-                                <option value="">-- Change priority --</option>
+                                <option value="">-- @Localizer["ChangePriority"] --</option>
                                 
                                     @foreach (TaskPriority priority in Enum.GetValues(typeof(TaskPriority)))
                                     {
-                                        <option value="@priority">@priority</option>
+                                    <option value="@priority">@Localizer[priority.ToString()]</option>
                                     }
                                 
                             </InputSelect>
                         </div>
-                        <button type="submit" class="btn btn-success">Change</button>
+                        <button type="submit" class="btn btn-success">@Localizer["Change"]</button>
                     </EditForm>
                 </BodyTemplate>
                 <FooterTemplate>
-                    <Button Color="ButtonColor.Secondary" @onclick="HidePriorityModal">Close</Button>
+                    <Button Color="ButtonColor.Secondary" @onclick="HidePriorityModal">@Localizer["Close"]</Button>
                 </FooterTemplate>
             </Modal>
 
-            <Modal @ref="stateModal" Title="Change State">
+            <Modal @ref="stateModal" Title="@Localizer["ChangeState"]">
                 <BodyTemplate>
                     <EditForm Model="newState" OnValidSubmit="@(() => ChangeStateTask(selectedProjectTaskId))">
                         <DataAnnotationsValidator />
                         <ValidationSummary class="text-danger" />
 
                         <div class="form-group">
-                            <label for="state">State:</label>
+                            <label for="state">@Localizer["State"]:</label>
                             <InputSelect id="state" class="form-control" @bind-Value="newState">
-                                <option value="">-- Change state --</option>
+                                <option value="">-- @Localizer["ChangeState"] --</option>
 
                                 @foreach (TaskState state in Enum.GetValues(typeof(TaskState)))
                                 {
-                                    <option value="@state">@state</option>
+                                    <option value="@state">@Localizer[state.ToString()]</option>
                                 }
 
                             </InputSelect>
                         </div>
-                        <button type="submit" class="btn btn-success">Change</button>
+                        <button type="submit" class="btn btn-success">@Localizer["Change"]</button>
                     </EditForm>
                 </BodyTemplate>
                 <FooterTemplate>
-                    <Button Color="ButtonColor.Secondary" @onclick="HideStateModal">Close</Button>
+                    <Button Color="ButtonColor.Secondary" @onclick="HideStateModal">@Localizer["Close"]</Button>
                 </FooterTemplate>
             </Modal>
                 

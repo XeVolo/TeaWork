@@ -87,7 +87,7 @@ builder.Services.AddSignalR();
 
 var app = builder.Build();
 app.UseResponseCompression();
-// Configure the HTTP request pipeline.
+
 if (app.Environment.IsDevelopment())
 {
     app.UseMigrationsEndPoint();
@@ -98,7 +98,7 @@ else
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
-// Lista obs³ugiwanych kultur
+
 var supportedCultures = new[]
 {
     new CultureInfo("en"),
