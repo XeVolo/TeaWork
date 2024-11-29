@@ -175,7 +175,7 @@
     <value>Panel Projektu</value>
   </data>
   <data name="Conversation" xml:space="preserve">
-    <value>Conversation</value>
+    <value>Konwersacja</value>
   </data>
   <data name="Welcome" xml:space="preserve">
     <value>Witaj w TeaWork!</value>
@@ -360,5 +360,90 @@
   </data>
   <data name="UserEmail" xml:space="preserve">
     <value>Email użytkownika</value>
+  </data>
+  <data name="CompleteReport" xml:space="preserve">
+    <value>Wypełnij raport podsumowujący projekt</value>
+  </data>
+  <data name="AssessUser" xml:space="preserve">
+    <value>Oceń pracę i zaangażowanie użytkownika</value>
+  </data>
+  <data name="Summary" xml:space="preserve">
+    <value>Podsumowanie</value>
+  </data>
+  <data name="AdditionalObservation" xml:space="preserve">
+    <value>Dodatkowe uwagi</value>
+  </data>
+  <data name="Attention" xml:space="preserve">
+    <value>Uwaga!</value>
+  </data>
+  <data name="NoUser" xml:space="preserve">
+    <value>Nie znaleziono użytkownika z podanym adresem.</value>
+  </data>
+  <data name="InvitationSent" xml:space="preserve">
+    <value>Wysłano zaproszenie</value>
+  </data>
+  <data name="Send" xml:space="preserve">
+    <value>Wyślij</value>
+  </data>
+  <data name="AddDesign" xml:space="preserve">
+    <value>Dodaj koncepcję</value>
+  </data>
+  <data name="EnterMessage" xml:space="preserve">
+    <value>Podaj wiadomość</value>
+  </data>
+  <data name="Profile" xml:space="preserve">
+    <value>Profil</value>
+  </data>
+  <data name="Password" xml:space="preserve">
+    <value>Hasło</value>
+  </data>
+  <data name="ExternalLogins" xml:space="preserve">
+    <value>Logowania zewnętrzne</value>
+  </data>
+  <data name="ChangeAccount" xml:space="preserve">
+    <value>Edytuj ustawienia profilu</value>
+  </data>
+  <data name="ManageAccount" xml:space="preserve">
+    <value>Zarządzaj swoim profilem</value>
+  </data>
+  <data name="CreateAccount" xml:space="preserve">
+    <value>Stwórz nowe konto</value>
+  </data>
+  <data name="ConfirmPassword" xml:space="preserve">
+    <value>Potwierdź hasło</value>
+  </data>
+  <data name="AnotherService" xml:space="preserve">
+    <value>Aby się zarejestrować, skorzystaj z innej usługi</value>
+  </data>
+  <data name="UseLocalAccount" xml:space="preserve">
+    <value>Aby się zalogować, użyj konta lokalnego</value>
+  </data>
+  <data name="RememberMe" xml:space="preserve">
+    <value>Zapamiętaj mnie</value>
+  </data>
+  <data name="Username" xml:space="preserve">
+    <value>Nazwa użytkownika</value>
+  </data>
+  <data name="PhoneNumber" xml:space="preserve">
+    <value>Numer telefonu</value>
+  </data>
+  <data name="RegisteredLogins" xml:space="preserve">
+    <value>Zarejestrowane logowania
+</value>
+  </data>
+  <data name="Remove" xml:space="preserve">
+    <value>Usuń</value>
+  </data>
+  <data name="ChangePassword" xml:space="preserve">
+    <value>Zmień hasło</value>
+  </data>
+  <data name="OldPassword" xml:space="preserve">
+    <value>Stare hasło</value>
+  </data>
+  <data name="NewPassword" xml:space="preserve">
+    <value>Nowe hasło</value>
+  </data>
+  <data name="UpdatePassword" xml:space="preserve">
+    <value>Zmień hasło</value>
   </data>
 </root>

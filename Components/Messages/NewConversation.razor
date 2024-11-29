@@ -21,31 +21,31 @@
     </div>
 </div>
 
-<button @onclick="FindUser">Send</button>
+<button @onclick="FindUser">@Localizer["Send"]</button>
 
-<Modal @ref="modalAddUser" Title="Send Invitation">
+<Modal @ref="modalAddUser" Title="@Localizer["SendInvitation"]">
     <BodyTemplate>
         <EditForm Model="this" OnValidSubmit="FindUser">
             <DataAnnotationsValidator />
             <ValidationSummary class="error-text" />
             <div class="form-group">
-                <label for="userInput">User Email:</label>
+                <label for="userInput">@Localizer["UserEmail"]:</label>
                 <InputText id="userInput" class="form-input" @bind-Value="userInput" />
             </div>
-            <button type="submit" class="btn-submit">Send</button>
+            <button type="submit" class="btn-submit">@Localizer["Send"]</button>
         </EditForm>
     </BodyTemplate>
     <FooterTemplate>
-        <Button Color="ButtonColor.Secondary" @onclick="HideAddUserModal">Close</Button>
+        <Button Color="ButtonColor.Secondary" @onclick="HideAddUserModal">@Localizer["Close"]</Button>
     </FooterTemplate>
 </Modal>
 
-<Modal @ref="modal" Title="Uwaga!">
+<Modal @ref="modal" Title="@Localizer["Attention"]">
     <BodyTemplate>
-        Nie znaleziono użytkownika z podanym adresem.
+        @Localizer["NoUser"]
     </BodyTemplate>
     <FooterTemplate>
-        <Button Color="ButtonColor.Secondary" @onclick="HideModal">Close</Button>
+        <Button Color="ButtonColor.Secondary" @onclick="HideModal">@Localizer["Close"]</Button>
     </FooterTemplate>
 </Modal>
 

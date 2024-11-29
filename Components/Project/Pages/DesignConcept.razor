@@ -15,51 +15,51 @@
 <div class="project-page">
     <PageTitle>Project Design Concept</PageTitle>
 
-    <h3 class="section-title">Design Concept</h3>
+    <h3 class="section-title">@Localizer["DesignConcept"]</h3>
     <div class="project-details">
-        <h4>Project</h4>
+        <h4>@Localizer["Project"]</h4>
         <hr />
         @if (project is null)
         {
-            <p class="loading-text"><em>Loading...</em></p>
+            <p class="loading-text"><em>@Localizer["Loading"]...</em></p>
         }
         else
         {
             <dl class="project-info">
-                <dt class="info-label">Title</dt>
+                <dt class="info-label">@Localizer["Title"]</dt>
                 <dd class="info-value">@project.Title</dd>
-                <dt class="info-label">Start Date</dt>
+                <dt class="info-label">@Localizer["StartDate"]</dt>
                 <dd class="info-value">@project.StartDate</dd>
-                <dt class="info-label">Deadline</dt>
+                <dt class="info-label">@Localizer["Deadline"]</dt>
                 <dd class="info-value">@project.Deadline</dd>
-                <dt class="info-label">Description</dt>
+                <dt class="info-label">@Localizer["Description"]</dt>
                 <dd class="info-value">@project.Description</dd>
             </dl>
-            <RadzenButton id="RadzenButton" Text="Add design concept" Click="() => ShowModal()" Style="width: 100%;" />
+            <RadzenButton id="RadzenButton" Text="@Localizer["AddDesign"]" Click="() => ShowModal()" Style="width: 100%;" />
 
-            <Modal @ref="modal" Title="Add Design Concept">
+            <Modal @ref="modal" Title="@Localizer["AddDesign"]">
                 <BodyTemplate>
                     <EditForm Model="ownDesignConcept" OnValidSubmit="AddDesignConcept">
                         <DataAnnotationsValidator />
                         <ValidationSummary class="error-text" />
 
                         <div class="form-group">
-                            <label for="title">Title:</label>
+                            <label for="title">@Localizer["Title"]:</label>
                             <InputText id="title" class="form-input" @bind-Value="ownDesignConcept.Title" />
                             <ValidationMessage For="() => ownDesignConcept.Title" class="error-text" />
                         </div>
 
                         <div class="form-group">
-                            <label for="description">Description:</label>
+                            <label for="description">@Localizer["Description"]:</label>
                             <InputTextArea id="description" class="form-input" @bind-Value="ownDesignConcept.Description" />
                             <ValidationMessage For="() => ownDesignConcept.Description" class="error-text" />
                         </div>
 
-                        <button type="submit" class="btn-submit">Add</button>
+                        <button type="submit" class="btn-submit">@Localizer["Add"]</button>
                     </EditForm>
                 </BodyTemplate>
                 <FooterTemplate>
-                    <Button Color="ButtonColor.Secondary" @onclick="HideModal">Close</Button>
+                    <Button Color="ButtonColor.Secondary" @onclick="HideModal">@Localizer["Close"]</Button>
                 </FooterTemplate>
             </Modal>
 
@@ -72,12 +72,12 @@
                             <dl class="concept-info">
                                 @if (designconcept.User is not null)
                                 {
-                                    <dt class="info-label">User</dt>
+                                    <dt class="info-label">@Localizer["User"]</dt>
                                     <dd class="info-value">@designconcept.User.UserName</dd>
                                 }
-                                <dt class="info-label">Title</dt>
+                                <dt class="info-label">@Localizer["Title"]</dt>
                                 <dd class="info-value">@designconcept.Title</dd>
-                                <dt class="info-label">Description</dt>
+                                <dt class="info-label">@Localizer["Description"]</dt>
                                 <dd class="info-value">@designconcept.Description</dd>
                             </dl>
 
@@ -89,10 +89,10 @@
                                         <dl class="comment-info">
                                             @if (designconceptcomment.User is not null)
                                             {
-                                                <dt class="info-label">User</dt>
+                                                <dt class="info-label">@Localizer["User"]</dt>
                                                 <dd class="info-value">@designconceptcomment.User.UserName</dd>
                                             }
-                                            <dt class="info-label">Description</dt>
+                                            <dt class="info-label">@Localizer["Description"]</dt>
                                             <dd class="info-value">@designconceptcomment.Description</dd>
                                         </dl>
                                     </RadzenCard>
@@ -103,11 +103,11 @@
                                 <ValidationSummary class="error-text" />
 
                                 <div class="form-group">
-                                    <label for="commentDescription">Comment Description:</label>
+                                    <label for="commentDescription">@Localizer["AddComment"]:</label>
                                     <InputTextArea id="commentDescription" class="form-input" @bind-Value="newComment.Description" />
                                 </div>
 
-                                <button type="submit" class="btn-add-comment">Add Comment</button>
+                                <button type="submit" class="btn-add-comment">@Localizer["AddComment"]</button>
                             </EditForm>
                         </RadzenCard>
                     }

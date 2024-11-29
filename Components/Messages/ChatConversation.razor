@@ -27,7 +27,7 @@
 
         
         <div class="col-md-9">
-            <h1>Conversation</h1>
+            <h1>@Localizer["Conversation"]</h1>
 
             <div class="conversation-section">
                 <h4>@conversationName</h4>
@@ -35,7 +35,7 @@
 
                 @if (conversation is null)
                 {
-                    <p><em>Loading...</em></p>
+                    <p><em>@Localizer["Loading"]...</em></p>
                 }
                 else
                 {
@@ -51,16 +51,10 @@
                             }
                         </div>
                     }
-
-                    
+                  
                     <div class="mt-3">
-                        <a href="@($"/messages")" class="btn btn-secondary">Back to List</a>
-                    </div>
-
-                    
-                    <div class="mt-3">
-                        <textarea class="form-control message-input" placeholder="Enter your comment" @bind="@newMessage"></textarea>
-                        <button class="btn btn-primary mt-2" @onclick="@(() => Send(newMessage))">Send</button>
+                        <textarea class="form-control message-input" placeholder="@Localizer["EnterMessage"]" @bind="@newMessage"></textarea>
+                        <button class="btn btn-primary mt-2" @onclick="@(() => Send(newMessage))">@Localizer["Send"]</button>
                     </div>
                 }
             </div>
