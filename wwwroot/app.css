@@ -49,3 +49,6 @@ h1:focus {
 .darker-border-checkbox.form-check-input {
     border-color: #929292;
 }
+#components-reconnect-modal {
+    transition: visibility 0s linear 10000ms;
+}
