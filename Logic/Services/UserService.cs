@@ -12,56 +12,48 @@ namespace TeaWork.Logic.Services
         private readonly IDbContextFactory _dbContextFactory;
         private readonly AuthenticationStateProvider _authenticationStateProvider;
         private readonly UserIdentity _userIdentity;
-        public UserService(IDbContextFactory dbContextFactory, AuthenticationStateProvider authenticationStateProvider, UserIdentity userIdentity)
+        private readonly ILogger<UserService> _logger;
+        public UserService(
+            IDbContextFactory dbContextFactory, 
+            AuthenticationStateProvider authenticationStateProvider, 
+            UserIdentity userIdentity,
+            ILogger<UserService> logger)
         {
             _dbContextFactory = dbContextFactory;
             _authenticationStateProvider = authenticationStateProvider;
             _userIdentity = userIdentity;
-        }
-        public async Task<List<string>> GetUsersEmails()
-        {
-            try
-            {
-                using var _context = _dbContextFactory.CreateDbContext();
-                var usersemails = await _context.Users
-                    .Select(x => x.Email)
-                    .ToListAsync();
-                return usersemails!;
-            }
-            catch (Exception ex)
-            {
-                throw new NotImplementedException();
-            }
-
+            _logger = logger;
         }
         public async Task<string> GetLoggedUserId()
         {
 
             try
             {
-                using var _context = _dbContextFactory.CreateDbContext();
+                await using var _context = _dbContextFactory.CreateDbContext();
                 ApplicationUser currentUser = await _userIdentity.GetLoggedUser();
                 return currentUser.Id;
             }
             catch (Exception ex)
             {
-                throw new NotImplementedException();
+                _logger.LogError(ex, "Failed to get logged user.");
+                throw;
             }
         }
         public async Task<string> FindUserByEmail(string email)
         {
             try
             {
-                using var _context = _dbContextFactory.CreateDbContext();
+                await using var _context = _dbContextFactory.CreateDbContext();
                 var userId = await _context.Users
                     .Where(x => x.Email.Equals(email))
                     .Select(x => x.Id)
                     .FirstOrDefaultAsync();
-                return userId;
+                return userId!;
             }
             catch (Exception ex)
             {
-                throw new NotImplementedException();
+                _logger.LogError(ex, "Failed to get user by email.");
+                throw;
             }
 
         }
@@ -69,16 +61,17 @@ namespace TeaWork.Logic.Services
         {
             try
             {
-                using var _context = _dbContextFactory.CreateDbContext();
+                await using var _context = _dbContextFactory.CreateDbContext();
                 var userEmail = await _context.Users
                     .Where(x => x.Id.Equals(userId))
                     .Select(x => x.Email)
                     .FirstOrDefaultAsync();
-                return userEmail;
+                return userEmail!;
             }
             catch (Exception ex)
             {
-                throw new NotImplementedException();
+                _logger.LogError(ex, "Failed to get email by userId.");
+                throw;
             }
 
         }
@@ -86,7 +79,7 @@ namespace TeaWork.Logic.Services
         {
             try
             {
-                using var _context = _dbContextFactory.CreateDbContext();
+                await using var _context = _dbContextFactory.CreateDbContext();
                 List<UserDto> Users = new List<UserDto>();
                 var projectmembers = await _context.ProjectMembers
                     .Where(x => x.ProjectId == projectId)
@@ -108,7 +101,8 @@ namespace TeaWork.Logic.Services
             }
             catch (Exception ex)
             {
-                throw new NotImplementedException();
+                _logger.LogError(ex, "Failed to get project users");
+                throw;
             }
         }
     }

@@ -11,24 +11,37 @@ namespace TeaWork.Logic.Services
     {
         private readonly IDbContextFactory _dbContextFactory;
         private readonly AuthenticationStateProvider _authenticationStateProvider;
+        private readonly ILogger<UserIdentity> _logger;
 
-        public UserIdentity(IDbContextFactory dbContextFactory, AuthenticationStateProvider authenticationStateProvider)
+        public UserIdentity(
+            IDbContextFactory dbContextFactory, 
+            AuthenticationStateProvider authenticationStateProvider,
+            ILogger<UserIdentity> logger)
         {
             _dbContextFactory = dbContextFactory;
             _authenticationStateProvider = authenticationStateProvider;
+            _logger = logger;
         }
 
         public async Task<ApplicationUser> GetLoggedUser()
         {
-            using var _context = _dbContextFactory.CreateDbContext();
-            var authState = await _authenticationStateProvider.GetAuthenticationStateAsync();            
-            var user = authState.User;
-            var currentUser = await _context.Users.FirstOrDefaultAsync(u => u.UserName == user.Identity!.Name);
-            if (currentUser == null)
+            try
             {
-                throw new InvalidOperationException("Unknown user");
+                await using var _context = _dbContextFactory.CreateDbContext();
+                var authState = await _authenticationStateProvider.GetAuthenticationStateAsync();
+                var user = authState.User;
+                var currentUser = await _context.Users.FirstOrDefaultAsync(u => u.UserName == user.Identity!.Name);
+                if (currentUser == null)
+                {
+                    throw new InvalidOperationException("Unknown user");
+                }
+                return currentUser!;
             }
-            return currentUser!;
+            catch(Exception ex)
+            {
+                _logger.LogError(ex, "Failed to get logged user.");
+                throw;
+            }
         }
     }
 }

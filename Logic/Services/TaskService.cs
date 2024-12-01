@@ -64,21 +64,22 @@ namespace TeaWork.Logic.Services
             
             try
             {
-                using var _context = _dbContextFactory.CreateDbContext();
+                await using var _context = _dbContextFactory.CreateDbContext();
                 ApplicationUser currentUser = await _userIdentity.GetLoggedUser();
                 var project = _context.Projects.FirstOrDefault(m => m.Id == projectId);
-                var projecttaks = await _context.ProjectTasks
+                var projectTaks = await _context.ProjectTasks
                     .Where(x => x.ToDoListId == project.ToDoListId)
                     .Include(x => x.TaskComments)
                         .ThenInclude(y => y.User)
                     .Include(x => x.TasksDistributions)
                         .ThenInclude(y => y.User)
                     .ToListAsync();
-                return projecttaks;
+                return projectTaks;
             }
             catch (Exception ex)
             {
-                throw new NotImplementedException();
+                _logger.LogError(ex, "Failed to get project tasks.");
+                throw;
             }
         }
         public async Task<List<ProjectTask>> GetMyProjectTasks()
@@ -87,12 +88,12 @@ namespace TeaWork.Logic.Services
             try
             {
                 List<ProjectTask> myTasks = new List<ProjectTask>();
-                using var _context = _dbContextFactory.CreateDbContext();
+                await using var _context = _dbContextFactory.CreateDbContext();
                 ApplicationUser currentUser = await _userIdentity.GetLoggedUser();
 
                 
                 var projecttaks = await _context.TaskDistributions
-                    .Where(x => x.UserId.Equals(currentUser.Id))
+                    .Where(x => x.UserId!.Equals(currentUser.Id))
                     .ToListAsync();
                 foreach (var task in projecttaks) 
                 {
@@ -107,7 +108,8 @@ namespace TeaWork.Logic.Services
             }
             catch (Exception ex)
             {
-                throw new NotImplementedException();
+                _logger.LogError(ex, "Failed to get my project tasks.");
+                throw;
             }
         }
         public async Task<int> GetProjectId(int taskId)
@@ -115,7 +117,7 @@ namespace TeaWork.Logic.Services
 
             try
             {
-                using var _context = _dbContextFactory.CreateDbContext();
+                await using var _context = _dbContextFactory.CreateDbContext();
 
                 var toDoListId = await _context.ProjectTasks
                     .Where(x => x.Id == taskId)
@@ -130,7 +132,8 @@ namespace TeaWork.Logic.Services
             }
             catch (Exception ex)
             {
-                throw new NotImplementedException();
+                _logger.LogError(ex, "Failed to get projectId.");
+                throw;
             }
         }
         public async Task AddTaskDistribution(int taskId, string userId)
@@ -138,7 +141,7 @@ namespace TeaWork.Logic.Services
             
             try
             {
-                using var _context = _dbContextFactory.CreateDbContext();
+                await using var _context = _dbContextFactory.CreateDbContext();
                 var existingTaskDistribution = await _context.TaskDistributions
                         .FirstOrDefaultAsync(x => x.TaskId == taskId && x.UserId == userId);
 
@@ -155,7 +158,8 @@ namespace TeaWork.Logic.Services
             }
             catch (Exception ex)
             {
-                throw new NotImplementedException();
+                _logger.LogError(ex, "Failed to add task distribution.");
+                throw;
             }
         }
         public async Task AddComment(DesignConceptDto taskCommentData, int taskId)
@@ -163,7 +167,7 @@ namespace TeaWork.Logic.Services
             
             try
             {
-                using var _context = _dbContextFactory.CreateDbContext();
+                await using var _context = _dbContextFactory.CreateDbContext();
                 ApplicationUser currentUser = await _userIdentity.GetLoggedUser();
                 TaskComment taskComment = new TaskComment
                 {
@@ -179,14 +183,15 @@ namespace TeaWork.Logic.Services
             }
             catch (Exception ex)
             {
-                throw new NotImplementedException();
+                _logger.LogError(ex, "Failed to add comment.");
+                throw;
             }
         }
         public async Task ChangePriorityTask(int projectTaskId, TaskPriority priority)
         {
             try
             {
-                using var _context = _dbContextFactory.CreateDbContext();
+                await using var _context = _dbContextFactory.CreateDbContext();
                 var projecttask = await _context.ProjectTasks.FirstOrDefaultAsync(x => x.Id == projectTaskId);
                 if (projecttask != null)
                 {
@@ -197,14 +202,15 @@ namespace TeaWork.Logic.Services
             }
             catch (Exception ex)
             {
-                throw new NotImplementedException();
+                _logger.LogError(ex, "Failed to change task priority.");
+                throw;
             }
         }
         public async Task ChangeStateTask(int projectTaskId, TaskState state)
         {
             try
             {
-                using var _context = _dbContextFactory.CreateDbContext();
+                await using var _context = _dbContextFactory.CreateDbContext();
                 var projecttask = await _context.ProjectTasks.FirstOrDefaultAsync(x => x.Id == projectTaskId);
                 if (projecttask != null)
                 {
@@ -215,7 +221,8 @@ namespace TeaWork.Logic.Services
             }
             catch (Exception ex)
             {
-                throw new NotImplementedException();
+                _logger.LogError(ex, "Failed to change task state.");
+                throw;
             }
         }
 
@@ -224,7 +231,7 @@ namespace TeaWork.Logic.Services
 
             try
             {
-                using var _context = _dbContextFactory.CreateDbContext();
+                await using var _context = _dbContextFactory.CreateDbContext();
                 ApplicationUser currentUser = await _userIdentity.GetLoggedUser();
 
                 PrivateTask privateTask = new PrivateTask
@@ -241,7 +248,8 @@ namespace TeaWork.Logic.Services
             }
             catch (Exception ex)
             {
-                throw new NotImplementedException();
+                _logger.LogError(ex, "Failed to add private task.");
+                throw;
             }
         }
         public async Task EditPrivateTask(int taskId, DateTime start, DateTime end, string title, string? description)
@@ -249,7 +257,7 @@ namespace TeaWork.Logic.Services
 
             try
             {
-                using var _context = _dbContextFactory.CreateDbContext();
+                await using var _context = _dbContextFactory.CreateDbContext();
                 var privateTaskToEdit = await _context.PrivateTasks.FirstOrDefaultAsync(m => m.Id == taskId);
                 if (privateTaskToEdit != null)
                 {
@@ -263,7 +271,8 @@ namespace TeaWork.Logic.Services
             }
             catch (Exception ex)
             {
-                throw new NotImplementedException();
+                _logger.LogError(ex, "Failed to edit private task.");
+                throw;
             }
         }
         public async Task<List<PrivateTask>> GetMyPrivateTasks()
@@ -271,7 +280,7 @@ namespace TeaWork.Logic.Services
 
             try
             {
-                using var _context = _dbContextFactory.CreateDbContext();
+                await using var _context = _dbContextFactory.CreateDbContext();
                 ApplicationUser currentUser = await _userIdentity.GetLoggedUser();
 
 
@@ -282,7 +291,8 @@ namespace TeaWork.Logic.Services
             }
             catch (Exception ex)
             {
-                throw new NotImplementedException();
+                _logger.LogError(ex, "Failed to get my private tasks.");
+                throw;
             }
         }
 
