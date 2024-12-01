@@ -13,5 +13,6 @@ namespace TeaWork.Logic.Services.Interfaces
         Task<List<Message>> GetMessegesByConversation(int id);
         Task<Message> NewMessage(int conversationId, string content);
         Task<string> GetConversationName(int conversationId);
+        Task<bool> CheckUserAccess(int conversationId);
     }
 }

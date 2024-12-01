@@ -282,30 +282,49 @@
 
             hubConnection.On("ReceiveTask", async () =>
                 {
-                    project = await ProjectService.GetProjectById(Id);
-                    projectTasks = await ProjectTaskService.GetProjectTasks(Id);
-                    await InvokeAsync(StateHasChanged);
+                    if (await ProjectService.CheckUserAccess(Id))
+                    {
+                        project = await ProjectService.GetProjectById(Id);
+                        projectTasks = await ProjectTaskService.GetProjectTasks(Id);
+                        await InvokeAsync(StateHasChanged);
+                    }
+                    else
+                    {
+                        NavigationManager.NavigateTo("projects");
+                    }                 
                 });
         }
-
-
-        project = await ProjectService.GetProjectById(Id);
+        if (await ProjectService.CheckUserAccess(Id))
+        {
+            project = await ProjectService.GetProjectById(Id);
+            projectTasks = await ProjectTaskService.GetProjectTasks(Id);
+            users = await UserService.GetProjectUsers(Id);
+        }
+        else
+        {
+            NavigationManager.NavigateTo("projects");
+        }
 
         if (project is null)
         {
             NavigationManager.NavigateTo("notfound");
         }
-
-        projectTasks = await ProjectTaskService.GetProjectTasks(Id);
-        users = await UserService.GetProjectUsers(Id);
+        
     }
     protected override async Task OnParametersSetAsync()
     {
         try
         {
-            project = await ProjectService.GetProjectById(Id);
-            projectTasks = await ProjectTaskService.GetProjectTasks(Id);
-            users = await UserService.GetProjectUsers(Id);
+            if (await ProjectService.CheckUserAccess(Id))
+            {
+                project = await ProjectService.GetProjectById(Id);
+                projectTasks = await ProjectTaskService.GetProjectTasks(Id);
+                users = await UserService.GetProjectUsers(Id);
+            }
+            else
+            {
+                NavigationManager.NavigateTo("projects");
+            }
             await InvokeAsync(StateHasChanged);
         }
         catch (Exception ex)

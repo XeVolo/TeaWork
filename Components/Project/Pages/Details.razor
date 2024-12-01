@@ -62,7 +62,7 @@
             }
         </dl>
         <RadzenButton id="RadzenButton" Text="@Localizer["AddProjectMember"]" Click="() => ShowAddUserModal()" Style="width: 100%;margin:10px;" />
-        <RadzenButton id="RadzenButton" Text="@Localizer["CreateRaport"]" Click="() => ShowReport()" Style="width: 100%;margin:10px;" />
+        <RadzenButton id="RadzenButton" Text="@Localizer["CreateReport"]" Click="() => ShowReport()" Style="width: 100%;margin:10px;" />
 
         <Modal @ref="modalAddUser" Title="@Localizer["SendInvitation"]">
             <BodyTemplate>
@@ -166,10 +166,16 @@
 
             await hubConnection.StartAsync();
         }
-
-
-        project = await ProjectService.GetProjectById(Id);
-        projectMembers = project.ProjectMembers;
+        if (await ProjectService.CheckUserAccess(Id))
+        {
+            project = await ProjectService.GetProjectById(Id);
+            projectMembers = project.ProjectMembers;
+        }
+        else
+        {
+            NavigationManager.NavigateTo("projects");
+        }
+        
         reportForm = new ReportForm { UserForms = new List<UserForm>()};
         if (projectMembers != null)
         {
@@ -181,8 +187,6 @@
                 }
             }
         }
-
-
         if (project is null)
         {
             NavigationManager.NavigateTo("notfound");
@@ -227,10 +231,17 @@
     {
         try
         {
-            await ProjectService.DeleteUserFromProject(userId, Id);
-            project = await ProjectService.GetProjectById(Id);
-            projectMembers = project.ProjectMembers;
-            await InvokeAsync(StateHasChanged);
+            if (await ProjectService.CheckUserAccess(Id))
+            {
+                await ProjectService.DeleteUserFromProject(userId, Id);
+                project = await ProjectService.GetProjectById(Id);
+                projectMembers = project.ProjectMembers;
+                await InvokeAsync(StateHasChanged);
+            }
+            else
+            {
+                NavigationManager.NavigateTo("projects");
+            }           
         }
         catch (Exception ex)
         {

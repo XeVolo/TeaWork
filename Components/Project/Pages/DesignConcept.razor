@@ -144,18 +144,27 @@
 
             hubConnection.On("ReceiveDesignConcept",async () =>
                 {
-                    project = await ProjectService.GetProjectById(Id);
-                    designConcepts = await DesignConceptService.GetDesignConcepts(Id);
-                    await InvokeAsync(StateHasChanged);
+                    if (await ProjectService.CheckUserAccess(Id))
+                    {
+                        project = await ProjectService.GetProjectById(Id);
+                        designConcepts = await DesignConceptService.GetDesignConcepts(Id);
+                        await InvokeAsync(StateHasChanged);
+                    }
                 });
 
 
             await hubConnection.StartAsync();
         }
 
-
-        project = await ProjectService.GetProjectById(Id);
-        designConcepts = await DesignConceptService.GetDesignConcepts(Id);
+        if (await ProjectService.CheckUserAccess(Id))
+        {
+            project = await ProjectService.GetProjectById(Id);
+            designConcepts = await DesignConceptService.GetDesignConcepts(Id);
+        }
+        else
+        {
+            NavigationManager.NavigateTo("projects");
+        }
 
 
         if (project is null)
@@ -163,11 +172,34 @@
             NavigationManager.NavigateTo("notfound");
         }
     }
+    protected override async Task OnParametersSetAsync()
+    {   
+        if (await ProjectService.CheckUserAccess(Id))
+        {
+            project = await ProjectService.GetProjectById(Id);
+            designConcepts = await DesignConceptService.GetDesignConcepts(Id);
+        }
+        else
+        {
+            NavigationManager.NavigateTo("projects");
+        }
+        if (project is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
     public async Task AddDesignConcept()
-    {
-        await DesignConceptService.Add(ownDesignConcept, Id);
-        project = await ProjectService.GetProjectById(Id);
-        designConcepts = await DesignConceptService.GetDesignConcepts(Id);        
+    {      
+        if (await ProjectService.CheckUserAccess(Id))
+        {
+            await DesignConceptService.Add(ownDesignConcept, Id);
+            project = await ProjectService.GetProjectById(Id);
+            designConcepts = await DesignConceptService.GetDesignConcepts(Id);
+        }
+        else
+        {
+            NavigationManager.NavigateTo("projects");
+        }
 
         if (hubConnection is not null)
         {
@@ -186,9 +218,17 @@
     }
     private async Task AddComment(int designConceptId)
     {
-        await DesignConceptService.AddComment(newComment, designConceptId);
-        project = await ProjectService.GetProjectById(Id);
-        designConcepts = await DesignConceptService.GetDesignConcepts(Id);
+        
+        if (await ProjectService.CheckUserAccess(Id))
+        {
+            await DesignConceptService.AddComment(newComment, designConceptId);
+            project = await ProjectService.GetProjectById(Id);
+            designConcepts = await DesignConceptService.GetDesignConcepts(Id);
+        }
+        else
+        {
+            NavigationManager.NavigateTo("projects");
+        }
 
         if (hubConnection is not null)
         {

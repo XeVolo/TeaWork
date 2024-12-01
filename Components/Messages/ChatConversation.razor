@@ -103,12 +103,16 @@
 
 
             hubConnection.On<int>("ReceiveMessage", async (messageId) =>
-                {                    
-                    conversation = await ConversationService.GetConversationById(Id);
-                    conversationName = await ConversationService.GetConversationName(Id);
-                    messages = await ConversationService.GetMessegesByConversation(Id);
-                    _shouldScrollToBottom = true;
-                    await InvokeAsync(StateHasChanged);
+                {
+
+                    if (await ConversationService.CheckUserAccess(Id))
+                    {
+                        conversation = await ConversationService.GetConversationById(Id);
+                        conversationName = await ConversationService.GetConversationName(Id);
+                        messages = await ConversationService.GetMessegesByConversation(Id);
+                        _shouldScrollToBottom = true;
+                        await InvokeAsync(StateHasChanged);
+                    }
                 });
             await hubConnection.StartAsync();
         }
@@ -118,10 +122,13 @@
     {
         try
         {
-            conversation = await ConversationService.GetConversationById(Id);
-            conversationName = await ConversationService.GetConversationName(Id);
-            messages = await ConversationService.GetMessegesByConversation(Id);
-            if (conversation == null)
+            if (await ConversationService.CheckUserAccess(Id))
+            {
+                conversation = await ConversationService.GetConversationById(Id);
+                conversationName = await ConversationService.GetConversationName(Id);
+                messages = await ConversationService.GetMessegesByConversation(Id);
+            }
+            else
             {
                 NavigationManager.NavigateTo("/messages");
             }

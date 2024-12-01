@@ -187,6 +187,27 @@ namespace TeaWork.Logic.Services
                 throw;
             }
         }
-      
+        public async Task<bool> CheckUserAccess(int projectId)
+        {
+            try
+            {
+                await using var _context = _dbContextFactory.CreateDbContext();
+                ApplicationUser currentUser = await _userIdentity.GetLoggedUser();
+
+                var projectMember = await _context.ProjectMembers
+                    .Where(x => x.UserId.Equals(currentUser.Id))
+                    .Where(x => x.ProjectId == projectId)
+                    .FirstOrDefaultAsync();
+
+                return projectMember != null;
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to get user access.");
+                throw;
+            }
+        }
+
     }
 }

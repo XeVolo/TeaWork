@@ -111,13 +111,26 @@
 
     protected override async Task OnInitializedAsync()
     {
-        projectFiles = await BlobStorageService.GetFilesById(Id);
+        if (await ProjectService.CheckUserAccess(Id))
+        {
+            projectFiles = await BlobStorageService.GetFilesById(Id);
+        }
+        else
+        {
+            NavigationManager.NavigateTo("projects");
+        }      
     }
 
     protected override async Task OnParametersSetAsync()
     {
-
-        projectFiles = await BlobStorageService.GetFilesById(Id);
+        if (await ProjectService.CheckUserAccess(Id))
+        {
+            projectFiles = await BlobStorageService.GetFilesById(Id);
+        }
+        else
+        {
+            NavigationManager.NavigateTo("projects");
+        }
     }
     private void OnInputFileChange(InputFileChangeEventArgs e)
     {
