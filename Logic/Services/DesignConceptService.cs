@@ -13,18 +13,24 @@ namespace TeaWork.Logic.Services
         private readonly IDbContextFactory _dbContextFactory;
         private readonly AuthenticationStateProvider _authenticationStateProvider;
         private readonly UserIdentity _userIdentity;
-        public DesignConceptService(IDbContextFactory dbContextFactory, AuthenticationStateProvider authenticationStateProvider, UserIdentity userIdentity)
+        private readonly ILogger<DesignConceptService> _logger;
+        public DesignConceptService(
+            IDbContextFactory dbContextFactory, 
+            AuthenticationStateProvider authenticationStateProvider, 
+            UserIdentity userIdentity,
+            ILogger<DesignConceptService> logger)
         {
             _dbContextFactory = dbContextFactory;
             _authenticationStateProvider = authenticationStateProvider;
             _userIdentity =userIdentity;
+            _logger = logger;
         }
         public async Task Add(DesignConceptDto designConceptData, int projectId)
         {
             
             try
             {
-                using var _context = _dbContextFactory.CreateDbContext();
+                await using var _context = _dbContextFactory.CreateDbContext();
                 ApplicationUser currentUser = await _userIdentity.GetLoggedUser();
                 OwnDesignConcept designConcept = new OwnDesignConcept
                 {
@@ -40,18 +46,19 @@ namespace TeaWork.Logic.Services
             }
             catch (Exception ex)
             {
-                throw new NotImplementedException();
+                _logger.LogError(ex, "Failed to add design concept.");
+                throw;
             }
         }
         public async Task<List<OwnDesignConcept>> GetDesignConcepts(int projectId)
         {
             try
             {
-                using var _context = _dbContextFactory.CreateDbContext();
+                await using var _context = _dbContextFactory.CreateDbContext();
                 var designconcepts = await _context.OwnDesignConcepts
                     .Where(x => x.ProjectId == projectId)
                     .Include(x => x.User)
-                    .Include(x =>x.DesignConceptComments)
+                    .Include(x => x.DesignConceptComments)
                         .ThenInclude(pm => pm.User)
                     .ToListAsync();
 
@@ -59,7 +66,8 @@ namespace TeaWork.Logic.Services
             }
             catch (Exception ex)
             {
-                throw new NotImplementedException();
+                _logger.LogError(ex, "Failed to get design concepts.");
+                throw;
             }
         }
         public async Task AddComment(DesignConceptDto designCommentData, int designConceptId)
@@ -67,7 +75,7 @@ namespace TeaWork.Logic.Services
             
             try
             {
-                using var _context = _dbContextFactory.CreateDbContext();
+                await using var _context = _dbContextFactory.CreateDbContext();
                 ApplicationUser currentUser = await _userIdentity.GetLoggedUser();
                 DesignConceptComment designComment = new DesignConceptComment
                 {
@@ -83,7 +91,8 @@ namespace TeaWork.Logic.Services
             }
             catch (Exception ex)
             {
-                throw new NotImplementedException();
+                _logger.LogError(ex, "Failed to add comment.");
+                throw;
             }
         }
     }

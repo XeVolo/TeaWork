@@ -17,36 +17,39 @@ namespace TeaWork.Logic.Services
         private readonly AuthenticationStateProvider _authenticationStateProvider;
         private readonly UserIdentity _userIdentity;
         private readonly IConversationService _conversationService;
+        private readonly ILogger<ProjectService> _logger;
 
 
         public ProjectService(
             IDbContextFactory dbContextFactory, 
             AuthenticationStateProvider authenticationStateProvider, 
             UserIdentity userIdentity,
-            IConversationService conversationService)
+            IConversationService conversationService,
+            ILogger<ProjectService> logger)
         {
             _dbContextFactory = dbContextFactory;
             _authenticationStateProvider = authenticationStateProvider;
             _userIdentity = userIdentity;
             _conversationService = conversationService;
+            _logger = logger;
         }
-        public async Task Add(ProjectAddDto projectdata)
+        public async Task Add(ProjectAddDto projectData)
         {            
             try
             {
-                using var _context = _dbContextFactory.CreateDbContext();
+                await using var _context = _dbContextFactory.CreateDbContext();
                 ToDoList toDoList = new ToDoList();
                 ApplicationUser currentUser = await _userIdentity.GetLoggedUser();
                 _context.ToDoLists.Add(toDoList);
                 await _context.SaveChangesAsync();
-                Conversation conversation = await _conversationService.AddConversation(ConversationType.GroupChat, projectdata.Title);
+                Conversation conversation = await _conversationService.AddConversation(ConversationType.GroupChat, projectData.Title!);
                 await _conversationService.AddMember(conversation, currentUser.Id);
                 Project project = new Project
                 {
-                    Title = projectdata.Title,
+                    Title = projectData.Title,
                     StartDate = DateTime.Now,
-                    Deadline = (DateTime)projectdata.Deadline!,
-                    Description = projectdata.Description,
+                    Deadline = (DateTime)projectData.Deadline!,
+                    Description = projectData.Description,
                     ToDoListId = toDoList.Id,
                     ProjectConversationId = conversation.Id,
                 };
@@ -56,22 +59,8 @@ namespace TeaWork.Logic.Services
             }
             catch (Exception ex)
             {
-                throw new NotImplementedException();
-            }
-        }
-
-        public async Task Delete(int id)
-        {
-            try
-            {
-                using var _context = _dbContextFactory.CreateDbContext();
-                var project = await _context.Projects.FirstOrDefaultAsync(m => m.Id == id);
-                _context.Projects.Remove(project!);
-                await _context.SaveChangesAsync();
-            }
-            catch (Exception ex)
-            {
-                throw new NotImplementedException();
+                _logger.LogError(ex, "Failed to add project.");
+                throw;
             }
         }
 
@@ -79,7 +68,7 @@ namespace TeaWork.Logic.Services
         {
             try
             {
-                using var _context = _dbContextFactory.CreateDbContext();
+                await using var _context = _dbContextFactory.CreateDbContext();
                 var project = await _context.Projects
                     .Include(x => x.ProjectMembers)
                         .ThenInclude(pm => pm.User)
@@ -88,73 +77,48 @@ namespace TeaWork.Logic.Services
             }
             catch (Exception ex)
             {
-                throw new NotImplementedException();
-            }
-        }
-
-        public async Task<List<Project>> GetProjects()
-        {
-            try
-            {
-                using var _context = _dbContextFactory.CreateDbContext();
-                var projects = await _context.Projects.ToListAsync();
-                return projects;
-            }
-            catch (Exception ex)
-            {
-                throw new NotImplementedException();
+                _logger.LogError(ex, "Failed to get project.");
+                throw;
             }
         }
         public async Task<List<Project>> GetMyProjects()
         {
-            List<Project> projects = new List<Project>();
+
             try
             {
-                using var _context = _dbContextFactory.CreateDbContext();
+                await using var _context = _dbContextFactory.CreateDbContext();
                 ApplicationUser currentUser = await _userIdentity.GetLoggedUser();
-                var projectMembers = await _context.ProjectMembers.Where(x => x.UserId.Equals(currentUser.Id)).ToListAsync();
-                foreach (var projectMember in projectMembers)
-                {
-                    var project = await _context.Projects.Where(x => x.Id == projectMember.ProjectId).FirstOrDefaultAsync();
-                    if (project != null)
-                        projects.Add(project);
-                }
+                var projects = await _context.Projects
+                    .Where(p => p.ProjectMembers!
+                        .Any(pm => pm.UserId == currentUser.Id))
+                    .ToListAsync();
                 return projects;
             }
             catch (Exception ex)
             {
-                throw new NotImplementedException();
+                _logger.LogError(ex, "Failed to get projects.");
+                throw;
             }
         }
 
-
-        public async Task Update(Project project, int id)
-        {
-            try
-            {
-                using var _context = _dbContextFactory.CreateDbContext();
-                var projectToEdit = await _context.Projects.FirstOrDefaultAsync(m => m.Id == id);
-                projectToEdit = project;
-                _context.Attach(projectToEdit!).State = EntityState.Modified;
-                await _context.SaveChangesAsync();
-            }
-            catch (Exception ex)
-            {
-                throw new NotImplementedException();
-            }
-        }
         public async Task AddProjectMember(Project project, ApplicationUser user, ProjectMemberRole role)
         {
             try
             {
-                using var _context = _dbContextFactory.CreateDbContext();
-                ProjectMember projectMember = new ProjectMember { UserId = user.Id, ProjectId = project.Id, Role = role };
-            _context.ProjectMembers.Add(projectMember);
-            await _context.SaveChangesAsync();
+                await using var _context = _dbContextFactory.CreateDbContext();
+                ProjectMember projectMember = new ProjectMember 
+                { 
+                    UserId = user.Id, 
+                    ProjectId = project.Id, 
+                    Role = role 
+                };
+                _context.ProjectMembers.Add(projectMember);
+                await _context.SaveChangesAsync();
             }
             catch (Exception ex)
             {
-                throw new NotImplementedException();
+                _logger.LogError(ex, "Failed to add project member.");
+                throw;
             }
         }
 
@@ -162,7 +126,7 @@ namespace TeaWork.Logic.Services
         {
             try
             {
-                using var _context = _dbContextFactory.CreateDbContext();
+                await using var _context = _dbContextFactory.CreateDbContext();
 
                 var project = await _context.Projects.FirstOrDefaultAsync(m => m.Id == projectId);
                 if (project != null)
@@ -203,11 +167,10 @@ namespace TeaWork.Logic.Services
                             }
                         }
                     }
-                    foreach(var task in taskDistributions)
-                    {
-                        _context.TaskDistributions.Remove(task);
-                        await _context.SaveChangesAsync();
-                    }
+
+                    _context.TaskDistributions.RemoveRange(taskDistributions);
+                    await _context.SaveChangesAsync();
+                    
 
                     var invitation =await _context.Invitations
                         .Where(x => x.UserId.Equals(userId))
@@ -220,7 +183,8 @@ namespace TeaWork.Logic.Services
             }
             catch (Exception ex)
             {
-                throw new NotImplementedException();
+                _logger.LogError(ex, "Failed to remove user from project.");
+                throw;
             }
         }
       

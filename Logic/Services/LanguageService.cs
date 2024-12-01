@@ -8,11 +8,9 @@ namespace TeaWork.Logic.Services
 {
     public class LanguageService
     {
-        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public LanguageService( IHttpContextAccessor HttpContextAccessor)
+        public LanguageService()
         {
-            _httpContextAccessor = HttpContextAccessor;
         }
         public string GetName()
         {

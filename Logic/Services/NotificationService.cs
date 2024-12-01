@@ -14,19 +14,25 @@ namespace TeaWork.Logic.Services
         private readonly IDbContextFactory _dbContextFactory;
         private readonly AuthenticationStateProvider _authenticationStateProvider;
         private readonly UserIdentity _userIdentity;
+        private readonly ILogger<NotificationService> _logger;
 
-        public NotificationService(IDbContextFactory dbContextFactory, AuthenticationStateProvider authenticationStateProvider, UserIdentity userIdentity)
+        public NotificationService(
+            IDbContextFactory dbContextFactory, 
+            AuthenticationStateProvider authenticationStateProvider, 
+            UserIdentity userIdentity,
+            ILogger<NotificationService> logger)
         {
             _dbContextFactory = dbContextFactory;
             _authenticationStateProvider = authenticationStateProvider;
             _userIdentity =userIdentity;
+            _logger = logger;
         }
         public async Task NewNotification(NotificationDto notificationData)
         {
 
             try
             {
-                using var _context = _dbContextFactory.CreateDbContext();
+                await using var _context = _dbContextFactory.CreateDbContext();
                 Notification notification = new Notification
                 {
                     UserId = notificationData.UserId,
@@ -43,7 +49,8 @@ namespace TeaWork.Logic.Services
             }
             catch (Exception ex)
             {
-                throw new NotImplementedException();
+                _logger.LogError(ex, "Failed to add notification.");
+                throw;
             }
         }
         public async Task<Notification> NewInvitation(string userId, int projectId)
@@ -51,14 +58,14 @@ namespace TeaWork.Logic.Services
 
             try
             {
-                using var _context = _dbContextFactory.CreateDbContext();
+                await using var _context = _dbContextFactory.CreateDbContext();
                 var project = await _context.Projects.FirstOrDefaultAsync(m => m.Id == projectId);
 
                 Notification notification = new Notification
                 {
                     UserId = userId,
                     Title = "New Invitation",
-                    Description = project.Title,
+                    Description = project!.Title,
                     CreationDate = DateTime.Now,
                     NotificationType = NotificationType.Invitation,
                     Status = NotificationonStatus.New,
@@ -72,37 +79,23 @@ namespace TeaWork.Logic.Services
             }
             catch (Exception ex)
             {
-                throw new NotImplementedException();
-            }
-        }
-
-        public async Task<Notification> GetNotificationById(int id)
-        {
-            try
-            {
-                using var _context = _dbContextFactory.CreateDbContext();
-                var notification = await _context.Notifications
-                    .FirstOrDefaultAsync(m => m.Id == id);
-                
-                return notification!;
-            }
-            catch (Exception ex)
-            {
-                throw new NotImplementedException();
+                _logger.LogError(ex, "Failed to add invitation notification.");
+                throw;
             }
         }
         public async Task NotificationDisplayed(Notification notification)
         {
             try
             {
-                using var _context = _dbContextFactory.CreateDbContext();
+                await using var _context = _dbContextFactory.CreateDbContext();
                 notification.Status = NotificationonStatus.Seen;
                 _context.Attach(notification!).State = EntityState.Modified;
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
             {
-                throw new NotImplementedException();
+                _logger.LogError(ex, "Failed to display notification.");
+                throw;
             }
         }
         public async Task<List<Notification>> GetMyNewNotifications()
@@ -110,7 +103,7 @@ namespace TeaWork.Logic.Services
 
             try
             {
-                using var _context = _dbContextFactory.CreateDbContext();
+                await using var _context = _dbContextFactory.CreateDbContext();
                 ApplicationUser currentUser = await _userIdentity.GetLoggedUser();
                 var notifications = await _context.Notifications
                     .Where(x => x.UserId.Equals(currentUser.Id))
@@ -121,25 +114,8 @@ namespace TeaWork.Logic.Services
             }
             catch (Exception ex)
             {
-                throw new NotImplementedException();
-            }
-        }
-        public async Task<List<Notification>> GetMyAllNotifications()
-        {
-            try
-            {
-
-                using var _context = _dbContextFactory.CreateDbContext();
-                ApplicationUser currentUser = await _userIdentity.GetLoggedUser();
-                var notifications = await _context.Notifications
-                    .Where(x => x.UserId.Equals(currentUser.Id))
-                    .ToListAsync();
-
-                return notifications;
-            }
-            catch (Exception ex)
-            {
-                throw new NotImplementedException();
+                _logger.LogError(ex, "Failed to get notifications.");
+                throw;
             }
         }
     }

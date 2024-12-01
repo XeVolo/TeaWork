@@ -15,7 +15,11 @@ namespace TeaWork.Logic.Services
         private readonly UserIdentity _userIdentity;
         private readonly ILogger<ConversationService> _logger;
 
-        public ConversationService(ILogger<ConversationService> logger, IDbContextFactory dbContextFactory, AuthenticationStateProvider authenticationStateProvider, UserIdentity userIdentity)
+        public ConversationService(
+            ILogger<ConversationService> logger, 
+            IDbContextFactory dbContextFactory, 
+            AuthenticationStateProvider authenticationStateProvider, 
+            UserIdentity userIdentity)
         {
             _dbContextFactory = dbContextFactory;
             _authenticationStateProvider = authenticationStateProvider;
@@ -32,7 +36,7 @@ namespace TeaWork.Logic.Services
                 { 
                     ConversationType = conversationType, 
                     Name             = name 
-                };
+                }; 
                 _context.Conversations.Add(conversation);
                 await _context.SaveChangesAsync();
                 return conversation;
@@ -48,6 +52,7 @@ namespace TeaWork.Logic.Services
             try
             {
                 await using var _context = _dbContextFactory.CreateDbContext();
+
                 var newconversationmember = new ConversationMember 
                 { 
                     UserId         = userId, 
@@ -68,9 +73,7 @@ namespace TeaWork.Logic.Services
             {
                 await using var _context = _dbContextFactory.CreateDbContext();
 
-
                 var currentUser = await _userIdentity.GetLoggedUser();
-
 
                 var conversations = await _context.Conversations
                     .Where(c => _context.ConversationMembers
@@ -89,42 +92,41 @@ namespace TeaWork.Logic.Services
         {
             try
             {
-                using var _context = _dbContextFactory.CreateDbContext();
-                List<Conversation> conversations = new List<Conversation>();
-                var conversationMembers = await _context.ConversationMembers.Where(x => x.UserId.Equals(userId)).ToListAsync();
-                foreach (var conversationMember in conversationMembers)
-                {
-                    var conversation = await _context.Conversations.Where(x => x.Id == conversationMember.ConversationId).FirstOrDefaultAsync();
-                    if (conversation != null)
-                        conversations.Add(conversation);
-                }
+                await using var _context = _dbContextFactory.CreateDbContext();
+
+                var conversations = await _context.Conversations
+                    .Where(c => _context.ConversationMembers
+                        .Any(cm => cm.ConversationId == c.Id && cm.UserId == userId))
+                    .ToListAsync();
+
                 return conversations;
             }
             catch (Exception ex)
             {
-                throw new NotImplementedException();
+                _logger.LogError(ex, "Failed to get conversation.");
+                throw;
             }
         }
         public async Task<Conversation> GetConversationById(int id)
         {
             try
             {
-                using var _context = _dbContextFactory.CreateDbContext();
+                await using var _context = _dbContextFactory.CreateDbContext();
                 var conversation = await _context.Conversations
-                    .Include(x => x.Messages)
                     .FirstOrDefaultAsync(x => x.Id == id);
                 return conversation!;
             }
             catch (Exception ex)
             {
-                throw new NotImplementedException();
+                _logger.LogError(ex, "Failed to get conversation.");
+                throw;
             }
         }
         public async Task<List<Message>> GetMessegesByConversation(int id)
         {
             try
             {
-                using var _context = _dbContextFactory.CreateDbContext();
+                await using var _context = _dbContextFactory.CreateDbContext();
                 var messages = await _context.Messages
                     .Where(x => x.ConversationId == id)
                     .OrderBy(x => x.SendTime)
@@ -134,14 +136,15 @@ namespace TeaWork.Logic.Services
             }
             catch (Exception ex)
             {
-                throw new NotImplementedException();
+                _logger.LogError(ex, "Failed to get messages.");
+                throw;
             }
         }
         public async Task<Message> NewMessage(int conversationId, string content)
         {
             try
             {
-                using var _context = _dbContextFactory.CreateDbContext();
+                await using var _context = _dbContextFactory.CreateDbContext();
                 ApplicationUser currentUser = await _userIdentity.GetLoggedUser();
                 Message message = new Message
                 {
@@ -151,68 +154,55 @@ namespace TeaWork.Logic.Services
                     SendTime = DateTime.Now,
                 };
                 _context.Messages.Add(message);
-                _context.SaveChanges();                
+                await _context.SaveChangesAsync();                
                 return message;
             }
             catch (Exception ex)
             {
-                throw new NotImplementedException();
-            }
-        }
-        public async Task<Message> GetMessegesById(int id)
-        {
-            try
-            {
-                using var _context = _dbContextFactory.CreateDbContext();
-                var message = await _context.Messages
-                    .FirstOrDefaultAsync(x => x.Id == id); ;
-                return message!;
-            }
-            catch (Exception ex)
-            {
-                throw new NotImplementedException();
+                _logger.LogError(ex, "Failed to create message.");
+                throw;
             }
         }
         public async Task<string> GetConversationName(int conversationId)
         {
             try
             {               
-                using var _context = _dbContextFactory.CreateDbContext();
+                await using var _context = _dbContextFactory.CreateDbContext();
                 ApplicationUser currentUser = await _userIdentity.GetLoggedUser();
+
                 var conversation = await _context.Conversations
                     .Include(x=>x.ConversationMembers)
-                    .FirstOrDefaultAsync(x => x.Id == conversationId); ;
+                    .FirstOrDefaultAsync(x => x.Id == conversationId);
+
                 if (conversation != null)
                 {
                     if (conversation.ConversationType.Equals(ConversationType.GroupChat))
                     {
-                        string name = conversation.Name ?? conversation.Id.ToString();
-                        return name;
+                        return conversation.Name ?? conversation.Id.ToString();
                     }
-                    else
+
+                    if (conversation.ConversationMembers != null)
                     {
-                        if (conversation.ConversationMembers != null)
-                        {                           
-                            foreach (var member in conversation.ConversationMembers)
-                            {
-                                if (!member.UserId!.Equals(currentUser.Id))
-                                {
-                                    var name= await _context.Users
-                                            .Where(x => x.Id.Equals(member.UserId))
-                                            .Select(x => x.Email)
-                                            .FirstOrDefaultAsync();
-                                    return name!;
-                                }
-                            }
-                            
+                        var otherUser = conversation.ConversationMembers
+                                .FirstOrDefault(cm => cm.UserId != currentUser.Id);
+                        if (otherUser != null)
+                        {
+                            var name = await _context.Users
+                                .Where(x => x.Id == otherUser.UserId)
+                                .Select(x => x.Email)
+                                .FirstOrDefaultAsync();
+
+                            return name ?? "Unknown User";
                         }
                     }
+                
                 }
                 return conversationId.ToString();
             }
             catch (Exception ex)
             {
-                throw new NotImplementedException();
+                _logger.LogError(ex, "Failed to get conversation name.");
+                throw;
             }
         }
 

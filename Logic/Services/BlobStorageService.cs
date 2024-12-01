@@ -15,24 +15,31 @@ namespace TeaWork.Logic.Services
     public class BlobStorageService :IBlobStorageService
     {
         private readonly IDbContextFactory _dbContextFactory;
+        private readonly ILogger<BlobStorageService> _logger;
         private readonly AuthenticationStateProvider _authenticationStateProvider;
         private readonly UserIdentity _userIdentity;
         private string _blobStorageConnection;
         private string _blobContainerName = "teawork";
 
-        public BlobStorageService(IConfiguration configuration ,IDbContextFactory dbContextFactory, AuthenticationStateProvider authenticationStateProvider, UserIdentity userIdentity)
+        public BlobStorageService(
+            IConfiguration configuration ,
+            IDbContextFactory dbContextFactory, 
+            AuthenticationStateProvider authenticationStateProvider, 
+            UserIdentity userIdentity,
+            ILogger<BlobStorageService> logger)
         {
             _dbContextFactory = dbContextFactory;
             _authenticationStateProvider = authenticationStateProvider;
             _userIdentity = userIdentity;
-            _blobStorageConnection = configuration.GetConnectionString("AzureStorageAcount");
+            _blobStorageConnection = configuration.GetConnectionString("AzureStorageAcount")!;
+            _logger= logger;
         }
 
         public async Task<ProjectFile> AddFile(string fileName, string fileType,int fileSize,int projectId)
         {
             try
             {
-                using var _context = _dbContextFactory.CreateDbContext();               
+                await using var _context = _dbContextFactory.CreateDbContext();               
                 ApplicationUser currentUser = await _userIdentity.GetLoggedUser();
                 ProjectFile projectFile = new ProjectFile
                 {
@@ -51,14 +58,15 @@ namespace TeaWork.Logic.Services
             }
             catch (Exception ex)
             {
-                throw new NotImplementedException();
+                _logger.LogError(ex, "Failed to add file.");
+                throw;
             }
         }
         public async Task<List<ProjectFile>> GetFilesById(int projectId)
         {
             try
             {
-                using var _context = _dbContextFactory.CreateDbContext();
+                await using var _context = _dbContextFactory.CreateDbContext();
                 var files = await _context.ProjectFiles
                     .Where(x => x.ProjectId == projectId)
                     .Where(x=>x.IsDeleted==false)
@@ -68,14 +76,15 @@ namespace TeaWork.Logic.Services
             }
             catch (Exception ex)
             {
-                throw new NotImplementedException();
+                _logger.LogError(ex, "Failed to get files.");
+                throw;
             }
         }
         public async Task<bool> UploadFileToBlobAsync(ProjectFile projectFile, Stream fileStream)
         {
             try
             {
-                using var _context = _dbContextFactory.CreateDbContext();
+                await using var _context = _dbContextFactory.CreateDbContext();
                 var container = new BlobContainerClient(_blobStorageConnection, _blobContainerName);
                 var createResponse = await container.CreateIfNotExistsAsync();
                 if (createResponse != null && createResponse.GetRawResponse().Status == 201)
@@ -91,15 +100,15 @@ namespace TeaWork.Logic.Services
             }
             catch (Exception ex)
             {
-                //_logger?.LogError(ex.ToString());
-                throw new NotImplementedException();
+                _logger.LogError(ex, "Failed to upload file.");
+                throw;
             }
         }
         public async Task<bool> DeleteFileToBlobAsync(string strFileName)
         {
             try
             {
-                using var _context = _dbContextFactory.CreateDbContext();
+                await using var _context = _dbContextFactory.CreateDbContext();
                 var file = await _context.ProjectFiles.FirstOrDefaultAsync(x => x.Id ==Convert.ToInt32(strFileName));
                 var container = new BlobContainerClient(_blobStorageConnection, _blobContainerName);
                 var createResponse = await container.CreateIfNotExistsAsync();
@@ -117,8 +126,8 @@ namespace TeaWork.Logic.Services
             }
             catch (Exception ex)
             {
-                //_logger?.LogError(ex.ToString());
-                throw new NotImplementedException();
+                _logger.LogError(ex, "Failed to delete file.");
+                throw;
             }
         }
         public async Task<(byte[] FileContent, string ContentType)> DownloadFileFromBlobAsync(string fileName)
@@ -144,7 +153,8 @@ namespace TeaWork.Logic.Services
             }
             catch (Exception ex)
             {
-                throw new NotImplementedException();
+                _logger.LogError(ex, "Failed to download file.");
+                throw;
             }
         }
 

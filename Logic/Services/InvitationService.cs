@@ -38,7 +38,7 @@ namespace TeaWork.Logic.Services
         {
             try
             {
-                using var _context = _dbContextFactory.CreateDbContext();
+                await using var _context = _dbContextFactory.CreateDbContext();
                 Invitation invitation = new Invitation
                 {
                     UserId = userId,
@@ -51,15 +51,15 @@ namespace TeaWork.Logic.Services
             }
             catch (Exception ex)
             {
-                throw new NotImplementedException();
+                _logger.LogError(ex, "Failed to send invitation.");
+                throw;
             }
         }
         public async Task<List<Invitation>> GetNewInvitations()
         {
-
             try
             {
-                using var _context = _dbContextFactory.CreateDbContext();
+                await using var _context = _dbContextFactory.CreateDbContext();
                 ApplicationUser currentUser = await _userIdentity.GetLoggedUser();
 
                 var invitations = await _context.Invitations
@@ -71,49 +71,66 @@ namespace TeaWork.Logic.Services
             }
             catch (Exception ex)
             {
-                throw new NotImplementedException();
+                _logger.LogError(ex, "Failed to get new invitations.");
+                throw;
             }
         }
         public async Task AcceptInvitation(int invitationId)
         {
             try
             {
-                using var _context = _dbContextFactory.CreateDbContext();
+                await using var _context = _dbContextFactory.CreateDbContext();
                 ApplicationUser currentUser = await _userIdentity.GetLoggedUser();
                 var invitation = await _context.Invitations.FirstOrDefaultAsync(x => x.Id == invitationId);
-                var project = await _context.Projects.FirstOrDefaultAsync(x => x.Id == invitation.ProjectId);
-                var conversation = await _context.Conversations.FirstOrDefaultAsync(x => x.Id == project.ProjectConversationId);
-                invitation.Status= InvitationStatus.Accepted;
-                _context.Attach(invitation).State = EntityState.Modified;
-                await _projectService.AddProjectMember(project, currentUser, ProjectMemberRole.User);
-                await _conversationService.AddMember(conversation, currentUser.Id);
-                await _context.SaveChangesAsync();
+                if (invitation != null)
+                {
+                    var project = await _context.Projects.FirstOrDefaultAsync(x => x.Id == invitation.ProjectId);
+                    if (project != null)
+                    {
+                        var conversation = await _context.Conversations.FirstOrDefaultAsync(x => x.Id == project.ProjectConversationId);
+                        if (conversation != null)
+                        {
+                            await _projectService.AddProjectMember(project, currentUser, ProjectMemberRole.User);
+                            await _conversationService.AddMember(conversation, currentUser.Id);
 
+                            invitation.Status = InvitationStatus.Accepted;
+                            _context.Attach(invitation).State = EntityState.Modified;
+
+                            await _context.SaveChangesAsync();
+                        }
+                    }
+                }
+                
             }
             catch (Exception ex)
             {
-                throw new NotImplementedException();
+                _logger.LogError(ex, "Failed to accept invitation.");
+                throw;
             }
         }
         public async Task DeclineInvitation(int invitationId)
         {
             try
             {
-                using var _context = _dbContextFactory.CreateDbContext();
+                await using var _context = _dbContextFactory.CreateDbContext();
                 var invitation = _context.Invitations.FirstOrDefault(x => x.Id == invitationId);
-                invitation.Status = InvitationStatus.Rejected;
-                _context.Attach(invitation).State = EntityState.Modified;
-                await _context.SaveChangesAsync();
+                if (invitation != null)
+                {
+                    invitation.Status = InvitationStatus.Rejected;
+                    _context.Attach(invitation).State = EntityState.Modified;
+                    await _context.SaveChangesAsync();
+                }
             }
             catch (Exception ex)
             {
-                throw new NotImplementedException();
+                _logger.LogError(ex, "Failed to decline invitation.");
+                throw;
             }
 
         }
         public async Task<bool> IsInvitationExist(string userId, int projectId)
         {
-            using var _context = _dbContextFactory.CreateDbContext();
+            await using var _context = _dbContextFactory.CreateDbContext();
 
             bool isInvitationExists = await _context.Invitations
                 .AnyAsync(pm => pm.UserId.Equals(userId) && pm.ProjectId == projectId);

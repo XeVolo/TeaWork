@@ -153,9 +153,9 @@ namespace TeaWork.Logic.Services
                         yPoint += 15;
                     }
 
-                    if (!string.IsNullOrWhiteSpace(userForm.Descriprion))
+                    if (!string.IsNullOrWhiteSpace(userForm.Description))
                     {
-                        textFormatter.DrawString(userForm.Descriprion, new XFont("Arial", 10), XBrushes.Black, new XRect(40, yPoint, 500, 60), XStringFormats.TopLeft);
+                        textFormatter.DrawString(userForm.Description, new XFont("Arial", 10), XBrushes.Black, new XRect(40, yPoint, 500, 60), XStringFormats.TopLeft);
                         yPoint += 60; 
                     }
                     yPoint += 10;

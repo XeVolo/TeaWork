@@ -16,18 +16,24 @@ namespace TeaWork.Logic.Services
         private readonly IDbContextFactory _dbContextFactory;
         private readonly AuthenticationStateProvider _authenticationStateProvider;
         private readonly UserIdentity _userIdentity;
-        public TaskService(IDbContextFactory dbContextFactory, AuthenticationStateProvider authenticationStateProvider, UserIdentity userIdentity)
+        private readonly ILogger<TaskService> _logger;
+        public TaskService(
+            IDbContextFactory dbContextFactory, 
+            AuthenticationStateProvider authenticationStateProvider, 
+            UserIdentity userIdentity,
+            ILogger<TaskService> logger)
         {
             _dbContextFactory = dbContextFactory;
             _authenticationStateProvider = authenticationStateProvider;
             _userIdentity =userIdentity;
+            _logger = logger;
         }
         public async Task Add(ProjectTaskAddDto taskData, int projectId)
         {
             
             try
             {
-                using var _context = _dbContextFactory.CreateDbContext();
+                await using var _context = _dbContextFactory.CreateDbContext();
                 ApplicationUser currentUser = await _userIdentity.GetLoggedUser();
                 var project = _context.Projects.FirstOrDefault(m => m.Id == projectId);
                 if (project != null)
@@ -49,7 +55,8 @@ namespace TeaWork.Logic.Services
             }
             catch (Exception ex)
             {
-                throw new NotImplementedException();
+                _logger.LogError(ex, "Failed to add project task.");
+                throw;
             }
         }
         public async Task<List<ProjectTask>> GetProjectTasks(int projectId)
