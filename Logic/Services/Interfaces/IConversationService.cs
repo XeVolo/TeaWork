@@ -6,7 +6,6 @@ namespace TeaWork.Logic.Services.Interfaces
     public interface IConversationService
     {
         Task<Conversation> AddConversation(ConversationType conversationType, string name);
-        Task Delete(int id);
         Task AddMember(Conversation conversation, string userId);
         Task<List<Conversation>> GetMyConversations();
         Task<List<Conversation>> GetConversationsByUserId(string userId);

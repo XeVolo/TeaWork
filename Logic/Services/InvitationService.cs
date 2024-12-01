@@ -16,15 +16,23 @@ namespace TeaWork.Logic.Services
         private readonly UserIdentity _userIdentity;
         private readonly IProjectService _projectService;
         private readonly IConversationService _conversationService;
+        private readonly ILogger<InvitationService> _logger;
 
 
-        public InvitationService(IDbContextFactory dbContextFactory, AuthenticationStateProvider authenticationStateProvider, UserIdentity userIdentity)
+        public InvitationService(
+            IDbContextFactory dbContextFactory, 
+            AuthenticationStateProvider authenticationStateProvider, 
+            UserIdentity userIdentity, 
+            IConversationService conversationService,
+            IProjectService projectService,
+            ILogger<InvitationService>logger)
         {
             _dbContextFactory = dbContextFactory;
             _authenticationStateProvider = authenticationStateProvider;
             _userIdentity = userIdentity;
-            _conversationService = new ConversationService(dbContextFactory, authenticationStateProvider, userIdentity);
-            _projectService = new ProjectService(dbContextFactory, authenticationStateProvider, userIdentity);
+            _conversationService =conversationService;
+            _projectService = projectService;
+            _logger = logger;
         }
         public async Task SendInvitation(string userId, int projectId)
         {

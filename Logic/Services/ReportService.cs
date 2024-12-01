@@ -22,15 +22,22 @@ namespace TeaWork.Logic.Services
         private readonly IDesignConceptService _designConceptService;
 
 
-        public ReportService(IDbContextFactory dbContextFactory, AuthenticationStateProvider authenticationStateProvider, UserIdentity userIdentity)
+        public ReportService(
+            IDbContextFactory dbContextFactory,
+            AuthenticationStateProvider authenticationStateProvider,
+            UserIdentity userIdentity,
+            IConversationService conversationService,
+            ITaskService taskService,
+            IProjectService projectService,
+            IDesignConceptService designConceptService)
         {
             _dbContextFactory = dbContextFactory;
             _authenticationStateProvider = authenticationStateProvider;
             _userIdentity = userIdentity;
-            _conversationService = new ConversationService(dbContextFactory, authenticationStateProvider, userIdentity);
-            _projectService = new ProjectService(dbContextFactory, authenticationStateProvider, userIdentity);
-            _taskService = new TaskService(dbContextFactory, authenticationStateProvider, userIdentity);
-            _designConceptService = new DesignConceptService(dbContextFactory, authenticationStateProvider, userIdentity);
+            _conversationService = conversationService;
+            _projectService = projectService;
+            _taskService = taskService;
+            _designConceptService = designConceptService;
         }
 
         public async Task<byte[]> GenerateReport(ReportForm reportForm, int projectId)

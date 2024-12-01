@@ -19,12 +19,16 @@ namespace TeaWork.Logic.Services
         private readonly IConversationService _conversationService;
 
 
-        public ProjectService(IDbContextFactory dbContextFactory, AuthenticationStateProvider authenticationStateProvider, UserIdentity userIdentity)
+        public ProjectService(
+            IDbContextFactory dbContextFactory, 
+            AuthenticationStateProvider authenticationStateProvider, 
+            UserIdentity userIdentity,
+            IConversationService conversationService)
         {
             _dbContextFactory = dbContextFactory;
             _authenticationStateProvider = authenticationStateProvider;
             _userIdentity = userIdentity;
-            _conversationService = new ConversationService(dbContextFactory, authenticationStateProvider, userIdentity);
+            _conversationService = conversationService;
         }
         public async Task Add(ProjectAddDto projectdata)
         {            
