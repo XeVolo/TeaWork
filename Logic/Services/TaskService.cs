@@ -14,17 +14,14 @@ namespace TeaWork.Logic.Services
     public class TaskService : ITaskService
     {
         private readonly IDbContextFactory _dbContextFactory;
-        private readonly AuthenticationStateProvider _authenticationStateProvider;
         private readonly UserIdentity _userIdentity;
         private readonly ILogger<TaskService> _logger;
         public TaskService(
             IDbContextFactory dbContextFactory, 
-            AuthenticationStateProvider authenticationStateProvider, 
             UserIdentity userIdentity,
             ILogger<TaskService> logger)
         {
             _dbContextFactory = dbContextFactory;
-            _authenticationStateProvider = authenticationStateProvider;
             _userIdentity =userIdentity;
             _logger = logger;
         }

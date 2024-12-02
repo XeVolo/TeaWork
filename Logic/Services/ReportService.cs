@@ -14,7 +14,6 @@ namespace TeaWork.Logic.Services
     public class ReportService : IReportService
     {
         private readonly IDbContextFactory _dbContextFactory;
-        private readonly AuthenticationStateProvider _authenticationStateProvider;
         private readonly UserIdentity _userIdentity;
         private readonly IConversationService _conversationService;
         private readonly IProjectService _projectService;
@@ -24,7 +23,6 @@ namespace TeaWork.Logic.Services
 
         public ReportService(
             IDbContextFactory dbContextFactory,
-            AuthenticationStateProvider authenticationStateProvider,
             UserIdentity userIdentity,
             IConversationService conversationService,
             ITaskService taskService,
@@ -32,7 +30,6 @@ namespace TeaWork.Logic.Services
             IDesignConceptService designConceptService)
         {
             _dbContextFactory = dbContextFactory;
-            _authenticationStateProvider = authenticationStateProvider;
             _userIdentity = userIdentity;
             _conversationService = conversationService;
             _projectService = projectService;

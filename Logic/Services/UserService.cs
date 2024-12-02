@@ -10,17 +10,14 @@ namespace TeaWork.Logic.Services
     public class UserService : IUserService
     {
         private readonly IDbContextFactory _dbContextFactory;
-        private readonly AuthenticationStateProvider _authenticationStateProvider;
         private readonly UserIdentity _userIdentity;
         private readonly ILogger<UserService> _logger;
         public UserService(
             IDbContextFactory dbContextFactory, 
-            AuthenticationStateProvider authenticationStateProvider, 
             UserIdentity userIdentity,
             ILogger<UserService> logger)
         {
             _dbContextFactory = dbContextFactory;
-            _authenticationStateProvider = authenticationStateProvider;
             _userIdentity = userIdentity;
             _logger = logger;
         }

@@ -12,7 +12,6 @@ namespace TeaWork.Logic.Services
     public class InvitationService : IInvitationService
     {
         private readonly IDbContextFactory _dbContextFactory;
-        private readonly AuthenticationStateProvider _authenticationStateProvider;
         private readonly UserIdentity _userIdentity;
         private readonly IProjectService _projectService;
         private readonly IConversationService _conversationService;
@@ -21,14 +20,12 @@ namespace TeaWork.Logic.Services
 
         public InvitationService(
             IDbContextFactory dbContextFactory, 
-            AuthenticationStateProvider authenticationStateProvider, 
             UserIdentity userIdentity, 
             IConversationService conversationService,
             IProjectService projectService,
             ILogger<InvitationService>logger)
         {
             _dbContextFactory = dbContextFactory;
-            _authenticationStateProvider = authenticationStateProvider;
             _userIdentity = userIdentity;
             _conversationService =conversationService;
             _projectService = projectService;

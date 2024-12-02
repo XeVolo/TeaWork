@@ -16,7 +16,6 @@ namespace TeaWork.Logic.Services
     {
         private readonly IDbContextFactory _dbContextFactory;
         private readonly ILogger<BlobStorageService> _logger;
-        private readonly AuthenticationStateProvider _authenticationStateProvider;
         private readonly UserIdentity _userIdentity;
         private string _blobStorageConnection;
         private string _blobContainerName = "teawork";
@@ -24,12 +23,10 @@ namespace TeaWork.Logic.Services
         public BlobStorageService(
             IConfiguration configuration ,
             IDbContextFactory dbContextFactory, 
-            AuthenticationStateProvider authenticationStateProvider, 
             UserIdentity userIdentity,
             ILogger<BlobStorageService> logger)
         {
             _dbContextFactory = dbContextFactory;
-            _authenticationStateProvider = authenticationStateProvider;
             _userIdentity = userIdentity;
             _blobStorageConnection = configuration.GetConnectionString("AzureStorageAcount")!;
             _logger= logger;

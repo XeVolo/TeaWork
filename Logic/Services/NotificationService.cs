@@ -12,18 +12,15 @@ namespace TeaWork.Logic.Services
     public class NotificationService : INotificationService
     {
         private readonly IDbContextFactory _dbContextFactory;
-        private readonly AuthenticationStateProvider _authenticationStateProvider;
         private readonly UserIdentity _userIdentity;
         private readonly ILogger<NotificationService> _logger;
 
         public NotificationService(
             IDbContextFactory dbContextFactory, 
-            AuthenticationStateProvider authenticationStateProvider, 
             UserIdentity userIdentity,
             ILogger<NotificationService> logger)
         {
             _dbContextFactory = dbContextFactory;
-            _authenticationStateProvider = authenticationStateProvider;
             _userIdentity =userIdentity;
             _logger = logger;
         }
