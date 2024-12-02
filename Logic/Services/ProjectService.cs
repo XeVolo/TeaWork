@@ -14,14 +14,14 @@ namespace TeaWork.Logic.Services
     public class ProjectService : IProjectService
     {
         private readonly IDbContextFactory _dbContextFactory;
-        private readonly UserIdentity _userIdentity;
+        private readonly IUserIdentity _userIdentity;
         private readonly IConversationService _conversationService;
         private readonly ILogger<ProjectService> _logger;
 
 
         public ProjectService(
             IDbContextFactory dbContextFactory, 
-            UserIdentity userIdentity,
+            IUserIdentity userIdentity,
             IConversationService conversationService,
             ILogger<ProjectService> logger)
         {

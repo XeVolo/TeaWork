@@ -11,13 +11,13 @@ namespace TeaWork.Logic.Services
     public class ConversationService : IConversationService
     {
         private readonly IDbContextFactory _dbContextFactory;
-        private readonly UserIdentity _userIdentity;
+        private readonly IUserIdentity _userIdentity;
         private readonly ILogger<ConversationService> _logger;
 
         public ConversationService(
             ILogger<ConversationService> logger, 
             IDbContextFactory dbContextFactory, 
-            UserIdentity userIdentity)
+            IUserIdentity userIdentity)
         {
             _dbContextFactory = dbContextFactory;
             _userIdentity = userIdentity;

@@ -11,11 +11,11 @@ namespace TeaWork.Logic.Services
     public class DesignConceptService : IDesignConceptService
     {
         private readonly IDbContextFactory _dbContextFactory;
-        private readonly UserIdentity _userIdentity;
+        private readonly IUserIdentity _userIdentity;
         private readonly ILogger<DesignConceptService> _logger;
         public DesignConceptService(
             IDbContextFactory dbContextFactory, 
-            UserIdentity userIdentity,
+            IUserIdentity userIdentity,
             ILogger<DesignConceptService> logger)
         {
             _dbContextFactory = dbContextFactory;

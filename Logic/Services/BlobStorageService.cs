@@ -16,14 +16,14 @@ namespace TeaWork.Logic.Services
     {
         private readonly IDbContextFactory _dbContextFactory;
         private readonly ILogger<BlobStorageService> _logger;
-        private readonly UserIdentity _userIdentity;
+        private readonly IUserIdentity _userIdentity;
         private string _blobStorageConnection;
         private string _blobContainerName = "teawork";
 
         public BlobStorageService(
             IConfiguration configuration ,
             IDbContextFactory dbContextFactory, 
-            UserIdentity userIdentity,
+            IUserIdentity userIdentity,
             ILogger<BlobStorageService> logger)
         {
             _dbContextFactory = dbContextFactory;

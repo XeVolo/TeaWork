@@ -4,10 +4,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
 using TeaWork.Data;
 using TeaWork.Logic.DbContextFactory;
+using TeaWork.Logic.Services.Interfaces;
 
 namespace TeaWork.Logic.Services
 {
-    public class UserIdentity 
+    public class UserIdentity : IUserIdentity
     {
         private readonly IDbContextFactory _dbContextFactory;
         private readonly AuthenticationStateProvider _authenticationStateProvider;

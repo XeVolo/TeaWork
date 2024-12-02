@@ -35,7 +35,7 @@ builder.Services.AddScoped<IdentityUserAccessor>();
 builder.Services.AddScoped<IdentityRedirectManager>();
 builder.Services.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuthenticationStateProvider>();
 
-builder.Services.AddScoped<UserIdentity>();
+builder.Services.AddScoped<IUserIdentity, UserIdentity>();
 builder.Services.AddScoped<IDbContextFactory, DbContextFactory>();
 builder.Services.AddScoped<IProjectService, ProjectService>();
 builder.Services.AddScoped<IConversationService, ConversationService>();
