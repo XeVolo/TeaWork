@@ -92,7 +92,6 @@ namespace TeaWork.Logic.Services
 
                             invitation.Status = InvitationStatus.Accepted;
                             _context.Attach(invitation).State = EntityState.Modified;
-
                             await _context.SaveChangesAsync();
                         }
                     }

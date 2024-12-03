@@ -121,11 +121,12 @@ namespace TeaWork.Logic.Services
                     .Select(x => x.ToDoListId)
                     .FirstOrDefaultAsync();
 
-                var project = await _context.Projects
+                var projectId = await _context.Projects
                     .Where(x => x.ToDoListId == toDoListId)
+                    .Select(x=>x.Id)
                     .FirstOrDefaultAsync();
 
-                return project.Id;
+                return projectId;
             }
             catch (Exception ex)
             {

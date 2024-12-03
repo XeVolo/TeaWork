@@ -34,6 +34,7 @@ namespace TeaWork.Logic.Services
                 var currentUser = await _context.Users.FirstOrDefaultAsync(u => u.UserName == user.Identity!.Name);
                 if (currentUser == null)
                 {
+                    _logger.LogError("Failed to get logged user.");
                     throw new InvalidOperationException("Unknown user");
                 }
                 return currentUser!;

@@ -15,9 +15,10 @@ namespace TeaWork.Logic.Services
         private readonly ILogger<ConversationService> _logger;
 
         public ConversationService(
-            ILogger<ConversationService> logger, 
-            IDbContextFactory dbContextFactory, 
-            IUserIdentity userIdentity)
+            IUserIdentity userIdentity,            
+            IDbContextFactory dbContextFactory,
+            ILogger<ConversationService> logger)
+            
         {
             _dbContextFactory = dbContextFactory;
             _userIdentity = userIdentity;
@@ -178,7 +179,7 @@ namespace TeaWork.Logic.Services
                         return conversation.Name ?? conversation.Id.ToString();
                     }
 
-                    if (conversation.ConversationMembers != null)
+                    if (conversation.ConversationMembers != null && conversation.ConversationMembers.Count()!=0)
                     {
                         var otherUser = conversation.ConversationMembers
                                 .FirstOrDefault(cm => cm.UserId != currentUser.Id);
@@ -191,6 +192,11 @@ namespace TeaWork.Logic.Services
 
                             return name ?? "Unknown User";
                         }
+                        else
+                        {
+                            return "Unknown User";
+                        }
+
                     }
                 
                 }
