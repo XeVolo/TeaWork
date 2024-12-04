@@ -22,8 +22,8 @@
         <div id="test4" class="top-row px-4">
             <AuthorizeView>
                 <Authorized>                                      
-                        <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Start" Gap="0.5rem" class="rz-p-sm-12">
-                        <RadzenDropDown @bind-Value=@value Data=@myProjects TextProperty="@nameof(Project.Title)" ValueProperty="@nameof(Project.Id)" AllowClear=true Placeholder="@Localizer["Select"]" Style="width: 100%; max-width: 400px;" Name="DropDownClear" />
+                        <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End" Gap="10px" class="rz-p-sm-12" Style="max-width:100%">
+                        <RadzenDropDown @bind-Value=@value Style="width: 20%;" Data=@myProjects TextProperty="@nameof(Project.Title)" ValueProperty="@nameof(Project.Id)" AllowClear=true Placeholder="@Localizer["Select"]" Name="DropDownClear" />
                         <RadzenButton id="RadzenButton" Style="width: 200px;" Disabled="@IsDisabled" Text="@Localizer["ToDoList"]" Click="NavigateToToDoList" ButtonStyle="ButtonStyle.Primary" />
                         <RadzenButton id="RadzenButton" Style="width: 200px;" Disabled="@IsDisabled" Text="@Localizer["Details"]" Click="NavigateToDetails" ButtonStyle="ButtonStyle.Primary" />
                         <RadzenButton id="RadzenButton" Style="width: 200px;" Disabled="@IsDisabled" Text="@Localizer["Schedule"]" Click="NavigateToSchedule" ButtonStyle="ButtonStyle.Primary" />
