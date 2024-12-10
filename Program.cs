@@ -82,8 +82,6 @@ builder.Services.AddAuthorization();
 
 builder.Services.AddCascadingAuthenticationState();
 
-builder.Services.AddSignalR();
-
 var app = builder.Build();
 app.UseResponseCompression();
 
