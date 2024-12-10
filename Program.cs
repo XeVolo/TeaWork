@@ -18,7 +18,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
-builder.Services.AddSignalR();
+builder.Services.AddSignalR().AddAzureSignalR();
 
 builder.Services.AddBlazorBootstrap();
 
