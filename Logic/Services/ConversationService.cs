@@ -4,19 +4,18 @@ using TeaWork.Data.Models;
 using TeaWork.Data;
 using TeaWork.Logic.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using TeaWork.Logic.DbContextFactory;
 
 namespace TeaWork.Logic.Services
 {
     public class ConversationService : IConversationService
     {
-        private readonly IDbContextFactory _dbContextFactory;
+        private readonly IDbContextFactory<ApplicationDbContext> _dbContextFactory;
         private readonly IUserIdentity _userIdentity;
         private readonly ILogger<ConversationService> _logger;
 
         public ConversationService(
-            IUserIdentity userIdentity,            
-            IDbContextFactory dbContextFactory,
+            IUserIdentity userIdentity,
+            IDbContextFactory<ApplicationDbContext> dbContextFactory,
             ILogger<ConversationService> logger)
             
         {

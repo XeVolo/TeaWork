@@ -9,7 +9,6 @@ using TeaWork.Logic.Services.Interfaces;
 using TeaWork.Logic.Services;
 using TeaWork.Logic.Hubs;
 using Radzen;
-using TeaWork.Logic.DbContextFactory;
 using Microsoft.AspNetCore.Localization;
 using System.Globalization;
 
@@ -36,7 +35,6 @@ builder.Services.AddScoped<IdentityRedirectManager>();
 builder.Services.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuthenticationStateProvider>();
 
 builder.Services.AddScoped<IUserIdentity, UserIdentity>();
-builder.Services.AddScoped<IDbContextFactory, DbContextFactory>();
 builder.Services.AddScoped<IProjectService, ProjectService>();
 builder.Services.AddScoped<IConversationService, ConversationService>();
 builder.Services.AddScoped<IUserService, UserService>();
@@ -65,11 +63,9 @@ builder.Services.AddAuthentication()
    });
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
+builder.Services.AddDbContextFactory<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
-
-builder.Services.AddScoped<IDbContextFactory, DbContextFactory>();
 
 builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = false)
     .AddEntityFrameworkStores<ApplicationDbContext>()

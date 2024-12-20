@@ -5,7 +5,6 @@ using TeaWork.Data.Models;
 using TeaWork.Data;
 using TeaWork.Logic.Dto;
 using TeaWork.Logic.Services.Interfaces;
-using TeaWork.Logic.DbContextFactory;
 using System.Data;
 using System.Linq.Dynamic.Core;
 
@@ -13,14 +12,14 @@ namespace TeaWork.Logic.Services
 {
     public class ProjectService : IProjectService
     {
-        private readonly IDbContextFactory _dbContextFactory;
+        private readonly IDbContextFactory<ApplicationDbContext> _dbContextFactory;
         private readonly IUserIdentity _userIdentity;
         private readonly IConversationService _conversationService;
         private readonly ILogger<ProjectService> _logger;
 
 
         public ProjectService(
-            IDbContextFactory dbContextFactory, 
+            IDbContextFactory<ApplicationDbContext> dbContextFactory, 
             IUserIdentity userIdentity,
             IConversationService conversationService,
             ILogger<ProjectService> logger)

@@ -1,7 +1,6 @@
 ﻿using Azure.Storage.Blobs.Models;
 using Azure.Storage.Blobs;
 using Microsoft.AspNetCore.Components.Authorization;
-using TeaWork.Logic.DbContextFactory;
 using TeaWork.Logic.Services.Interfaces;
 using TeaWork.Data.Models;
 using TeaWork.Data.Enums;
@@ -14,7 +13,7 @@ namespace TeaWork.Logic.Services
 {
     public class BlobStorageService :IBlobStorageService
     {
-        private readonly IDbContextFactory _dbContextFactory;
+        private readonly IDbContextFactory<ApplicationDbContext> _dbContextFactory;
         private readonly ILogger<BlobStorageService> _logger;
         private readonly IUserIdentity _userIdentity;
         private string _blobStorageConnection;
@@ -22,7 +21,7 @@ namespace TeaWork.Logic.Services
 
         public BlobStorageService(
             IConfiguration configuration ,
-            IDbContextFactory dbContextFactory, 
+            IDbContextFactory<ApplicationDbContext> dbContextFactory, 
             IUserIdentity userIdentity,
             ILogger<BlobStorageService> logger)
         {

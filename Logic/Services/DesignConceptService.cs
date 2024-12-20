@@ -4,17 +4,16 @@ using TeaWork.Data;
 using TeaWork.Logic.Services.Interfaces;
 using TeaWork.Logic.Dto;
 using Microsoft.EntityFrameworkCore;
-using TeaWork.Logic.DbContextFactory;
 
 namespace TeaWork.Logic.Services
 {
     public class DesignConceptService : IDesignConceptService
     {
-        private readonly IDbContextFactory _dbContextFactory;
+        private readonly IDbContextFactory<ApplicationDbContext> _dbContextFactory;
         private readonly IUserIdentity _userIdentity;
         private readonly ILogger<DesignConceptService> _logger;
         public DesignConceptService(
-            IDbContextFactory dbContextFactory, 
+            IDbContextFactory<ApplicationDbContext> dbContextFactory, 
             IUserIdentity userIdentity,
             ILogger<DesignConceptService> logger)
         {

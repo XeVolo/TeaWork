@@ -5,13 +5,13 @@ using TeaWork.Data;
 using Microsoft.AspNetCore.Components.Authorization;
 using TeaWork.Logic.Services.Interfaces;
 using Microsoft.CodeAnalysis;
-using TeaWork.Logic.DbContextFactory;
+
 
 namespace TeaWork.Logic.Services
 {
     public class InvitationService : IInvitationService
     {
-        private readonly IDbContextFactory _dbContextFactory;
+        private readonly IDbContextFactory<ApplicationDbContext> _dbContextFactory;
         private readonly IUserIdentity _userIdentity;
         private readonly IProjectService _projectService;
         private readonly IConversationService _conversationService;
@@ -19,7 +19,7 @@ namespace TeaWork.Logic.Services
 
 
         public InvitationService(
-            IDbContextFactory dbContextFactory, 
+            IDbContextFactory<ApplicationDbContext> dbContextFactory, 
             IUserIdentity userIdentity, 
             IConversationService conversationService,
             IProjectService projectService,

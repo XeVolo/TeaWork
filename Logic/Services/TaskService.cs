@@ -4,7 +4,6 @@ using TeaWork.Data;
 using TeaWork.Logic.Dto;
 using TeaWork.Logic.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using TeaWork.Logic.DbContextFactory;
 using TeaWork.Data.Enums;
 using System.Threading.Tasks;
 using TeaWork.Components.Notifications;
@@ -13,11 +12,11 @@ namespace TeaWork.Logic.Services
 {
     public class TaskService : ITaskService
     {
-        private readonly IDbContextFactory _dbContextFactory;
+        private readonly IDbContextFactory<ApplicationDbContext> _dbContextFactory;
         private readonly IUserIdentity _userIdentity;
         private readonly ILogger<TaskService> _logger;
         public TaskService(
-            IDbContextFactory dbContextFactory, 
+            IDbContextFactory<ApplicationDbContext> dbContextFactory, 
             IUserIdentity userIdentity,
             ILogger<TaskService> logger)
         {

@@ -5,18 +5,17 @@ using TeaWork.Data;
 using TeaWork.Logic.Dto;
 using TeaWork.Logic.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using TeaWork.Logic.DbContextFactory;
 
 namespace TeaWork.Logic.Services
 {
     public class NotificationService : INotificationService
     {
-        private readonly IDbContextFactory _dbContextFactory;
+        private readonly IDbContextFactory<ApplicationDbContext> _dbContextFactory;
         private readonly IUserIdentity _userIdentity;
         private readonly ILogger<NotificationService> _logger;
 
         public NotificationService(
-            IDbContextFactory dbContextFactory, 
+            IDbContextFactory<ApplicationDbContext> dbContextFactory, 
             IUserIdentity userIdentity,
             ILogger<NotificationService> logger)
         {

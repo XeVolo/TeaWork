@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.EntityFrameworkCore;
 using TeaWork.Data;
-using TeaWork.Logic.DbContextFactory;
 using TeaWork.Logic.Dto;
 using TeaWork.Logic.Services.Interfaces;
 
@@ -9,11 +8,11 @@ namespace TeaWork.Logic.Services
 {
     public class UserService : IUserService
     {
-        private readonly IDbContextFactory _dbContextFactory;
+        private readonly IDbContextFactory<ApplicationDbContext> _dbContextFactory;
         private readonly IUserIdentity _userIdentity;
         private readonly ILogger<UserService> _logger;
         public UserService(
-            IDbContextFactory dbContextFactory, 
+            IDbContextFactory<ApplicationDbContext> dbContextFactory, 
             IUserIdentity userIdentity,
             ILogger<UserService> logger)
         {

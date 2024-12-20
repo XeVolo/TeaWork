@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components.Authorization;
 using TeaWork.Logic.Services.Interfaces;
-using TeaWork.Logic.DbContextFactory;
 using PdfSharpCore.Drawing;
 using PdfSharpCore.Pdf;
 using System.Threading.Tasks;
@@ -8,12 +7,13 @@ using TeaWork.Logic.Dto;
 using TeaWork.Data.Models;
 using TeaWork.Data;
 using PdfSharpCore.Drawing.Layout;
+using Microsoft.EntityFrameworkCore;
 
 namespace TeaWork.Logic.Services
 {
     public class ReportService : IReportService
     {
-        private readonly IDbContextFactory _dbContextFactory;
+        private readonly IDbContextFactory<ApplicationDbContext> _dbContextFactory;
         private readonly IUserIdentity _userIdentity;
         private readonly IConversationService _conversationService;
         private readonly IProjectService _projectService;
@@ -22,7 +22,7 @@ namespace TeaWork.Logic.Services
 
 
         public ReportService(
-            IDbContextFactory dbContextFactory,
+            IDbContextFactory<ApplicationDbContext> dbContextFactory,
             IUserIdentity userIdentity,
             IConversationService conversationService,
             ITaskService taskService,
