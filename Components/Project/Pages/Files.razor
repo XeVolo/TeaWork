@@ -17,6 +17,7 @@
 <PageTitle>Files</PageTitle>
 
 <h4>@Localizer["Files"]</h4>
+@if(storageFilling){
 <div class="row">
     <div class="col-sm-6">
         <label>
@@ -30,7 +31,14 @@
     <div class="col-sm-2">
         <RadzenButton Text="@Localizer["UploadFile"]" Disabled="@fileLoading" Click="OnUploadSubmit" Style="width: 70%" />
     </div>
-</div>
+    </div>
+}
+else
+{
+    <div class="row">
+        <h3>@Localizer["StorageFilled"]</h3>
+    </div>
+}
 @if (displayMessage.Length > 0)
 {
     <div class="alert alert-success">
@@ -102,6 +110,7 @@
     private long maxFileSize = 1024 * 15;
     private int maxAllowedFiles = 3;
     private bool fileLoading;
+    private bool storageFilling;
     string Message = "No file(s) selected";
     IReadOnlyList<IBrowserFile> selectedFiles;
     private List<ProjectFile> projectFiles = new();
@@ -113,6 +122,7 @@
     {
         if (await ProjectService.CheckUserAccess(Id))
         {
+            storageFilling = await BlobStorageService.CheckFilling(Id);
             projectFiles = await BlobStorageService.GetFilesById(Id);
         }
         else

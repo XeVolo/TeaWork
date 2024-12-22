@@ -41,7 +41,7 @@ namespace TeaWork.Logic.Services
                 {
                     FileName = fileName,
                     ContentType = fileType,
-                    FileSize = fileSize,
+                    FileSize = fileSize/1024,
                     ProjectId = projectId,
                     UserId = currentUser.Id,
                     UploadDate = DateTime.Now,
@@ -69,6 +69,25 @@ namespace TeaWork.Logic.Services
                     .Include(x=>x.User)
                     .ToListAsync();
                 return files;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to get files.");
+                throw;
+            }
+        }
+        public async Task<bool> CheckFilling(int projectId)
+        {
+            try
+            {
+                int TwoGB = 2 * 1024 * 1024;
+                await using var _context = _dbContextFactory.CreateDbContext();
+                var totalSize = await _context.ProjectFiles
+                    .Where(x => x.ProjectId == projectId)
+                    .Where(x => x.IsDeleted == false)
+                    .SumAsync(x => x.FileSize);
+
+                return totalSize<TwoGB;
             }
             catch (Exception ex)
             {

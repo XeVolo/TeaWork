@@ -79,6 +79,24 @@ namespace TeaWork.Resources {
         }
         
         /// <summary>
+        /// Wyszukuje zlokalizowany ciąg podobny do ciągu Add Design Concept.
+        /// </summary>
+        internal static string AddDesign {
+            get {
+                return ResourceManager.GetString("AddDesign", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        /// Wyszukuje zlokalizowany ciąg podobny do ciągu Additional observations.
+        /// </summary>
+        internal static string AdditionalObservation {
+            get {
+                return ResourceManager.GetString("AdditionalObservation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         /// Wyszukuje zlokalizowany ciąg podobny do ciągu Add project member.
         /// </summary>
         internal static string AddProjectMember {
@@ -93,6 +111,24 @@ namespace TeaWork.Resources {
         internal static string AddTask {
             get {
                 return ResourceManager.GetString("AddTask", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        /// Wyszukuje zlokalizowany ciąg podobny do ciągu Use another service to register.
+        /// </summary>
+        internal static string AnotherService {
+            get {
+                return ResourceManager.GetString("AnotherService", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        /// Wyszukuje zlokalizowany ciąg podobny do ciągu Assess the user&apos;s work and involvement.
+        /// </summary>
+        internal static string AssessUser {
+            get {
+                return ResourceManager.GetString("AssessUser", resourceCulture);
             }
         }
         
@@ -115,6 +151,15 @@ namespace TeaWork.Resources {
         }
         
         /// <summary>
+        /// Wyszukuje zlokalizowany ciąg podobny do ciągu Attention!.
+        /// </summary>
+        internal static string Attention {
+            get {
+                return ResourceManager.GetString("Attention", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         /// Wyszukuje zlokalizowany ciąg podobny do ciągu Beginning.
         /// </summary>
         internal static string Beginning {
@@ -129,6 +174,24 @@ namespace TeaWork.Resources {
         internal static string Change {
             get {
                 return ResourceManager.GetString("Change", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        /// Wyszukuje zlokalizowany ciąg podobny do ciągu Change Your account settings.
+        /// </summary>
+        internal static string ChangeAccount {
+            get {
+                return ResourceManager.GetString("ChangeAccount", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        /// Wyszukuje zlokalizowany ciąg podobny do ciągu Change Password.
+        /// </summary>
+        internal static string ChangePassword {
+            get {
+                return ResourceManager.GetString("ChangePassword", resourceCulture);
             }
         }
         
@@ -178,6 +241,24 @@ namespace TeaWork.Resources {
         }
         
         /// <summary>
+        /// Wyszukuje zlokalizowany ciąg podobny do ciągu Complete the project summary report.
+        /// </summary>
+        internal static string CompleteReport {
+            get {
+                return ResourceManager.GetString("CompleteReport", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        /// Wyszukuje zlokalizowany ciąg podobny do ciągu Confirm Password.
+        /// </summary>
+        internal static string ConfirmPassword {
+            get {
+                return ResourceManager.GetString("ConfirmPassword", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         /// Wyszukuje zlokalizowany ciąg podobny do ciągu Conversation.
         /// </summary>
         internal static string Conversation {
@@ -201,6 +282,15 @@ namespace TeaWork.Resources {
         internal static string Create {
             get {
                 return ResourceManager.GetString("Create", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        /// Wyszukuje zlokalizowany ciąg podobny do ciągu Create a new account.
+        /// </summary>
+        internal static string CreateAccount {
+            get {
+                return ResourceManager.GetString("CreateAccount", resourceCulture);
             }
         }
         
@@ -304,6 +394,24 @@ namespace TeaWork.Resources {
         }
         
         /// <summary>
+        /// Wyszukuje zlokalizowany ciąg podobny do ciągu Enter Your message.
+        /// </summary>
+        internal static string EnterMessage {
+            get {
+                return ResourceManager.GetString("EnterMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        /// Wyszukuje zlokalizowany ciąg podobny do ciągu External Logins.
+        /// </summary>
+        internal static string ExternalLogins {
+            get {
+                return ResourceManager.GetString("ExternalLogins", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         /// Wyszukuje zlokalizowany ciąg podobny do ciągu Files.
         /// </summary>
         internal static string Files {
@@ -345,6 +453,15 @@ namespace TeaWork.Resources {
         internal static string InProgress {
             get {
                 return ResourceManager.GetString("InProgress", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        /// Wyszukuje zlokalizowany ciąg podobny do ciągu Invitation Sent.
+        /// </summary>
+        internal static string InvitationSent {
+            get {
+                return ResourceManager.GetString("InvitationSent", resourceCulture);
             }
         }
         
@@ -403,6 +520,15 @@ namespace TeaWork.Resources {
         }
         
         /// <summary>
+        /// Wyszukuje zlokalizowany ciąg podobny do ciągu Manage Your account.
+        /// </summary>
+        internal static string ManageAccount {
+            get {
+                return ResourceManager.GetString("ManageAccount", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         /// Wyszukuje zlokalizowany ciąg podobny do ciągu Medium.
         /// </summary>
         internal static string Medium {
@@ -426,6 +552,15 @@ namespace TeaWork.Resources {
         internal static string Name {
             get {
                 return ResourceManager.GetString("Name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        /// Wyszukuje zlokalizowany ciąg podobny do ciągu New Password.
+        /// </summary>
+        internal static string NewPassword {
+            get {
+                return ResourceManager.GetString("NewPassword", resourceCulture);
             }
         }
         
@@ -466,6 +601,24 @@ namespace TeaWork.Resources {
         }
         
         /// <summary>
+        /// Wyszukuje zlokalizowany ciąg podobny do ciągu No user found with the given address..
+        /// </summary>
+        internal static string NoUser {
+            get {
+                return ResourceManager.GetString("NoUser", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        /// Wyszukuje zlokalizowany ciąg podobny do ciągu Old Password.
+        /// </summary>
+        internal static string OldPassword {
+            get {
+                return ResourceManager.GetString("OldPassword", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         /// Wyszukuje zlokalizowany ciąg podobny do ciągu Organize projects, track progress, and assign tasks with your team..
         /// </summary>
         internal static string OrganizeProj {
@@ -480,6 +633,24 @@ namespace TeaWork.Resources {
         internal static string Overview {
             get {
                 return ResourceManager.GetString("Overview", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        /// Wyszukuje zlokalizowany ciąg podobny do ciągu Password.
+        /// </summary>
+        internal static string Password {
+            get {
+                return ResourceManager.GetString("Password", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        /// Wyszukuje zlokalizowany ciąg podobny do ciągu Phone Number.
+        /// </summary>
+        internal static string PhoneNumber {
+            get {
+                return ResourceManager.GetString("PhoneNumber", resourceCulture);
             }
         }
         
@@ -507,6 +678,15 @@ namespace TeaWork.Resources {
         internal static string PrivateSchedule {
             get {
                 return ResourceManager.GetString("PrivateSchedule", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        /// Wyszukuje zlokalizowany ciąg podobny do ciągu Profile.
+        /// </summary>
+        internal static string Profile {
+            get {
+                return ResourceManager.GetString("Profile", resourceCulture);
             }
         }
         
@@ -583,6 +763,33 @@ namespace TeaWork.Resources {
         }
         
         /// <summary>
+        /// Wyszukuje zlokalizowany ciąg podobny do ciągu Registered Logins.
+        /// </summary>
+        internal static string RegisteredLogins {
+            get {
+                return ResourceManager.GetString("RegisteredLogins", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        /// Wyszukuje zlokalizowany ciąg podobny do ciągu Remember me.
+        /// </summary>
+        internal static string RememberMe {
+            get {
+                return ResourceManager.GetString("RememberMe", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        /// Wyszukuje zlokalizowany ciąg podobny do ciągu Remove.
+        /// </summary>
+        internal static string Remove {
+            get {
+                return ResourceManager.GetString("Remove", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         /// Wyszukuje zlokalizowany ciąg podobny do ciągu Role.
         /// </summary>
         internal static string Role {
@@ -637,6 +844,15 @@ namespace TeaWork.Resources {
         }
         
         /// <summary>
+        /// Wyszukuje zlokalizowany ciąg podobny do ciągu Send.
+        /// </summary>
+        internal static string Send {
+            get {
+                return ResourceManager.GetString("Send", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         /// Wyszukuje zlokalizowany ciąg podobny do ciągu Send Invitation.
         /// </summary>
         internal static string SendInvitation {
@@ -682,11 +898,29 @@ namespace TeaWork.Resources {
         }
         
         /// <summary>
+        /// Wyszukuje zlokalizowany ciąg podobny do ciągu Storage is full.
+        /// </summary>
+        internal static string StorageFilled {
+            get {
+                return ResourceManager.GetString("StorageFilled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         /// Wyszukuje zlokalizowany ciąg podobny do ciągu Success.
         /// </summary>
         internal static string Success {
             get {
                 return ResourceManager.GetString("Success", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        /// Wyszukuje zlokalizowany ciąg podobny do ciągu Summary.
+        /// </summary>
+        internal static string Summary {
+            get {
+                return ResourceManager.GetString("Summary", resourceCulture);
             }
         }
         
@@ -727,6 +961,15 @@ namespace TeaWork.Resources {
         }
         
         /// <summary>
+        /// Wyszukuje zlokalizowany ciąg podobny do ciągu Update Password.
+        /// </summary>
+        internal static string UpdatePassword {
+            get {
+                return ResourceManager.GetString("UpdatePassword", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         /// Wyszukuje zlokalizowany ciąg podobny do ciągu Upload Date.
         /// </summary>
         internal static string UploadDate {
@@ -745,6 +988,15 @@ namespace TeaWork.Resources {
         }
         
         /// <summary>
+        /// Wyszukuje zlokalizowany ciąg podobny do ciągu Use a local account to log in.
+        /// </summary>
+        internal static string UseLocalAccount {
+            get {
+                return ResourceManager.GetString("UseLocalAccount", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         /// Wyszukuje zlokalizowany ciąg podobny do ciągu User.
         /// </summary>
         internal static string User {
@@ -759,6 +1011,15 @@ namespace TeaWork.Resources {
         internal static string UserEmail {
             get {
                 return ResourceManager.GetString("UserEmail", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        /// Wyszukuje zlokalizowany ciąg podobny do ciągu Username.
+        /// </summary>
+        internal static string Username {
+            get {
+                return ResourceManager.GetString("Username", resourceCulture);
             }
         }
         

@@ -444,4 +444,7 @@
   <data name="UpdatePassword" xml:space="preserve">
     <value>Update Password</value>
   </data>
+  <data name="StorageFilled" xml:space="preserve">
+    <value>Storage is full</value>
+  </data>
 </root>
