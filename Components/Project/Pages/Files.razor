@@ -158,7 +158,7 @@ else
                 try
                 {
                     ProjectFile projectFile = await BlobStorageService.AddFile(file.Name, file.ContentType, Convert.ToInt32(file.Size), Id);
-                    bool uploaded = await BlobStorageService.UploadFileToBlobAsync(projectFile, file.OpenReadStream(20971520));
+                    bool uploaded = await BlobStorageService.UploadFileToBlob(projectFile, file.OpenReadStream(20971520));
                     if (uploaded)
                     {
                         displayMessage = projectFile.FileName + " Uploaded!!";
@@ -185,7 +185,7 @@ else
     {
         try
         {
-            var deleteResponse = await BlobStorageService.DeleteFileToBlobAsync(attachment.Id.ToString());
+            var deleteResponse = await BlobStorageService.DeleteFileToBlob(attachment.Id.ToString());
             if (deleteResponse)
             {
                 displayMessage = attachment.FileName + " Deleted!!";
@@ -205,7 +205,7 @@ else
     {
         try
         {
-            var (fileContent, contentType) = await BlobStorageService.DownloadFileFromBlobAsync(attachment.Id.ToString());
+            var (fileContent, contentType) = await BlobStorageService.DownloadFileFromBlob(attachment.Id.ToString());
             var base64 = Convert.ToBase64String(fileContent);
             var url = $"data:{contentType};base64,{base64}";
             await JS.InvokeVoidAsync("downloadFile", url, attachment.FileName);

@@ -95,7 +95,7 @@ namespace TeaWork.Logic.Services
                 throw;
             }
         }
-        public async Task<bool> UploadFileToBlobAsync(ProjectFile projectFile, Stream fileStream)
+        public async Task<bool> UploadFileToBlob(ProjectFile projectFile, Stream fileStream)
         {
             try
             {
@@ -119,7 +119,7 @@ namespace TeaWork.Logic.Services
                 throw;
             }
         }
-        public async Task<bool> DeleteFileToBlobAsync(string strFileName)
+        public async Task<bool> DeleteFileToBlob(string strFileName)
         {
             try
             {
@@ -145,7 +145,7 @@ namespace TeaWork.Logic.Services
                 throw;
             }
         }
-        public async Task<(byte[] FileContent, string ContentType)> DownloadFileFromBlobAsync(string fileName)
+        public async Task<(byte[] FileContent, string ContentType)> DownloadFileFromBlob(string fileName)
         {
             try
             {
