@@ -61,7 +61,7 @@ else
                         <RadzenColumn Size="12" SizeLG="6" class="rz-p-4">
                             <RadzenRow Gap="0">
                                 <RadzenColumn Size="12" SizeMD="6" SizeLG="2">
-                                    <RadzenText TextStyle="TextStyle.H6" TagName="TagName.H5" class="rz-mb-0">@Localizer["Size"]</RadzenText>
+                                    <RadzenText TextStyle="TextStyle.H6" TagName="TagName.H5" class="rz-mb-0">@Localizer["Size"] [KB]</RadzenText>
                                     <RadzenText TextStyle="TextStyle.Body2">@(projectFile.FileSize)</RadzenText>
                                 </RadzenColumn>
                                 <RadzenColumn Size="12" SizeMD="6" SizeLG="4">
@@ -110,7 +110,7 @@ else
     private long maxFileSize = 1024 * 15;
     private int maxAllowedFiles = 3;
     private bool fileLoading;
-    private bool storageFilling;
+    private bool storageFilling=true;
     string Message = "No file(s) selected";
     IReadOnlyList<IBrowserFile> selectedFiles;
     private List<ProjectFile> projectFiles = new();
