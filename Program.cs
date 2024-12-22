@@ -11,17 +11,13 @@ using TeaWork.Logic.Hubs;
 using Radzen;
 using Microsoft.AspNetCore.Localization;
 using System.Globalization;
-using System;
 
 var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
-builder.Services.AddSignalR(options =>
-{
-    options.EnableDetailedErrors = true;
-}).AddAzureSignalR();
+builder.Services.AddSignalR().AddAzureSignalR();
 
 builder.Services.AddBlazorBootstrap();
 
